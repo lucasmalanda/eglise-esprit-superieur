@@ -328,6 +328,77 @@
     font-variation-settings: "opsz" 144, "SOFT" 100;
   }
 
+  /* ---------- VISION / PILLARS ---------- */
+  .vision {
+    padding: 140px 0 120px;
+    background: var(--bg-cream);
+    position: relative;
+  }
+  .vision-intro {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 60px;
+    margin-bottom: 110px;
+    align-items: end;
+  }
+  .vision-quote {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1.55;
+    color: var(--muted-cream);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+    border-left: 1px solid var(--gold);
+    padding-left: 28px;
+  }
+  .vision-quote-attr {
+    margin-top: 18px;
+    font-style: normal;
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line-cream);
+  }
+  .pillar {
+    padding: 48px 32px 48px 0;
+    border-right: 1px solid var(--line-cream);
+    position: relative;
+  }
+  .pillar:last-child { border-right: none; padding-right: 0; }
+  .pillar:not(:first-child) { padding-left: 32px; }
+  .pillar-num {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--gold);
+    margin-bottom: 28px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .pillar-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .pillar-text {
+    font-size: 15px;
+    color: var(--muted-cream);
+    line-height: 1.6;
+  }
+
   /* ---------- APOSTLE ---------- */
   .apostle {
     background: var(--bg-cream-warm);
@@ -1307,6 +1378,12 @@
     .hero-meta { left: 24px; right: 24px; flex-direction: column; gap: 10px; }
     .hero-title { font-size: clamp(48px, 14vw, 92px); }
     .hero-bottom { flex-direction: column; align-items: flex-start; }
+    .vision { padding: 90px 0 80px; }
+    .vision-intro { grid-template-columns: 1fr; gap: 36px; margin-bottom: 60px; }
+    .pillars { grid-template-columns: 1fr; }
+    .pillar { padding: 32px 0; border-right: none; border-bottom: 1px solid var(--line-cream); }
+    .pillar:not(:first-child) { padding-left: 0; }
+    .pillar:last-child { border-bottom: none; }
     .apostle { padding: 90px 0; }
     .apostle-grid { grid-template-columns: 1fr; gap: 50px; }
     .app-section { padding: 90px 0 110px; }
@@ -1347,6 +1424,7 @@
     <a href="#app">Esprit Sage</a>
     <a href="#sermons">Prédications</a>
     <a href="#visit">Cultes</a>
+    <a href="#vision">Vision</a>
   </div>
   <a href="#contact" class="nav-cta">Nous rejoindre</a>
   <button class="nav-burger" aria-label="Menu">
@@ -1774,6 +1852,45 @@
         </svg>
         <h3>Les pasteurs</h3>
         <p>Rencontrez notre équipe pastorale. Des serviteurs de Dieu disponibles pour la prière, le conseil spirituel et l'accompagnement personnel sur votre chemin de foi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= VISION ============= -->
+<section class="vision" id="vision">
+  <div class="container">
+    <div class="vision-intro">
+      <div class="reveal">
+        <div class="section-eyebrow">Notre vision</div>
+        <h2 class="section-title">Bâtir une <em>communauté</em> vivante.</h2>
+      </div>
+      <blockquote class="vision-quote reveal delay-1">
+        « Nous aspirons à être un phare de lumière dans un monde souvent sombre — un refuge pour ceux qui sont perdus, un soutien pour ceux qui sont faibles, une source d'inspiration pour tous. »
+        <div class="vision-quote-attr">— Notre engagement</div>
+      </blockquote>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar reveal">
+        <div class="pillar-num">i.</div>
+        <h3 class="pillar-title">Une église pour tous</h3>
+        <p class="pillar-text">Indépendamment de votre origine, condition ou histoire, vous trouvez ici votre place et l'encouragement à vivre pleinement votre appel en Christ.</p>
+      </div>
+      <div class="pillar reveal delay-1">
+        <div class="pillar-num">ii.</div>
+        <h3 class="pillar-title">La vérité biblique</h3>
+        <p class="pillar-text">La Bible est notre fondation. Nous enseignons la Parole de Dieu avec clarté, profondeur et pertinence, pour transformer durablement les vies.</p>
+      </div>
+      <div class="pillar reveal delay-2">
+        <div class="pillar-num">iii.</div>
+        <h3 class="pillar-title">Un impact durable</h3>
+        <p class="pillar-text">Notre ministère ne s'arrête pas aux murs de l'église. Nous incarnons l'amour de Dieu par des actes concrets de service et de compassion.</p>
+      </div>
+      <div class="pillar reveal delay-3">
+        <div class="pillar-num">iv.</div>
+        <h3 class="pillar-title">Une croissance continue</h3>
+        <p class="pillar-text">Un environnement où chacun approfondit sa relation avec Dieu, développe ses dons spirituels, et reflète la sainteté et la grâce de Dieu.</p>
       </div>
     </div>
   </div>
