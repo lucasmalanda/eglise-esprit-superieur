@@ -730,37 +730,23 @@
     background: var(--bg-night);
   }
   .sermon-card.large { grid-row: span 2; aspect-ratio: 4/5; }
-  .sermon-card-bg {
+  .sermon-thumb {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #1a1f4a, #0e1230);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition: transform .8s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: brightness(0.85) saturate(1.05);
   }
-  .sermon-card.s1 .sermon-card-bg {
-    background:
-      radial-gradient(circle at 30% 30%, rgba(212, 168, 90, 0.4), transparent 60%),
-      linear-gradient(135deg, #2a1d3a, #0e1230);
+  .sermon-card:hover .sermon-thumb {
+    transform: scale(1.05);
+    filter: brightness(0.95) saturate(1.1);
   }
-  .sermon-card.s2 .sermon-card-bg {
-    background:
-      radial-gradient(circle at 70% 50%, rgba(201, 123, 106, 0.4), transparent 60%),
-      linear-gradient(135deg, #1a3a4a, #0e1230);
-  }
-  .sermon-card.s3 .sermon-card-bg {
-    background:
-      radial-gradient(circle at 50% 70%, rgba(184, 137, 61, 0.4), transparent 60%),
-      linear-gradient(135deg, #3a2d1a, #0e1230);
-  }
-  .sermon-card.s4 .sermon-card-bg {
-    background:
-      radial-gradient(circle at 30% 70%, rgba(232, 210, 160, 0.3), transparent 60%),
-      linear-gradient(135deg, #1a1f4a, #0e1230);
-  }
-  .sermon-card:hover .sermon-card-bg { transform: scale(1.05); }
   .sermon-card-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(0deg, rgba(7, 9, 36, 0.85) 0%, transparent 50%);
+    background: linear-gradient(0deg, rgba(7, 9, 36, 0.95) 0%, rgba(7, 9, 36, 0.55) 40%, rgba(7, 9, 36, 0.1) 70%, transparent 100%);
     padding: 28px;
     display: flex;
     flex-direction: column;
@@ -829,6 +815,100 @@
     transition: transform .3s, background .3s;
   }
   .yt-link:hover { background: #c9a961; color: var(--ink); transform: translateY(-2px); }
+
+  /* ---------- LIVE STREAM BLOCK ---------- */
+  .live-block {
+    background: var(--bg-night-deep);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 80px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 80px -30px rgba(20, 21, 43, 0.3);
+  }
+  .live-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 100% 0%, rgba(212, 168, 90, 0.15), transparent 60%);
+    pointer-events: none;
+  }
+  .live-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    color: #f6f1e6;
+    flex-wrap: wrap;
+    gap: 16px;
+    position: relative;
+  }
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gold-bright);
+  }
+  .live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #ff3b30;
+    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.55);
+    animation: live-pulse 1.6s ease-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.55); }
+    70% { box-shadow: 0 0 0 14px rgba(255, 59, 48, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+  }
+  .live-meta {
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--gold-soft);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .live-player {
+    position: relative;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #000;
+  }
+  .live-player iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .archive-divider {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 40px;
+  }
+  .archive-divider span {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .archive-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line-cream);
+  }
 
   /* ---------- VISIT ---------- */
   .visit {
@@ -1403,61 +1483,109 @@
         <h2 class="section-title">Écouter, <em>méditer</em>, grandir.</h2>
       </div>
       <div class="reveal delay-1" style="font-size: 15px; color: var(--muted-cream); max-width: 380px;">
-        Retrouvez chaque semaine de nouveaux enseignements du Prophète King Eric sur notre chaîne YouTube.
+        En direct chaque dimanche à 13h, et tout l'archive en replay sur notre chaîne YouTube.
       </div>
     </div>
 
+    <!-- LIVE STREAM BLOCK -->
+    <div class="live-block reveal">
+      <div class="live-header">
+        <span class="live-badge">
+          <span class="live-dot"></span>
+          En direct · Dimanche 13h
+        </span>
+        <span class="live-meta">Culte hebdomadaire diffusé sur YouTube</span>
+      </div>
+      <div class="live-player">
+        <!--
+          Ce lecteur affiche AUTOMATIQUEMENT le live de la chaîne YouTube quand vous diffusez.
+          Hors live : YouTube affiche un message « Aucune diffusion en direct » + dernière vidéo.
+          L'identifiant de chaîne (channel ID) est : UCjHkV5k136Ar2KV9pMzx3tA
+        -->
+        <iframe
+          src="https://www.youtube.com/embed/live_stream?channel=UCjHkV5k136Ar2KV9pMzx3tA"
+          title="Culte en direct — Église Esprit Supérieur"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+
+    <div class="archive-divider reveal">
+      <span>En replay</span>
+    </div>
+
+    <!--
+      ============================================================
+      COMMENT METTRE À JOUR LES VIDÉOS YOUTUBE :
+      ============================================================
+      Pour chaque carte, il suffit de remplacer 2 choses :
+        1. L'ID de la vidéo (ex: "1OJ1FKK6Gqs") dans le href
+           ET dans l'URL de l'image (img src)
+        2. Le titre <h3> de la carte
+
+      L'ID se trouve dans l'URL YouTube après "watch?v=" :
+        https://www.youtube.com/watch?v=1OJ1FKK6Gqs
+                                       └────┬────┘
+                                       l'ID à copier
+
+      L'image se génère automatiquement via :
+      https://img.youtube.com/vi/[ID-DE-LA-VIDEO]/hqdefault.jpg
+      ============================================================
+    -->
+
     <div class="sermons-grid">
-      <a href="https://www.youtube.com/@egliseespritsuperieur" class="sermon-card large s1 reveal" target="_blank" rel="noopener">
-        <div class="sermon-card-bg"></div>
+      <a href="https://www.youtube.com/watch?v=1OJ1FKK6Gqs" class="sermon-card large reveal" target="_blank" rel="noopener">
+        <img class="sermon-thumb" src="https://img.youtube.com/vi/1OJ1FKK6Gqs/maxresdefault.jpg" alt="Message solennel" loading="lazy" onerror="this.src='https://img.youtube.com/vi/1OJ1FKK6Gqs/hqdefault.jpg'">
         <div class="sermon-card-overlay">
           <div class="sermon-card-cat">À la une</div>
-          <h3 class="sermon-card-title">La puissance du Saint-Esprit dans la vie du croyant</h3>
-          <div class="sermon-card-meta">Prophète King Eric · 47 min</div>
+          <h3 class="sermon-card-title">Message solennel : Ce que Dieu m'a révélé pour 2025</h3>
+          <div class="sermon-card-meta">Prophète King Eric · 1h 07 min</div>
         </div>
         <div class="sermon-play">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
       </a>
-      <a href="https://www.youtube.com/@egliseespritsuperieur" class="sermon-card s2 reveal delay-1" target="_blank" rel="noopener">
-        <div class="sermon-card-bg"></div>
+      <a href="https://www.youtube.com/watch?v=q4UX8CI_SgU" class="sermon-card reveal delay-1" target="_blank" rel="noopener">
+        <img class="sermon-thumb" src="https://img.youtube.com/vi/q4UX8CI_SgU/hqdefault.jpg" alt="Côte d'Ivoire — message" loading="lazy">
+        <div class="sermon-card-overlay">
+          <div class="sermon-card-cat">Message</div>
+          <h3 class="sermon-card-title">Côte d'Ivoire, ton Prophète te parle</h3>
+          <div class="sermon-card-meta">Prophète King Eric</div>
+        </div>
+        <div class="sermon-play">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </a>
+      <a href="https://www.youtube.com/watch?v=4K8SNb9qRMc" class="sermon-card reveal delay-2" target="_blank" rel="noopener">
+        <img class="sermon-thumb" src="https://img.youtube.com/vi/4K8SNb9qRMc/hqdefault.jpg" alt="Prophéties et émotions" loading="lazy">
         <div class="sermon-card-overlay">
           <div class="sermon-card-cat">Enseignement</div>
-          <h3 class="sermon-card-title">Marcher par la foi</h3>
-          <div class="sermon-card-meta">32 min</div>
+          <h3 class="sermon-card-title">Prophéties et émotions</h3>
+          <div class="sermon-card-meta">Prophète King Eric</div>
         </div>
         <div class="sermon-play">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
       </a>
-      <a href="https://www.youtube.com/@egliseespritsuperieur" class="sermon-card s3 reveal delay-2" target="_blank" rel="noopener">
-        <div class="sermon-card-bg"></div>
-        <div class="sermon-card-overlay">
-          <div class="sermon-card-cat">Prière</div>
-          <h3 class="sermon-card-title">L'art de l'intercession</h3>
-          <div class="sermon-card-meta">28 min</div>
-        </div>
-        <div class="sermon-play">
-          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-      </a>
-      <a href="https://www.youtube.com/@egliseespritsuperieur" class="sermon-card s4 reveal delay-3" target="_blank" rel="noopener">
-        <div class="sermon-card-bg"></div>
+      <a href="https://www.youtube.com/watch?v=iRCw4f6Ph08" class="sermon-card reveal delay-3" target="_blank" rel="noopener">
+        <img class="sermon-thumb" src="https://img.youtube.com/vi/iRCw4f6Ph08/hqdefault.jpg" alt="Prophète King Éric parle encore" loading="lazy">
         <div class="sermon-card-overlay">
           <div class="sermon-card-cat">Témoignage</div>
-          <h3 class="sermon-card-title">La grâce qui transforme</h3>
-          <div class="sermon-card-meta">21 min</div>
+          <h3 class="sermon-card-title">Le Prophète parle encore</h3>
+          <div class="sermon-card-meta">Prophète King Eric</div>
         </div>
         <div class="sermon-play">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
       </a>
-      <a href="https://www.youtube.com/@egliseespritsuperieur" class="sermon-card s2 reveal delay-2" target="_blank" rel="noopener">
-        <div class="sermon-card-bg"></div>
+      <a href="https://www.youtube.com/watch?v=ev_MkQ7qNeM" class="sermon-card reveal delay-2" target="_blank" rel="noopener">
+        <img class="sermon-thumb" src="https://img.youtube.com/vi/ev_MkQ7qNeM/hqdefault.jpg" alt="Réponse pastorale" loading="lazy">
         <div class="sermon-card-overlay">
-          <div class="sermon-card-cat">Étude</div>
-          <h3 class="sermon-card-title">Romains chapitre par chapitre</h3>
-          <div class="sermon-card-meta">Série · 12 épisodes</div>
+          <div class="sermon-card-cat">Réponse</div>
+          <h3 class="sermon-card-title">Pourquoi j'ai présenté mes excuses</h3>
+          <div class="sermon-card-meta">Prophète King Eric</div>
         </div>
         <div class="sermon-play">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -1487,8 +1615,8 @@
           <div class="visit-row">
             <div class="visit-label">Adresse</div>
             <div class="visit-value">
-              Corminboeuf
-              <span class="visit-value-sub">Canton de Fribourg, Suisse</span>
+              Route du Pâqui 2
+              <span class="visit-value-sub">1720 Corminboeuf · Canton de Fribourg, Suisse</span>
             </div>
           </div>
           <div class="visit-row">
