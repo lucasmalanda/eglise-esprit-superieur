@@ -494,6 +494,37 @@
   }
   .app-section .section-eyebrow { color: var(--gold-bright); }
   .app-section .section-title em { color: var(--gold-bright); }
+
+  /* Esprit Sage app icon */
+  .app-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+    margin-bottom: 32px;
+    background: #fff;
+    box-shadow:
+      0 20px 50px -15px rgba(123, 168, 94, 0.45),
+      0 8px 20px -8px rgba(0, 0, 0, 0.4),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    position: relative;
+    transition: transform .4s ease;
+  }
+  .app-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 35%);
+    pointer-events: none;
+  }
+  .app-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .app-icon:hover { transform: translateY(-3px) scale(1.02); }
   .app-tagline {
     margin-top: 32px;
     font-family: var(--display);
@@ -875,20 +906,111 @@
     color: var(--gold-soft);
     font-variation-settings: "opsz" 144, "SOFT" 100;
   }
-  .live-player {
+  .live-stage {
     position: relative;
     aspect-ratio: 16/9;
     border-radius: 4px;
     overflow: hidden;
     background: #000;
   }
-  .live-player iframe {
+  .live-stage iframe {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     border: none;
   }
+  .live-countdown {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 32px;
+    text-align: center;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 30%, rgba(212, 168, 90, 0.18), transparent 60%),
+      linear-gradient(135deg, #1a1f4a 0%, #0e1230 100%);
+    color: #f6f1e6;
+  }
+  .live-countdown::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.4 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .countdown-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    font-weight: 500;
+    position: relative;
+  }
+  .countdown-time {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    font-family: var(--display);
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    position: relative;
+  }
+  .countdown-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .countdown-num {
+    font-size: clamp(40px, 7vw, 90px);
+    font-weight: 200;
+    line-height: 0.9;
+    color: var(--gold-soft);
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted-night);
+    font-weight: 500;
+  }
+  .countdown-sep {
+    font-size: clamp(28px, 4vw, 50px);
+    color: rgba(232, 210, 160, 0.25);
+    font-family: var(--display);
+    align-self: center;
+    margin-bottom: 22px;
+  }
+  .live-load-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 26px;
+    border-radius: 100px;
+    background: var(--gold-bright);
+    color: var(--bg-night-deep);
+    border: none;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: transform .3s, background .3s;
+    position: relative;
+  }
+  .live-load-btn:hover {
+    background: var(--gold-soft);
+    transform: translateY(-2px);
+  }
+  .live-load-btn svg { flex-shrink: 0; }
   .archive-divider {
     display: flex;
     align-items: center;
@@ -1386,6 +1508,9 @@
   <div class="container">
     <div class="app-grid">
       <div>
+        <div class="app-icon reveal">
+          <img src="esprit-sage-logo.png" alt="Logo Esprit Sage">
+        </div>
         <div class="section-eyebrow reveal">Notre nouvelle app</div>
         <h2 class="section-title reveal delay-1">Esprit <em>Sage</em>.</h2>
         <p class="app-tagline reveal delay-2">
@@ -1490,25 +1615,45 @@
     <!-- LIVE STREAM BLOCK -->
     <div class="live-block reveal">
       <div class="live-header">
-        <span class="live-badge">
+        <span class="live-badge" id="live-badge">
           <span class="live-dot"></span>
-          En direct · Dimanche 13h
+          <span id="live-badge-text">En direct · Dimanche 13h</span>
         </span>
-        <span class="live-meta">Culte hebdomadaire diffusé sur YouTube</span>
+        <span class="live-meta" id="live-meta">Culte hebdomadaire diffusé sur YouTube</span>
       </div>
-      <div class="live-player">
-        <!--
-          Ce lecteur affiche AUTOMATIQUEMENT le live de la chaîne YouTube quand vous diffusez.
-          Hors live : YouTube affiche un message « Aucune diffusion en direct » + dernière vidéo.
-          L'identifiant de chaîne (channel ID) est : UCjHkV5k136Ar2KV9pMzx3tA
-        -->
-        <iframe
-          src="https://www.youtube.com/embed/live_stream?channel=UCjHkV5k136Ar2KV9pMzx3tA"
-          title="Culte en direct — Église Esprit Supérieur"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+
+      <!--
+        Le lecteur live se charge automatiquement le dimanche entre 12h45 et 18h
+        (heure suisse). Le reste du temps, un compte à rebours s'affiche, et un
+        bouton permet de charger manuellement le lecteur.
+        Channel ID : UCjHkV5k136Ar2KV9pMzx3tA
+      -->
+      <div class="live-stage" id="live-stage" data-channel="UCjHkV5k136Ar2KV9pMzx3tA">
+        <div class="live-countdown" id="live-countdown">
+          <div class="countdown-eyebrow">Prochain culte en direct</div>
+          <div class="countdown-time">
+            <span class="countdown-block">
+              <span class="countdown-num" id="cd-days">--</span>
+              <span class="countdown-label">jours</span>
+            </span>
+            <span class="countdown-sep">·</span>
+            <span class="countdown-block">
+              <span class="countdown-num" id="cd-hours">--</span>
+              <span class="countdown-label">heures</span>
+            </span>
+            <span class="countdown-sep">·</span>
+            <span class="countdown-block">
+              <span class="countdown-num" id="cd-mins">--</span>
+              <span class="countdown-label">minutes</span>
+            </span>
+          </div>
+          <button class="live-load-btn" id="live-load-btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="6 4 20 12 6 20 6 4"/>
+            </svg>
+            Ouvrir le lecteur YouTube
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1822,6 +1967,99 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ============================================================
+  // LIVE STREAM — countdown + auto-load on Sundays (Swiss time)
+  // ============================================================
+  (function () {
+    const stage = document.getElementById('live-stage');
+    if (!stage) return;
+    const countdown = document.getElementById('live-countdown');
+    const loadBtn = document.getElementById('live-load-btn');
+    const badgeText = document.getElementById('live-badge-text');
+    const liveMeta = document.getElementById('live-meta');
+    const cdDays = document.getElementById('cd-days');
+    const cdHours = document.getElementById('cd-hours');
+    const cdMins = document.getElementById('cd-mins');
+    const channelId = stage.dataset.channel;
+
+    // Returns a Date object that "lives" in Swiss local time —
+    // its .getDay()/.getHours() etc. return Swiss values regardless of the visitor's timezone.
+    function getSwissNow() {
+      const localStr = new Date().toLocaleString('en-US', { timeZone: 'Europe/Zurich' });
+      return new Date(localStr);
+    }
+
+    // Computes the next Sunday 13:00 Swiss time.
+    function nextSundayLive(swissNow) {
+      const target = new Date(swissNow);
+      target.setHours(13, 0, 0, 0);
+      // If today is Sunday and we're still before 13h, target is today
+      if (swissNow.getDay() === 0 && swissNow < target) return target;
+      // Otherwise, move to the next Sunday
+      const daysAhead = (7 - swissNow.getDay()) % 7 || 7;
+      target.setDate(swissNow.getDate() + daysAhead);
+      return target;
+    }
+
+    // Live "window" — Sunday between 12:45 and 18:00 Swiss time.
+    function isLiveWindow(swissNow) {
+      if (swissNow.getDay() !== 0) return false;
+      const h = swissNow.getHours();
+      const m = swissNow.getMinutes();
+      if (h > 12 && h < 18) return true;
+      if (h === 12 && m >= 45) return true;
+      return false;
+    }
+
+    function loadIframe(autoplay) {
+      countdown.style.display = 'none';
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube.com/embed/live_stream?channel=' + channelId + (autoplay ? '&autoplay=1' : '');
+      iframe.title = 'Culte en direct — Église Esprit Supérieur';
+      iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+      iframe.setAttribute('allowfullscreen', '');
+      stage.appendChild(iframe);
+    }
+
+    function updateCountdown() {
+      const swissNow = getSwissNow();
+      // Re-check live window on each tick — useful if user keeps the page open
+      if (isLiveWindow(swissNow)) {
+        loadIframe(true);
+        if (badgeText) badgeText.textContent = 'En direct · Maintenant';
+        if (liveMeta) liveMeta.textContent = 'Le culte est en direct sur YouTube';
+        return true; // signal that we loaded
+      }
+      const target = nextSundayLive(swissNow);
+      const diff = Math.max(0, target - swissNow);
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff / 3600000) % 24);
+      const mins = Math.floor((diff / 60000) % 60);
+      if (cdDays) cdDays.textContent = days;
+      if (cdHours) cdHours.textContent = String(hours).padStart(2, '0');
+      if (cdMins) cdMins.textContent = String(mins).padStart(2, '0');
+      return false;
+    }
+
+    // Initial state
+    const loaded = updateCountdown();
+    if (!loaded) {
+      // Refresh countdown every 30 seconds; auto-loads iframe when window opens
+      const timer = setInterval(() => {
+        const didLoad = updateCountdown();
+        if (didLoad) clearInterval(timer);
+      }, 30 * 1000);
+      // Manual button to load the player anytime
+      if (loadBtn) {
+        loadBtn.addEventListener('click', () => {
+          loadIframe(false);
+          if (badgeText) badgeText.textContent = 'Lecteur YouTube';
+          clearInterval(timer);
+        });
+      }
+    }
+  })();
 </script>
 
 </body>
