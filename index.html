@@ -418,29 +418,30 @@
     background: var(--bg-night);
     border-radius: 4px;
     overflow: hidden;
+    box-shadow: 0 30px 80px -30px rgba(20, 21, 43, 0.4);
   }
-  .apostle-img-wrap::before {
+  .apostle-img-wrap img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: contrast(1.02) saturate(1.05);
+  }
+  .apostle-img-wrap::after {
     content: '';
     position: absolute;
     inset: 0;
-    background:
-      radial-gradient(ellipse at top right, rgba(232, 210, 160, 0.5), transparent 60%),
-      linear-gradient(135deg, #1a1f4a 0%, #0e1230 100%);
-  }
-  .apostle-img-wrap::after {
-    content: 'Photo du Prophète King Eric';
-    position: absolute;
-    bottom: 24px; left: 24px; right: 24px;
-    color: rgba(232, 210, 160, 0.5);
-    font-family: var(--display);
-    font-style: italic;
-    font-size: 14px;
+    background: linear-gradient(180deg, transparent 60%, rgba(14, 18, 48, 0.35) 100%);
+    pointer-events: none;
   }
   .apostle-img-frame {
     position: absolute;
     inset: 14px;
-    border: 1px solid rgba(232, 210, 160, 0.2);
+    border: 1px solid rgba(232, 210, 160, 0.35);
     pointer-events: none;
+    z-index: 2;
   }
   .apostle-content .section-title {
     margin-bottom: 32px;
@@ -1320,8 +1321,8 @@
   <div class="container">
     <div class="apostle-grid">
       <div class="apostle-img-wrap reveal">
+        <img src="king-eric.jpg" alt="Prophète King Eric, fondateur de l'Église Esprit Supérieur">
         <div class="apostle-img-frame"></div>
-        <!-- Replace with real photo: <img src="apostle-king-eric.jpg" alt="Apôtre King Eric"> -->
       </div>
       <div class="apostle-content reveal delay-1">
         <div class="section-eyebrow">L'enseignant</div>
