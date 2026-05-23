@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Pasteurs — Église Esprit Supérieur</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-cream: #f6f1e6;
+    --bg-cream-warm: #efe7d3;
+    --bg-night: #0e1230;
+    --bg-night-deep: #070924;
+    --ink: #14152b;
+    --gold: #b8893d;
+    --gold-bright: #d4a85a;
+    --gold-soft: #e8d2a0;
+    --rose: #c97b6a;
+    --rose-soft: #f0d4cc;
+    --green: #7ba85e;
+    --green-soft: #d4e6c4;
+    --line-cream: rgba(20, 21, 43, 0.12);
+    --line-night: rgba(232, 210, 160, 0.18);
+    --muted-cream: rgba(20, 21, 43, 0.65);
+    --muted-night: rgba(246, 241, 230, 0.72);
+    --display: 'Fraunces', 'Times New Roman', serif;
+    --sans: 'Outfit', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg-cream);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ---------- LOGIN SCREEN ---------- */
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--bg-night);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+  }
+  .login-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212, 168, 90, 0.3), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(184, 137, 61, 0.15), transparent 70%);
+    pointer-events: none;
+  }
+  .login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    color: #f6f1e6;
+  }
+  .login-eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .login-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(38px, 8vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .login-title em { font-style: italic; color: var(--gold-bright); }
+  .login-sub {
+    font-size: 15px;
+    color: var(--muted-night);
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .login-input {
+    width: 100%;
+    padding: 18px 22px;
+    border-radius: 100px;
+    border: 1px solid var(--line-night);
+    background: rgba(232, 210, 160, 0.06);
+    color: #f6f1e6;
+    font-size: 16px;
+    font-family: var(--sans);
+    text-align: center;
+    letter-spacing: 0.05em;
+    transition: border-color .3s, background .3s;
+  }
+  .login-input::placeholder { color: rgba(246, 241, 230, 0.4); }
+  .login-input:focus {
+    outline: none;
+    border-color: var(--gold-bright);
+    background: rgba(232, 210, 160, 0.1);
+  }
+  .login-btn {
+    width: 100%;
+    padding: 18px;
+    border-radius: 100px;
+    border: none;
+    background: var(--gold-bright);
+    color: var(--bg-night-deep);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: transform .3s, background .3s;
+  }
+  .login-btn:hover { background: var(--gold-soft); transform: translateY(-2px); }
+  .login-error {
+    color: var(--rose);
+    font-size: 14px;
+    min-height: 20px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .login-error.show { opacity: 1; }
+  .login-back {
+    margin-top: 32px;
+    font-size: 13px;
+    color: var(--muted-night);
+    transition: color .3s;
+  }
+  .login-back:hover { color: var(--gold-soft); }
+  .shake { animation: shake .4s; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+
+  /* ---------- APP (hidden until login) ---------- */
+  .app { display: none; }
+  .app.unlocked { display: block; }
+
+  /* ---------- HEADER ---------- */
+  .ph-header {
+    background: var(--bg-night);
+    color: #f6f1e6;
+    padding: 28px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .ph-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(212, 168, 90, 0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .ph-brand {
+    position: relative;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 20px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .ph-brand span { font-style: italic; font-weight: 300; color: var(--gold-soft); }
+  .ph-brand small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .ph-header-actions { position: relative; display: flex; gap: 12px; align-items: center; }
+  .ph-logout {
+    padding: 9px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--line-night);
+    background: transparent;
+    color: var(--gold-soft);
+    font-size: 13px;
+    transition: background .3s, color .3s;
+  }
+  .ph-logout:hover { background: var(--gold-soft); color: var(--bg-night-deep); }
+
+  /* ---------- TABS (for future sections) ---------- */
+  .ph-tabs {
+    background: var(--bg-night-deep);
+    padding: 0 48px;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--line-night);
+    overflow-x: auto;
+  }
+  .ph-tab {
+    padding: 16px 22px;
+    background: none;
+    border: none;
+    color: var(--muted-night);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    border-bottom: 2px solid transparent;
+    transition: color .3s, border-color .3s;
+    white-space: nowrap;
+  }
+  .ph-tab.active { color: var(--gold-bright); border-bottom-color: var(--gold-bright); }
+  .ph-tab:hover { color: var(--gold-soft); }
+
+  /* ---------- MAIN ---------- */
+  .ph-main { max-width: 1200px; margin: 0 auto; padding: 48px; }
+  .ph-panel { display: none; }
+  .ph-panel.active { display: block; }
+
+  /* ---------- CALENDAR TOOLBAR ---------- */
+  .cal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .cal-nav { display: flex; align-items: center; gap: 16px; }
+  .cal-nav-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--ink);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .3s, border-color .3s, transform .2s;
+  }
+  .cal-nav-btn:hover { background: var(--gold-soft); border-color: var(--gold); transform: scale(1.05); }
+  .cal-month {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 42px);
+    letter-spacing: -0.02em;
+    min-width: 280px;
+    text-align: center;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .cal-month em { font-style: italic; color: var(--gold); }
+  .cal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--ink);
+    transition: background .3s, transform .3s, border-color .3s;
+  }
+  .cal-btn:hover { background: var(--bg-cream-warm); transform: translateY(-2px); }
+  .cal-btn.primary {
+    background: var(--ink);
+    color: var(--bg-cream);
+    border-color: var(--ink);
+  }
+  .cal-btn.primary:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+  .cal-btn svg { width: 15px; height: 15px; }
+
+  /* ---------- CALENDAR GRID ---------- */
+  .cal-wrap {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--line-cream);
+    overflow: hidden;
+    box-shadow: 0 20px 50px -30px rgba(20, 21, 43, 0.2);
+  }
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--line-cream);
+    background: var(--bg-cream);
+  }
+  .cal-weekday {
+    padding: 16px 12px;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted-cream);
+    font-weight: 500;
+    text-align: left;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: minmax(110px, auto);
+  }
+  .cal-cell {
+    border-right: 1px solid var(--line-cream);
+    border-bottom: 1px solid var(--line-cream);
+    padding: 10px;
+    position: relative;
+    transition: background .25s;
+    cursor: pointer;
+    min-height: 110px;
+  }
+  .cal-cell:nth-child(7n) { border-right: none; }
+  .cal-cell.empty { background: #faf7ef; cursor: default; }
+  .cal-cell:not(.empty):hover { background: var(--bg-cream); }
+  .cal-cell.today { background: rgba(212, 168, 90, 0.08); }
+  .cal-daynum {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+  }
+  .cal-cell.today .cal-daynum {
+    background: var(--gold-bright);
+    color: var(--bg-night-deep);
+    font-weight: 600;
+  }
+  .cal-add-hint {
+    position: absolute;
+    top: 12px; right: 10px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg-cream-warm);
+    color: var(--gold);
+    font-size: 16px;
+    line-height: 20px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .cal-cell:not(.empty):hover .cal-add-hint { opacity: 1; }
+  .cal-event {
+    display: block;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    cursor: pointer;
+    border-left: 3px solid;
+    transition: transform .2s;
+    overflow: hidden;
+  }
+  .cal-event:hover { transform: translateX(2px); }
+  .cal-event-title { font-weight: 600; display: block; }
+  .cal-event-time { opacity: 0.75; font-size: 10.5px; }
+  .cal-event.formation { background: var(--green-soft); border-color: var(--green); color: #3d5e29; }
+  .cal-event.priere { background: var(--rose-soft); border-color: var(--rose); color: #8a3f30; }
+  .cal-event.culte { background: rgba(212, 168, 90, 0.2); border-color: var(--gold); color: #7a5a1f; }
+  .cal-event.intercession { background: #d8e4ec; border-color: #4a7a96; color: #2c4a5c; }
+  .cal-event.autre { background: rgba(20, 21, 43, 0.08); border-color: var(--ink); color: var(--ink); }
+
+  /* ---------- LEGEND ---------- */
+  .cal-legend {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--muted-cream);
+  }
+  .cal-legend-item { display: flex; align-items: center; gap: 8px; }
+  .cal-legend-dot { width: 14px; height: 14px; border-radius: 4px; }
+  .cal-legend-dot.formation { background: var(--green); }
+  .cal-legend-dot.priere { background: var(--rose); }
+  .cal-legend-dot.culte { background: var(--gold); }
+  .cal-legend-dot.intercession { background: #4a7a96; }
+  .cal-legend-dot.autre { background: var(--ink); }
+
+  .cal-hint {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted-cream);
+    font-style: italic;
+    font-family: var(--display);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(7, 9, 36, 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--bg-cream);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 480px;
+    padding: 36px;
+    position: relative;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 26px;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .modal-title em { font-style: italic; color: var(--gold); }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-cream);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    font-size: 15px;
+    font-family: var(--sans);
+    color: var(--ink);
+    transition: border-color .3s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 28px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-actions-right { display: flex; gap: 10px; }
+  .mbtn {
+    padding: 13px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid transparent;
+    transition: background .3s, transform .3s, color .3s;
+  }
+  .mbtn:hover { transform: translateY(-2px); }
+  .mbtn-save { background: var(--ink); color: var(--bg-cream); }
+  .mbtn-save:hover { background: var(--gold); color: var(--ink); }
+  .mbtn-cancel { background: transparent; color: var(--muted-cream); border-color: var(--line-cream); }
+  .mbtn-cancel:hover { background: #fff; }
+  .mbtn-delete { background: transparent; color: var(--rose); border-color: rgba(201, 123, 106, 0.4); }
+  .mbtn-delete:hover { background: var(--rose); color: #fff; }
+  .mbtn-export { background: var(--green-soft); color: #3d5e29; }
+  .mbtn-export:hover { background: var(--green); color: #fff; }
+
+  /* ---------- PLACEHOLDER PANEL ---------- */
+  .placeholder-panel {
+    text-align: center;
+    padding: 100px 24px;
+    color: var(--muted-cream);
+  }
+  .placeholder-panel svg { width: 56px; height: 56px; color: var(--gold); margin-bottom: 24px; }
+  .placeholder-panel h2 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 12px;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+
+  /* ---------- TOAST ---------- */
+  .toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    background: var(--ink);
+    color: var(--bg-cream);
+    padding: 14px 26px;
+    border-radius: 100px;
+    font-size: 14px;
+    z-index: 3000;
+    transition: transform .4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 768px) {
+    .ph-header, .ph-tabs, .ph-main { padding-left: 20px; padding-right: 20px; }
+    .cal-cell { min-height: 80px; padding: 6px; }
+    .cal-grid { grid-auto-rows: minmax(80px, auto); }
+    .cal-event-time { display: none; }
+    .cal-weekday { padding: 12px 6px; font-size: 10px; }
+    .cal-daynum { width: 24px; height: 24px; font-size: 12px; }
+    .field-row { grid-template-columns: 1fr; }
+    .cal-month { min-width: auto; font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card" id="loginCard">
+    <div class="login-eyebrow">Église Esprit Supérieur</div>
+    <h1 class="login-title">Espace <em>Pasteurs</em></h1>
+    <p class="login-sub">Cet espace est réservé à l'équipe pastorale. Merci d'entrer le mot de passe partagé.</p>
+    <form class="login-form" id="loginForm">
+      <input type="password" class="login-input" id="pwdInput" placeholder="Mot de passe" autocomplete="current-password" autofocus>
+      <button type="submit" class="login-btn">Entrer</button>
+      <div class="login-error" id="loginError">Mot de passe incorrect</div>
+    </form>
+    <a href="index.html" class="login-back">← Retour au site</a>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <header class="ph-header">
+    <div class="ph-brand">
+      Esprit <span>Supérieur</span>
+      <small>Espace Pasteurs</small>
+    </div>
+    <div class="ph-header-actions">
+      <a href="index.html" class="ph-logout">← Site public</a>
+      <button class="ph-logout" id="logoutBtn">Déconnexion</button>
+    </div>
+  </header>
+
+  <nav class="ph-tabs">
+    <button class="ph-tab active" data-panel="calendrier">📅 Calendrier pastoral</button>
+    <button class="ph-tab" data-panel="ressources">📖 Ressources (à venir)</button>
+    <button class="ph-tab" data-panel="annonces">📣 Annonces (à venir)</button>
+  </nav>
+
+  <main class="ph-main">
+    <!-- CALENDAR PANEL -->
+    <section class="ph-panel active" id="panel-calendrier">
+      <div class="cal-toolbar">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="prevMonth" aria-label="Mois précédent">‹</button>
+          <div class="cal-month" id="calMonth">—</div>
+          <button class="cal-nav-btn" id="nextMonth" aria-label="Mois suivant">›</button>
+        </div>
+        <div class="cal-actions">
+          <button class="cal-btn" id="todayBtn">Aujourd'hui</button>
+          <button class="cal-btn" id="exportAllBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exporter vers Agenda
+          </button>
+          <button class="cal-btn primary" id="addEventBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nouvel événement
+          </button>
+        </div>
+      </div>
+
+      <div class="cal-wrap">
+        <div class="cal-weekdays">
+          <div class="cal-weekday">Lun</div>
+          <div class="cal-weekday">Mar</div>
+          <div class="cal-weekday">Mer</div>
+          <div class="cal-weekday">Jeu</div>
+          <div class="cal-weekday">Ven</div>
+          <div class="cal-weekday">Sam</div>
+          <div class="cal-weekday">Dim</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div class="cal-legend">
+        <div class="cal-legend-item"><span class="cal-legend-dot culte"></span> Culte</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot intercession"></span> Intercession</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot formation"></span> Formation pastorale</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot priere"></span> Prière pastorale</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot autre"></span> Autre</div>
+      </div>
+      <p class="cal-hint">Cliquez sur un jour pour ajouter un événement, ou sur un événement pour le modifier.</p>
+    </section>
+
+    <!-- FUTURE PANELS -->
+    <section class="ph-panel" id="panel-ressources">
+      <div class="placeholder-panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <h2>Ressources pastorales</h2>
+        <p>Cet espace accueillera bientôt vos documents, supports de formation et ressources partagées.</p>
+      </div>
+    </section>
+    <section class="ph-panel" id="panel-annonces">
+      <div class="placeholder-panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+        <h2>Annonces internes</h2>
+        <p>Bientôt : un fil d'annonces pour communiquer entre membres de l'équipe pastorale.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 class="modal-title" id="modalTitle">Nouvel <em>événement</em></h2>
+    <div class="field">
+      <label for="evTitle">Titre</label>
+      <input type="text" id="evTitle" placeholder="Ex. Formation pastorale">
+    </div>
+    <div class="field">
+      <label for="evType">Catégorie</label>
+      <select id="evType">
+        <option value="culte">Culte</option>
+        <option value="intercession">Intercession</option>
+        <option value="formation">Formation pastorale</option>
+        <option value="priere">Prière pastorale</option>
+        <option value="autre">Autre</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="evDate">Date</label>
+      <input type="date" id="evDate">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label for="evStart">Heure de début</label>
+        <input type="time" id="evStart">
+      </div>
+      <div class="field">
+        <label for="evEnd">Heure de fin</label>
+        <input type="time" id="evEnd">
+      </div>
+    </div>
+    <div class="field">
+      <label for="evNotes">Notes (optionnel)</label>
+      <textarea id="evNotes" rows="2" placeholder="Lieu, détails..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-delete" id="deleteBtn" style="display:none;">Supprimer</button>
+      <div class="modal-actions-right">
+        <button class="mbtn mbtn-cancel" id="cancelBtn">Annuler</button>
+        <button class="mbtn mbtn-save" id="saveBtn">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  ESPACE PASTEURS — Église Esprit Supérieur
+// ============================================================
+
+// --- CONFIG : mot de passe partagé ---
+// Pour changer le mot de passe, remplacez la valeur ci-dessous.
+const SHARED_PASSWORD = "Esprit2026";
+
+// --- Données par défaut (calendrier pastoral mai → octobre 2026) ---
+// Récurrences extraites du PDF :
+//  • Prière pastorale : dernier vendredi du mois, 20h–minuit
+//  • Formation pastorale : lundi, 1 semaine sur 2, 21h–22h
+//  • Culte : chaque dimanche, 13h–18h
+const DEFAULT_EVENTS = [
+  // — Cultes hebdomadaires (générés plus bas automatiquement) —
+  // — Formations (lundis, 1 sem/2) —
+  { id:'f1', title:'Formation pastorale', type:'formation', date:'2026-05-25', start:'21:00', end:'22:00', notes:'' },
+  { id:'f2', title:'Formation pastorale', type:'formation', date:'2026-06-08', start:'21:00', end:'22:00', notes:'' },
+  { id:'f3', title:'Formation pastorale', type:'formation', date:'2026-06-22', start:'21:00', end:'22:00', notes:'' },
+  { id:'f4', title:'Formation pastorale', type:'formation', date:'2026-07-06', start:'21:00', end:'22:00', notes:'' },
+  { id:'f5', title:'Formation pastorale', type:'formation', date:'2026-07-20', start:'21:00', end:'22:00', notes:'' },
+  { id:'f6', title:'Formation pastorale', type:'formation', date:'2026-08-03', start:'21:00', end:'22:00', notes:'' },
+  { id:'f7', title:'Formation pastorale', type:'formation', date:'2026-08-17', start:'21:00', end:'22:00', notes:'' },
+  { id:'f8', title:'Formation pastorale', type:'formation', date:'2026-08-31', start:'21:00', end:'22:00', notes:'' },
+  { id:'f9', title:'Formation pastorale', type:'formation', date:'2026-09-14', start:'21:00', end:'22:00', notes:'' },
+  { id:'f10', title:'Formation pastorale', type:'formation', date:'2026-09-28', start:'21:00', end:'22:00', notes:'' },
+  { id:'f11', title:'Formation pastorale', type:'formation', date:'2026-10-12', start:'21:00', end:'22:00', notes:'' },
+  { id:'f12', title:'Formation pastorale', type:'formation', date:'2026-10-26', start:'21:00', end:'22:00', notes:'' },
+  // — Prières pastorales (dernier vendredi du mois) —
+  { id:'p1', title:'Prière pastorale', type:'priere', date:'2026-05-29', start:'20:00', end:'23:59', notes:'' },
+  { id:'p2', title:'Prière pastorale', type:'priere', date:'2026-06-26', start:'20:00', end:'23:59', notes:'' },
+  { id:'p3', title:'Prière pastorale', type:'priere', date:'2026-07-31', start:'20:00', end:'23:59', notes:'' },
+  { id:'p4', title:'Prière pastorale', type:'priere', date:'2026-08-28', start:'20:00', end:'23:59', notes:'' },
+  { id:'p5', title:'Prière pastorale', type:'priere', date:'2026-09-25', start:'20:00', end:'23:59', notes:'' },
+  { id:'p6', title:'Prière pastorale', type:'priere', date:'2026-10-30', start:'20:00', end:'23:59', notes:'' },
+];
+
+// Generate weekly Sunday cultes from May to Oct 2026
+function generateCultes() {
+  const cultes = [];
+  let d = new Date(2026, 4, 1); // May 1, 2026
+  const end = new Date(2026, 10, 1); // Nov 1, 2026
+  let i = 1;
+  while (d < end) {
+    if (d.getDay() === 0) { // Sunday
+      const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      cultes.push({ id:'c'+i, title:'Culte dominical', type:'culte', date:iso, start:'13:00', end:'18:00', notes:'' });
+      i++;
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return cultes;
+}
+
+// Intercesseurs par jour de la semaine (1=Lundi ... 5=Vendredi)
+const INTERCESSEURS = {
+  1: 'Pst Satulu Mundyo / Pst Jack Muloko',
+  2: 'Pst Lucas Malanda / Pst Eric',
+  3: 'Pst Thomas / Pst Sara Clerc',
+  4: 'Pst Godefroy Alambako / Pst Coralie Joye',
+  5: 'Pst King Kouame / Pst Laurent Mbombo / Pst Elisée Mundyo'
+};
+
+// Generate daily intercession (Mon–Fri) 19h–20h from May to Oct 2026
+function generateIntercessions() {
+  const list = [];
+  let d = new Date(2026, 4, 1);
+  const end = new Date(2026, 10, 1);
+  let i = 1;
+  while (d < end) {
+    const dow = d.getDay();
+    if (dow >= 1 && dow <= 5) { // Monday to Friday
+      const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      list.push({ id:'int'+i, title:'Intercession', type:'intercession', date:iso, start:'19:00', end:'20:00', notes:INTERCESSEURS[dow] });
+      i++;
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return list;
+}
+
+const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const STORAGE_KEY = 'pastoral-events-v2';
+
+let events = [];
+let currentDate = new Date(2026, 4, 1); // Start on May 2026
+let editingId = null;
+let storageAvailable = typeof window !== 'undefined' && window.storage;
+
+// ---------- STORAGE ----------
+async function loadEvents() {
+  // Try persistent storage (works inside Claude), fall back to default + localStorage
+  if (storageAvailable) {
+    try {
+      const res = await window.storage.get(STORAGE_KEY, true);
+      if (res && res.value) { events = JSON.parse(res.value); return; }
+    } catch (e) { /* key doesn't exist yet */ }
+  }
+  // Fallback: try browser localStorage (works on a real website per-device)
+  try {
+    const local = localStorage.getItem(STORAGE_KEY);
+    if (local) { events = JSON.parse(local); return; }
+  } catch (e) {}
+  // First run: seed with defaults
+  events = [...generateCultes(), ...generateIntercessions(), ...DEFAULT_EVENTS];
+  await saveEvents();
+}
+
+async function saveEvents() {
+  const json = JSON.stringify(events);
+  if (storageAvailable) {
+    try { await window.storage.set(STORAGE_KEY, json, true); } catch (e) {}
+  }
+  try { localStorage.setItem(STORAGE_KEY, json); } catch (e) {}
+}
+
+// ---------- LOGIN ----------
+const loginScreen = document.getElementById('loginScreen');
+const loginForm = document.getElementById('loginForm');
+const pwdInput = document.getElementById('pwdInput');
+const loginError = document.getElementById('loginError');
+const loginCard = document.getElementById('loginCard');
+const app = document.getElementById('app');
+
+function checkSession() {
+  if (sessionStorage.getItem('pastor-auth') === 'ok') unlock();
+}
+function unlock() {
+  loginScreen.style.display = 'none';
+  app.classList.add('unlocked');
+  initCalendar();
+}
+loginForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (pwdInput.value === SHARED_PASSWORD) {
+    try { sessionStorage.setItem('pastor-auth', 'ok'); } catch(e){}
+    unlock();
+  } else {
+    loginError.classList.add('show');
+    loginCard.classList.add('shake');
+    pwdInput.value = '';
+    setTimeout(() => loginCard.classList.remove('shake'), 400);
+  }
+});
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  try { sessionStorage.removeItem('pastor-auth'); } catch(e){}
+  location.reload();
+});
+
+// ---------- TABS ----------
+document.querySelectorAll('.ph-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.ph-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.ph-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+// ---------- CALENDAR RENDER ----------
+async function initCalendar() {
+  await loadEvents();
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  document.getElementById('calMonth').innerHTML = '<em>' + MONTHS[month] + '</em> ' + year;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  // First day of month; convert Sunday=0 to Monday-first index
+  let firstDay = new Date(year, month, 1).getDay();
+  firstDay = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  // Empty leading cells
+  for (let i = 0; i < firstDay; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell empty';
+    grid.appendChild(cell);
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const iso = year + '-' + String(month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (iso === todayStr ? ' today' : '');
+    cell.dataset.date = iso;
+
+    const dayNum = document.createElement('div');
+    dayNum.className = 'cal-daynum';
+    dayNum.textContent = day;
+    cell.appendChild(dayNum);
+
+    const addHint = document.createElement('div');
+    addHint.className = 'cal-add-hint';
+    addHint.textContent = '+';
+    cell.appendChild(addHint);
+
+    // Events for this day
+    const dayEvents = events.filter(ev => ev.date === iso).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+    dayEvents.forEach(ev => {
+      const el = document.createElement('div');
+      el.className = 'cal-event ' + ev.type;
+      el.innerHTML = '<span class="cal-event-title">' + escapeHtml(ev.title) + '</span>' +
+                     (ev.start ? '<span class="cal-event-time">' + ev.start + (ev.end ? '–' + ev.end : '') + '</span>' : '');
+      el.addEventListener('click', (e) => { e.stopPropagation(); openModal(ev); });
+      cell.appendChild(el);
+    });
+
+    cell.addEventListener('click', () => openModal(null, iso));
+    grid.appendChild(cell);
+  }
+}
+
+function escapeHtml(s) {
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ---------- NAVIGATION ----------
+document.getElementById('prevMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); });
+document.getElementById('nextMonth').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); });
+document.getElementById('todayBtn').addEventListener('click', () => { currentDate = new Date(); renderCalendar(); });
+
+// ---------- MODAL ----------
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitle = document.getElementById('modalTitle');
+const evTitle = document.getElementById('evTitle');
+const evType = document.getElementById('evType');
+const evDate = document.getElementById('evDate');
+const evStart = document.getElementById('evStart');
+const evEnd = document.getElementById('evEnd');
+const evNotes = document.getElementById('evNotes');
+const deleteBtn = document.getElementById('deleteBtn');
+
+function openModal(ev, presetDate) {
+  if (ev) {
+    editingId = ev.id;
+    modalTitle.innerHTML = 'Modifier l\'<em>événement</em>';
+    evTitle.value = ev.title;
+    evType.value = ev.type;
+    evDate.value = ev.date;
+    evStart.value = ev.start || '';
+    evEnd.value = ev.end || '';
+    evNotes.value = ev.notes || '';
+    deleteBtn.style.display = 'inline-block';
+  } else {
+    editingId = null;
+    modalTitle.innerHTML = 'Nouvel <em>événement</em>';
+    evTitle.value = '';
+    evType.value = 'autre';
+    evDate.value = presetDate || '';
+    evStart.value = '';
+    evEnd.value = '';
+    evNotes.value = '';
+    deleteBtn.style.display = 'none';
+  }
+  modalOverlay.classList.add('show');
+  setTimeout(() => evTitle.focus(), 100);
+}
+function closeModal() { modalOverlay.classList.remove('show'); editingId = null; }
+
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+
+document.getElementById('addEventBtn').addEventListener('click', () => {
+  const iso = currentDate.getFullYear() + '-' + String(currentDate.getMonth()+1).padStart(2,'0') + '-01';
+  openModal(null, iso);
+});
+
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  if (!evTitle.value.trim() || !evDate.value) {
+    showToast('Merci d\'indiquer au moins un titre et une date.');
+    return;
+  }
+  if (editingId) {
+    const ev = events.find(e => e.id === editingId);
+    if (ev) {
+      ev.title = evTitle.value.trim();
+      ev.type = evType.value;
+      ev.date = evDate.value;
+      ev.start = evStart.value;
+      ev.end = evEnd.value;
+      ev.notes = evNotes.value.trim();
+    }
+    showToast('Événement modifié ✓');
+  } else {
+    events.push({
+      id: 'u' + Date.now(),
+      title: evTitle.value.trim(),
+      type: evType.value,
+      date: evDate.value,
+      start: evStart.value,
+      end: evEnd.value,
+      notes: evNotes.value.trim()
+    });
+    showToast('Événement ajouté ✓');
+  }
+  await saveEvents();
+  closeModal();
+  renderCalendar();
+});
+
+deleteBtn.addEventListener('click', async () => {
+  if (editingId && confirm('Supprimer cet événement ?')) {
+    events = events.filter(e => e.id !== editingId);
+    await saveEvents();
+    closeModal();
+    renderCalendar();
+    showToast('Événement supprimé');
+  }
+});
+
+// ---------- ICS EXPORT (Google Agenda / Apple Calendar / Outlook) ----------
+function pad(n){ return String(n).padStart(2,'0'); }
+function toICSDate(dateStr, timeStr) {
+  // Local time, no timezone conversion (floating). dateStr=YYYY-MM-DD, timeStr=HH:MM
+  const [y,m,d] = dateStr.split('-');
+  let h = '00', min = '00';
+  if (timeStr) { [h, min] = timeStr.split(':'); }
+  return y + m + d + 'T' + pad(h) + pad(min) + '00';
+}
+function buildICS(evList) {
+  let ics = 'BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Eglise Esprit Superieur//Calendrier Pastoral//FR\r\nCALSCALE:GREGORIAN\r\nX-WR-CALNAME:Calendrier pastoral\r\n';
+  const stamp = new Date().toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+  evList.forEach(ev => {
+    const dtStart = toICSDate(ev.date, ev.start || '00:00');
+    const dtEnd = toICSDate(ev.date, ev.end || ev.start || '23:59');
+    ics += 'BEGIN:VEVENT\r\n';
+    ics += 'UID:' + ev.id + '@egliseespritsuperieur\r\n';
+    ics += 'DTSTAMP:' + stamp + '\r\n';
+    ics += 'DTSTART:' + dtStart + '\r\n';
+    ics += 'DTEND:' + dtEnd + '\r\n';
+    ics += 'SUMMARY:' + (ev.title||'').replace(/[,;\\]/g, '\\$&') + '\r\n';
+    if (ev.notes) ics += 'DESCRIPTION:' + ev.notes.replace(/[,;\\]/g, '\\$&').replace(/\n/g,'\\n') + '\r\n';
+    ics += 'LOCATION:Route du Pâqui 2\\, 1720 Corminboeuf\r\n';
+    ics += 'END:VEVENT\r\n';
+  });
+  ics += 'END:VCALENDAR';
+  return ics;
+}
+function downloadICS(evList, filename) {
+  const blob = new Blob([buildICS(evList)], { type:'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+document.getElementById('exportAllBtn').addEventListener('click', () => {
+  downloadICS(events, 'calendrier-pastoral.ics');
+  showToast('Calendrier exporté — ouvrez le fichier pour l\'ajouter à votre agenda');
+});
+
+// ---------- TOAST ----------
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ---------- INIT ----------
+checkSession();
+</script>
+</body>
+</html>
