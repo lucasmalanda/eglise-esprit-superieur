@@ -533,14 +533,128 @@
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   @media (max-width: 768px) {
-    .ph-header, .ph-tabs, .ph-main { padding-left: 20px; padding-right: 20px; }
-    .cal-cell { min-height: 80px; padding: 6px; }
-    .cal-grid { grid-auto-rows: minmax(80px, auto); }
-    .cal-event-time { display: none; }
-    .cal-weekday { padding: 12px 6px; font-size: 10px; }
-    .cal-daynum { width: 24px; height: 24px; font-size: 12px; }
+    .ph-header, .ph-tabs, .ph-main { padding-left: 16px; padding-right: 16px; }
+    .ph-main { padding-top: 28px; padding-bottom: 28px; }
     .field-row { grid-template-columns: 1fr; }
-    .cal-month { min-width: auto; font-size: 24px; }
+    .cal-month { min-width: auto; font-size: 22px; }
+    .cal-toolbar { gap: 12px; }
+    .cal-actions { width: 100%; }
+    .cal-actions .cal-btn { flex: 1; justify-content: center; font-size: 12px; padding: 11px 12px; }
+
+    /* Compact grid: small cells with colored dots instead of text */
+    .cal-grid { grid-auto-rows: minmax(56px, auto); }
+    .cal-cell { min-height: 56px; padding: 6px 4px; }
+    .cal-weekday { padding: 10px 2px; font-size: 9px; letter-spacing: 0.05em; text-align: center; }
+    .cal-daynum { width: 26px; height: 26px; font-size: 13px; margin: 0 auto 4px; }
+    .cal-add-hint { display: none; }
+
+    /* Hide full event text, show dots */
+    .cal-event {
+      padding: 0;
+      margin: 2px auto 0;
+      border-radius: 50%;
+      border-left: none;
+      width: 7px;
+      height: 7px;
+      overflow: hidden;
+      text-indent: -9999px;
+    }
+    .cal-event.formation { background: var(--green); }
+    .cal-event.priere { background: var(--rose); }
+    .cal-event.culte { background: var(--gold); }
+    .cal-event.intercession { background: #4a7a96; }
+    .cal-event.autre { background: var(--ink); }
+    .cal-dots {
+      display: flex;
+      gap: 3px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cal-hint { font-size: 12px; }
+  }
+
+  /* ---------- DAY DETAIL SHEET (mobile tap) ---------- */
+  .day-sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1900;
+    background: rgba(7, 9, 36, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .day-sheet-overlay.show { display: flex; }
+  .day-sheet {
+    background: var(--bg-cream);
+    width: 100%;
+    max-width: 520px;
+    border-radius: 20px 20px 0 0;
+    padding: 28px 24px 36px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: sheet-up .35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .day-sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--line-cream);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .day-sheet-date {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 24px;
+    margin-bottom: 4px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .day-sheet-date em { font-style: italic; color: var(--gold); }
+  .day-sheet-sub {
+    font-size: 13px;
+    color: var(--muted-cream);
+    margin-bottom: 24px;
+  }
+  .day-sheet-event {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    transition: transform .2s;
+  }
+  .day-sheet-event:active { transform: scale(0.98); }
+  .day-sheet-bar { width: 4px; border-radius: 2px; flex-shrink: 0; }
+  .day-sheet-bar.formation { background: var(--green); }
+  .day-sheet-bar.priere { background: var(--rose); }
+  .day-sheet-bar.culte { background: var(--gold); }
+  .day-sheet-bar.intercession { background: #4a7a96; }
+  .day-sheet-bar.autre { background: var(--ink); }
+  .day-sheet-ev-title { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
+  .day-sheet-ev-time { font-size: 13px; color: var(--gold); margin-bottom: 4px; }
+  .day-sheet-ev-notes { font-size: 13px; color: var(--muted-cream); line-height: 1.4; }
+  .day-sheet-add {
+    width: 100%;
+    padding: 15px;
+    border-radius: 100px;
+    background: var(--ink);
+    color: var(--bg-cream);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 12px;
+  }
+  .day-sheet-empty {
+    text-align: center;
+    color: var(--muted-cream);
+    font-style: italic;
+    font-family: var(--display);
+    padding: 20px 0;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
   }
 </style>
 </head>
@@ -622,7 +736,7 @@
         <div class="cal-legend-item"><span class="cal-legend-dot priere"></span> Prière pastorale</div>
         <div class="cal-legend-item"><span class="cal-legend-dot autre"></span> Autre</div>
       </div>
-      <p class="cal-hint">Cliquez sur un jour pour ajouter un événement, ou sur un événement pour le modifier.</p>
+      <p class="cal-hint">Touchez un jour pour voir le détail et ajouter ou modifier un événement.</p>
     </section>
 
     <!-- FUTURE PANELS -->
@@ -641,6 +755,17 @@
       </div>
     </section>
   </main>
+</div>
+
+<!-- ============ DAY DETAIL SHEET (mobile) ============ -->
+<div class="day-sheet-overlay" id="daySheetOverlay">
+  <div class="day-sheet">
+    <div class="day-sheet-handle"></div>
+    <div class="day-sheet-date" id="daySheetDate">—</div>
+    <div class="day-sheet-sub" id="daySheetSub"></div>
+    <div id="daySheetEvents"></div>
+    <button class="day-sheet-add" id="daySheetAddBtn">+ Ajouter un événement ce jour</button>
+  </div>
 </div>
 
 <!-- ============ MODAL ============ -->
@@ -908,19 +1033,81 @@ function renderCalendar() {
 
     // Events for this day
     const dayEvents = events.filter(ev => ev.date === iso).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+    const dotsWrap = document.createElement('div');
+    dotsWrap.className = 'cal-dots';
     dayEvents.forEach(ev => {
       const el = document.createElement('div');
       el.className = 'cal-event ' + ev.type;
       el.innerHTML = '<span class="cal-event-title">' + escapeHtml(ev.title) + '</span>' +
                      (ev.start ? '<span class="cal-event-time">' + ev.start + (ev.end ? '–' + ev.end : '') + '</span>' : '');
-      el.addEventListener('click', (e) => { e.stopPropagation(); openModal(ev); });
-      cell.appendChild(el);
+      // On desktop, clicking an event opens it directly for editing
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isMobile()) { openDaySheet(iso); }
+        else { openModal(ev); }
+      });
+      dotsWrap.appendChild(el);
     });
+    cell.appendChild(dotsWrap);
 
-    cell.addEventListener('click', () => openModal(null, iso));
+    // Clicking the cell: mobile → day sheet; desktop → new event on that day
+    cell.addEventListener('click', () => {
+      if (isMobile()) openDaySheet(iso);
+      else openModal(null, iso);
+    });
     grid.appendChild(cell);
   }
 }
+
+function isMobile() { return window.matchMedia('(max-width: 768px)').matches; }
+
+// ---------- DAY DETAIL SHEET (mobile) ----------
+const daySheetOverlay = document.getElementById('daySheetOverlay');
+const JOURS_LONG = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+let daySheetDateIso = null;
+
+function openDaySheet(iso) {
+  daySheetDateIso = iso;
+  const [y,m,d] = iso.split('-').map(Number);
+  const dateObj = new Date(y, m-1, d);
+  document.getElementById('daySheetDate').innerHTML = JOURS_LONG[dateObj.getDay()] + ' <em>' + d + '</em>';
+  document.getElementById('daySheetSub').textContent = MONTHS[m-1] + ' ' + y;
+
+  const container = document.getElementById('daySheetEvents');
+  container.innerHTML = '';
+  const dayEvents = events.filter(ev => ev.date === iso).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+
+  if (dayEvents.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'day-sheet-empty';
+    empty.textContent = 'Aucun événement ce jour.';
+    container.appendChild(empty);
+  } else {
+    dayEvents.forEach(ev => {
+      const row = document.createElement('div');
+      row.className = 'day-sheet-event';
+      const time = ev.start ? (ev.start + (ev.end ? ' – ' + ev.end : '')) : 'Toute la journée';
+      row.innerHTML =
+        '<div class="day-sheet-bar ' + ev.type + '"></div>' +
+        '<div style="flex:1;">' +
+          '<div class="day-sheet-ev-title">' + escapeHtml(ev.title) + '</div>' +
+          '<div class="day-sheet-ev-time">' + time + '</div>' +
+          (ev.notes ? '<div class="day-sheet-ev-notes">' + escapeHtml(ev.notes) + '</div>' : '') +
+        '</div>';
+      row.addEventListener('click', () => { closeDaySheet(); openModal(ev); });
+      container.appendChild(row);
+    });
+  }
+  daySheetOverlay.classList.add('show');
+}
+function closeDaySheet() { daySheetOverlay.classList.remove('show'); }
+
+daySheetOverlay.addEventListener('click', (e) => { if (e.target === daySheetOverlay) closeDaySheet(); });
+document.getElementById('daySheetAddBtn').addEventListener('click', () => {
+  const iso = daySheetDateIso;
+  closeDaySheet();
+  openModal(null, iso);
+});
 
 function escapeHtml(s) {
   return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
