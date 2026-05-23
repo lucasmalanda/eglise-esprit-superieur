@@ -380,7 +380,7 @@
     overflow: hidden;
   }
   .cal-event:hover { transform: translateX(2px); }
-  .cal-event-title { font-weight: 600; display: block; }
+  .cal-event-title { font-weight: 600; display: block; word-break: break-word; }
   .cal-event-time { opacity: 0.75; font-size: 10.5px; }
   .cal-event.formation { background: var(--green-soft); border-color: var(--green); color: #3d5e29; }
   .cal-event.priere { background: var(--rose-soft); border-color: var(--rose); color: #8a3f30; }
@@ -738,7 +738,10 @@ function generateCultes() {
   while (d < end) {
     if (d.getDay() === 0) { // Sunday
       const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-      cultes.push({ id:'c'+i, title:'Culte dominical', type:'culte', date:iso, start:'13:00', end:'18:00', notes:'' });
+      // Intercession avant le culte
+      cultes.push({ id:'ci'+i, title:'Intercession (culte)', type:'intercession', date:iso, start:'12:55', end:'13:30', notes:'Intercession avant le culte dominical' });
+      // Culte dominical
+      cultes.push({ id:'c'+i, title:'Culte dominical', type:'culte', date:iso, start:'13:30', end:'18:00', notes:'' });
       i++;
     }
     d.setDate(d.getDate()+1);
@@ -747,12 +750,20 @@ function generateCultes() {
 }
 
 // Intercesseurs par jour de la semaine (1=Lundi ... 5=Vendredi)
+// Version longue (notes) + version courte (titre affiché dans la case)
 const INTERCESSEURS = {
   1: 'Pst Satulu Mundyo / Pst Jack Muloko',
   2: 'Pst Lucas Malanda / Pst Eric',
   3: 'Pst Thomas / Pst Sara Clerc',
   4: 'Pst Godefroy Alambako / Pst Coralie Joye',
   5: 'Pst King Kouame / Pst Laurent Mbombo / Pst Elisée Mundyo'
+};
+const INTERCESSEURS_COURT = {
+  1: 'Satulu & Jack',
+  2: 'Lucas & Eric',
+  3: 'Thomas & Sara',
+  4: 'Godefroy & Coralie',
+  5: 'King, Laurent & Elisée'
 };
 
 // Generate daily intercession (Mon–Fri) 19h–20h from May to Oct 2026
@@ -765,7 +776,7 @@ function generateIntercessions() {
     const dow = d.getDay();
     if (dow >= 1 && dow <= 5) { // Monday to Friday
       const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-      list.push({ id:'int'+i, title:'Intercession', type:'intercession', date:iso, start:'19:00', end:'20:00', notes:INTERCESSEURS[dow] });
+      list.push({ id:'int'+i, title:'Intercession · ' + INTERCESSEURS_COURT[dow], type:'intercession', date:iso, start:'19:00', end:'20:00', notes:INTERCESSEURS[dow] });
       i++;
     }
     d.setDate(d.getDate()+1);
@@ -774,7 +785,7 @@ function generateIntercessions() {
 }
 
 const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const STORAGE_KEY = 'pastoral-events-v2';
+const STORAGE_KEY = 'pastoral-events-v4';
 
 let events = [];
 let currentDate = new Date(2026, 4, 1); // Start on May 2026

@@ -1472,7 +1472,7 @@
       </p>
       <div class="hero-actions">
         <a href="#visit" class="btn btn-gold">
-          Dimanche · 13h00
+          Dimanche · 13h30
           <span class="btn-arrow">→</span>
         </a>
         <a href="#app" class="btn btn-ghost">
@@ -1612,7 +1612,7 @@
         <h2 class="section-title">Écouter, <em>méditer</em>, grandir.</h2>
       </div>
       <div class="reveal delay-1" style="font-size: 15px; color: var(--muted-cream); max-width: 380px;">
-        En direct chaque dimanche à 13h, et tout l'archive en replay sur notre chaîne YouTube.
+        En direct chaque dimanche à 13h30, et tout l'archive en replay sur notre chaîne YouTube.
       </div>
     </div>
 
@@ -1621,7 +1621,7 @@
       <div class="live-header">
         <span class="live-badge" id="live-badge">
           <span class="live-dot"></span>
-          <span id="live-badge-text">En direct · Dimanche 13h</span>
+          <span id="live-badge-text">En direct · Dimanche 13h30</span>
         </span>
         <span class="live-meta" id="live-meta">Culte hebdomadaire diffusé sur YouTube</span>
       </div>
@@ -1795,9 +1795,9 @@
       <div class="schedule-card reveal delay-2">
         <h3>Culte <em>dominical</em></h3>
         <div class="schedule-day">Chaque dimanche</div>
-        <div class="schedule-time">13:00</div>
+        <div class="schedule-time">13:30</div>
         <ul class="schedule-list">
-          <li><span>Accueil</span><span>13:00 — 13:30</span></li>
+          <li><span>Intercession</span><span>12:55 — 13:30</span></li>
           <li><span>Louange & adoration</span><span>13:30 — 14:30</span></li>
           <li><span>Enseignement de la Parole</span><span>14:30 — 16:00</span></li>
           <li><span>Communion fraternelle</span><span>16:00 — 18:00</span></li>
@@ -2006,11 +2006,11 @@
       return new Date(localStr);
     }
 
-    // Computes the next Sunday 13:00 Swiss time.
+    // Computes the next Sunday 13:30 Swiss time.
     function nextSundayLive(swissNow) {
       const target = new Date(swissNow);
-      target.setHours(13, 0, 0, 0);
-      // If today is Sunday and we're still before 13h, target is today
+      target.setHours(13, 30, 0, 0);
+      // If today is Sunday and we're still before 13h30, target is today
       if (swissNow.getDay() === 0 && swissNow < target) return target;
       // Otherwise, move to the next Sunday
       const daysAhead = (7 - swissNow.getDay()) % 7 || 7;
