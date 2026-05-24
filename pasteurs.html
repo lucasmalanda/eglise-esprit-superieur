@@ -694,6 +694,174 @@
     .wa-layout { grid-template-columns: 1fr; }
   }
 
+  /* ---------- FLYER CREATOR ---------- */
+  .flyer-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--bg-cream);
+    border-radius: 100px;
+    padding: 4px;
+  }
+  .flyer-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-cream);
+    transition: background .25s, color .25s;
+  }
+  .flyer-tab.active { background: #fff; color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+  .flyer-mode { display: none; }
+  .flyer-mode.active { display: block; }
+
+  /* The flyer canvas itself */
+  .flyer-stage {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .flyer {
+    width: 100%;
+    max-width: 340px;
+    aspect-ratio: 4/5;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg-night);
+    color: #f6f1e6;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.4);
+  }
+  /* Theme variants */
+  .flyer.theme-night {
+    background:
+      radial-gradient(ellipse 90% 60% at 70% 0%, rgba(212,168,90,0.35), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 30% 100%, rgba(184,137,61,0.2), transparent 70%),
+      linear-gradient(160deg, #1a1f4a, #070924);
+  }
+  .flyer.theme-gold {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(232,210,160,0.5), transparent 60%),
+      linear-gradient(160deg, #b8893d, #7a5a1f);
+  }
+  .flyer.theme-rose {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(201,123,106,0.4), transparent 60%),
+      linear-gradient(160deg, #2a1d3a, #0e1230);
+  }
+  .flyer-inner {
+    position: absolute;
+    inset: 0;
+    padding: 32px 26px;
+    display: flex;
+    flex-direction: column;
+  }
+  .flyer-frame {
+    position: absolute;
+    inset: 14px;
+    border: 1px solid rgba(232,210,160,0.3);
+    border-radius: 6px;
+    pointer-events: none;
+  }
+  .flyer-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    font-weight: 600;
+    margin-bottom: auto;
+    font-family: var(--sans);
+  }
+  .flyer-cat {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    margin-bottom: 10px;
+    font-family: var(--sans);
+  }
+  .flyer-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 34px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .flyer-title em { font-style: italic; color: var(--gold-bright); }
+  .flyer-details {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--gold-soft);
+  }
+  .flyer-detail-row { display: flex; gap: 9px; align-items: baseline; }
+  .flyer-detail-row .ic { color: var(--gold-bright); font-size: 13px; width: 16px; }
+  .flyer-footer {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(232,210,160,0.2);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(246,241,230,0.7);
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .flyer-bn {
+    font-family: var(--display);
+    font-size: 12px;
+    color: var(--gold-soft);
+    margin-top: 4px;
+    font-style: normal;
+  }
+
+  .flyer-controls { display: grid; gap: 12px; margin-bottom: 16px; }
+  .flyer-themes { display: flex; gap: 8px; }
+  .flyer-theme-btn {
+    flex: 1;
+    height: 36px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+  }
+  .flyer-theme-btn:hover { transform: scale(1.04); }
+  .flyer-theme-btn.selected { border-color: var(--ink); }
+  .flyer-theme-btn.theme-night { background: linear-gradient(160deg,#1a1f4a,#070924); }
+  .flyer-theme-btn.theme-gold { background: linear-gradient(160deg,#b8893d,#7a5a1f); }
+  .flyer-theme-btn.theme-rose { background: linear-gradient(160deg,#2a1d3a,#0e1230); }
+
+  /* Import drop zone */
+  .flyer-drop {
+    border: 2px dashed var(--line-cream);
+    border-radius: 12px;
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--muted-cream);
+    cursor: pointer;
+    transition: border-color .25s, background .25s;
+    margin-bottom: 16px;
+  }
+  .flyer-drop:hover, .flyer-drop.dragover { border-color: var(--gold); background: var(--bg-cream); }
+  .flyer-drop svg { width: 40px; height: 40px; color: var(--gold); margin-bottom: 12px; }
+  .flyer-drop-imported { max-width: 100%; border-radius: 10px; margin: 0 auto; }
+  .flyer-include-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--bg-cream);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .flyer-include-text input { width: 18px; height: 18px; accent-color: var(--gold); }
+
   /* ---------- PLACEHOLDER PANEL ---------- */
   .placeholder-panel {
     text-align: center;
@@ -992,6 +1160,72 @@
                 Envoyer au groupe
               </button>
               <button class="wa-btn wa-btn-outline" id="waCopyBtn">Copier le texte</button>
+            </div>
+          </div>
+
+          <div class="wa-section">
+            <h3>Flyer / <em>visuel</em></h3>
+            <p class="wa-section-sub">Créez un flyer aux couleurs de l'église, ou importez le vôtre. Téléchargez-le puis joignez-le à votre message WhatsApp.</p>
+
+            <div class="flyer-tabs">
+              <button class="flyer-tab active" data-mode="create">✨ Créer un flyer</button>
+              <button class="flyer-tab" data-mode="import">📁 Importer le mien</button>
+            </div>
+
+            <!-- CREATE MODE -->
+            <div class="flyer-mode active" id="flyerModeCreate">
+              <div class="flyer-stage">
+                <div class="flyer theme-night" id="flyerCanvas">
+                  <div class="flyer-inner">
+                    <div class="flyer-eyebrow">Église Esprit Supérieur</div>
+                    <div class="flyer-cat" id="flyerCat">Culte</div>
+                    <div class="flyer-title" id="flyerTitle">Culte <em>dominical</em></div>
+                    <div class="flyer-details" id="flyerDetails"></div>
+                    <div class="flyer-footer">
+                      Route du Pâqui 2 · 1720 Corminboeuf
+                      <div class="flyer-bn">Soyez les bienvenus 🕊️</div>
+                    </div>
+                  </div>
+                  <div class="flyer-frame"></div>
+                </div>
+              </div>
+
+              <div class="flyer-controls">
+                <div class="wa-field" style="margin-bottom:0;">
+                  <label>Couleur du flyer</label>
+                  <div class="flyer-themes">
+                    <button class="flyer-theme-btn theme-night selected" data-theme="night" title="Nuit"></button>
+                    <button class="flyer-theme-btn theme-gold" data-theme="gold" title="Or"></button>
+                    <button class="flyer-theme-btn theme-rose" data-theme="rose" title="Pourpre"></button>
+                  </div>
+                </div>
+              </div>
+              <p class="wa-section-sub" style="margin-bottom:14px;">Le flyer reprend automatiquement l'événement choisi en haut (« Composer un rappel »).</p>
+              <button class="wa-btn wa-btn-green" id="flyerDownload" style="width:100%;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Télécharger le flyer
+              </button>
+            </div>
+
+            <!-- IMPORT MODE -->
+            <div class="flyer-mode" id="flyerModeImport">
+              <div class="flyer-drop" id="flyerDrop">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <div id="flyerDropText">Touchez ici ou glissez votre flyer<br><small>JPG ou PNG</small></div>
+                <input type="file" id="flyerFileInput" accept="image/*" style="display:none;">
+              </div>
+            </div>
+
+            <label class="flyer-include-text">
+              <input type="checkbox" id="flyerIncludeText" checked>
+              <span>Copier aussi le texte du rappel (à coller avec l'image)</span>
+            </label>
+
+            <div class="wa-send-row">
+              <button class="wa-btn wa-btn-green" id="flyerSend" style="flex:1;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+                Envoyer le flyer
+              </button>
             </div>
           </div>
         </div>
@@ -1617,7 +1851,161 @@ function refreshWaMessage() {
   const type = document.querySelector('input[name="waType"]:checked').value;
   const eventId = document.getElementById('waEventDropdown').value;
   document.getElementById('waMessage').value = buildReminderMessage(type, eventId);
+  updateFlyer();
 }
+
+// ---------- FLYER ----------
+const CAT_LABELS = { culte:'Culte', intercession:'Intercession', formation:'Formation pastorale', priere:'Prière pastorale', autre:'Événement' };
+
+// Determine which event the flyer should represent (based on the reminder selection)
+function currentFlyerEvent() {
+  const type = document.querySelector('input[name="waType"]:checked').value;
+  const todayIso = new Date().toISOString().slice(0,10);
+  if (type === 'event') {
+    const id = document.getElementById('waEventDropdown').value;
+    return events.find(e => e.id === id) || null;
+  }
+  if (type === 'culte') {
+    return events.filter(e => e.type==='culte' && e.date >= todayIso).sort((a,b)=>a.date.localeCompare(b.date))[0] || null;
+  }
+  // 'jour' → first event of today, or next upcoming
+  const todays = events.filter(e => e.date === todayIso).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+  if (todays.length) return todays[0];
+  return events.filter(e => e.date >= todayIso).sort((a,b)=>a.date.localeCompare(b.date))[0] || null;
+}
+
+function updateFlyer() {
+  const ev = currentFlyerEvent();
+  const catEl = document.getElementById('flyerCat');
+  const titleEl = document.getElementById('flyerTitle');
+  const detailsEl = document.getElementById('flyerDetails');
+  if (!ev) {
+    catEl.textContent = 'Événement';
+    titleEl.textContent = 'Aucun événement';
+    detailsEl.innerHTML = '';
+    return;
+  }
+  catEl.textContent = CAT_LABELS[ev.type] || 'Événement';
+  // Put last word in italic gold for style
+  const words = ev.title.split(' ');
+  if (words.length > 1) {
+    const last = words.pop();
+    titleEl.innerHTML = escapeHtml(words.join(' ')) + ' <em>' + escapeHtml(last) + '</em>';
+  } else {
+    titleEl.innerHTML = '<em>' + escapeHtml(ev.title) + '</em>';
+  }
+  let d = '<div class="flyer-detail-row"><span class="ic">📅</span><span>' + frenchDate(ev.date) + '</span></div>';
+  if (ev.start) d += '<div class="flyer-detail-row"><span class="ic">🕐</span><span>' + ev.start + (ev.end ? ' – ' + ev.end : '') + '</span></div>';
+  if (ev.notes) d += '<div class="flyer-detail-row"><span class="ic">🕊️</span><span>' + escapeHtml(ev.notes) + '</span></div>';
+  detailsEl.innerHTML = d;
+}
+
+let flyerTheme = 'night';
+const FLYER_THEMES = {
+  night: { grad: [['#1a1f4a',0],['#070924',1]], glow:'rgba(212,168,90,0.35)' },
+  gold:  { grad: [['#b8893d',0],['#7a5a1f',1]], glow:'rgba(232,210,160,0.5)' },
+  rose:  { grad: [['#2a1d3a',0],['#0e1230',1]], glow:'rgba(201,123,106,0.4)' }
+};
+let importedFlyerDataUrl = null;
+
+// Draw the flyer on a canvas and return a Blob (for download / sharing)
+function renderFlyerCanvas() {
+  return new Promise((resolve) => {
+    const ev = currentFlyerEvent();
+    const W = 1080, H = 1350;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const theme = FLYER_THEMES[flyerTheme];
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, W*0.4, H);
+    theme.grad.forEach(([c,stop]) => grad.addColorStop(stop, c));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Glow
+    const rg = ctx.createRadialGradient(W*0.7, 0, 0, W*0.7, 0, W*0.9);
+    rg.addColorStop(0, theme.glow);
+    rg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Frame
+    ctx.strokeStyle = 'rgba(232,210,160,0.3)';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(46, 46, W-92, H-92);
+
+    const PADX = 92;
+    // Eyebrow
+    ctx.fillStyle = '#d4a85a';
+    ctx.font = '600 30px Outfit, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('É G L I S E   E S P R I T   S U P É R I E U R', PADX, 150);
+
+    // Category
+    const ev2 = ev || { type:'autre', title:'Aucun événement', date:new Date().toISOString().slice(0,10), start:'', end:'', notes:'' };
+    ctx.fillStyle = '#e8d2a0';
+    ctx.font = '500 32px Outfit, sans-serif';
+    ctx.fillText((CAT_LABELS[ev2.type]||'Événement').toUpperCase(), PADX, 560);
+
+    // Title (Fraunces, large, wrap)
+    ctx.fillStyle = '#f6f1e6';
+    ctx.font = '300 96px Fraunces, Georgia, serif';
+    wrapText(ctx, ev2.title, PADX, 660, W - PADX*2, 100);
+
+    // Details
+    ctx.fillStyle = '#e8d2a0';
+    ctx.font = '400 40px Outfit, sans-serif';
+    let dy = 900;
+    ctx.fillText('📅  ' + frenchDate(ev2.date), PADX, dy); dy += 64;
+    if (ev2.start) { ctx.fillText('🕐  ' + ev2.start + (ev2.end ? ' – ' + ev2.end : ''), PADX, dy); dy += 64; }
+    if (ev2.notes) {
+      ctx.font = '400 34px Outfit, sans-serif';
+      dy = wrapText(ctx, '🕊️  ' + ev2.notes, PADX, dy, W - PADX*2, 46);
+    }
+
+    // Footer
+    ctx.strokeStyle = 'rgba(232,210,160,0.25)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(PADX, H-180); ctx.lineTo(W-PADX, H-180); ctx.stroke();
+    ctx.fillStyle = 'rgba(246,241,230,0.75)';
+    ctx.font = 'italic 34px Fraunces, Georgia, serif';
+    ctx.fillText('Route du Pâqui 2 · 1720 Corminboeuf', PADX, H-120);
+    ctx.fillStyle = '#e8d2a0';
+    ctx.font = '36px Fraunces, Georgia, serif';
+    ctx.fillText('Soyez les bienvenus 🕊️', PADX, H-70);
+
+    canvas.toBlob((blob) => resolve(blob), 'image/png');
+  });
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  for (let n = 0; n < words.length; n++) {
+    const test = line + words[n] + ' ';
+    if (ctx.measureText(test).width > maxWidth && n > 0) {
+      ctx.fillText(line.trim(), x, y);
+      line = words[n] + ' ';
+      y += lineHeight;
+    } else { line = test; }
+  }
+  ctx.fillText(line.trim(), x, y);
+  return y + lineHeight;
+}
+
+async function downloadFlyer() {
+  // Ensure fonts are loaded for canvas rendering
+  if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+  const blob = await renderFlyerCanvas();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'flyer-eglise.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 
 function populateEventDropdown() {
   const todayIso = new Date().toISOString().slice(0,10);
@@ -1729,6 +2117,92 @@ function initWhatsApp() {
     renderContacts();
     showToast('Contact ajouté ✓');
   });
+
+  // ---- FLYER ----
+  // Tabs create / import
+  document.querySelectorAll('.flyer-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.flyer-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.flyer-mode').forEach(m => m.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('flyerMode' + (tab.dataset.mode === 'create' ? 'Create' : 'Import')).classList.add('active');
+    });
+  });
+
+  // Theme buttons
+  document.querySelectorAll('.flyer-theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.flyer-theme-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      flyerTheme = btn.dataset.theme;
+      const canvas = document.getElementById('flyerCanvas');
+      canvas.className = 'flyer theme-' + flyerTheme;
+    });
+  });
+
+  // Download flyer
+  document.getElementById('flyerDownload').addEventListener('click', async () => {
+    showToast('Préparation du flyer…');
+    await downloadFlyer();
+    showToast('Flyer téléchargé ✓ Il est dans vos téléchargements');
+  });
+
+  // Import flyer
+  const drop = document.getElementById('flyerDrop');
+  const fileInput = document.getElementById('flyerFileInput');
+  drop.addEventListener('click', () => fileInput.click());
+  drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+  drop.addEventListener('drop', (e) => {
+    e.preventDefault(); drop.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleImportedFlyer(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleImportedFlyer(fileInput.files[0]);
+  });
+
+  // Send flyer
+  document.getElementById('flyerSend').addEventListener('click', async () => {
+    const includeText = document.getElementById('flyerIncludeText').checked;
+    const isImport = document.getElementById('flyerModeImport').classList.contains('active');
+
+    if (includeText) copyText(document.getElementById('waMessage').value);
+
+    if (isImport) {
+      if (!importedFlyerDataUrl) { showToast('Importez d\'abord un flyer'); return; }
+      triggerImportedDownload();
+    } else {
+      await downloadFlyer();
+    }
+    const link = waConfig.groupLink;
+    showToast(includeText ? 'Flyer téléchargé + texte copié ✓ Joignez l\'image dans WhatsApp' : 'Flyer téléchargé ✓ Joignez-le dans WhatsApp');
+    setTimeout(() => { window.open(link || 'https://web.whatsapp.com', '_blank'); }, 800);
+  });
+
+  // Initial flyer render once events are ready
+  setTimeout(updateFlyer, 300);
+}
+
+function handleImportedFlyer(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    importedFlyerDataUrl = e.target.result;
+    const drop = document.getElementById('flyerDrop');
+    drop.innerHTML = '<img class="flyer-drop-imported" src="' + importedFlyerDataUrl + '" alt="Flyer importé"><div style="margin-top:12px;font-size:13px;">Touchez pour changer d\'image</div>';
+    const newInput = document.createElement('input');
+    newInput.type = 'file'; newInput.accept = 'image/*'; newInput.id = 'flyerFileInput'; newInput.style.display = 'none';
+    newInput.addEventListener('change', () => { if (newInput.files[0]) handleImportedFlyer(newInput.files[0]); });
+    drop.appendChild(newInput);
+    drop.onclick = () => newInput.click();
+  };
+  reader.readAsDataURL(file);
+}
+
+function triggerImportedDownload() {
+  const a = document.createElement('a');
+  a.href = importedFlyerDataUrl;
+  a.download = 'flyer-eglise.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
 function copyText(text) {
