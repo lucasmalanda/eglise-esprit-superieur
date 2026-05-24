@@ -1223,10 +1223,11 @@
 
             <div class="wa-send-row">
               <button class="wa-btn wa-btn-green" id="flyerSend" style="flex:1;justify-content:center;">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
-                Envoyer le flyer
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+                <span id="flyerSendLabel">Partager le flyer</span>
               </button>
             </div>
+            <p class="wa-section-sub" id="flyerSendNote" style="margin-top:12px;margin-bottom:0;font-size:12px;"></p>
           </div>
         </div>
 
@@ -2006,6 +2007,62 @@ async function downloadFlyer() {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+// Convert a dataURL (imported image) to a Blob
+function dataUrlToBlob(dataUrl) {
+  const parts = dataUrl.split(',');
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const bin = atob(parts[1]);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
+// Get the current flyer as a File, whether created or imported
+async function getFlyerFile() {
+  const isImport = document.getElementById('flyerModeImport').classList.contains('active');
+  let blob;
+  if (isImport) {
+    if (!importedFlyerDataUrl) return null;
+    blob = dataUrlToBlob(importedFlyerDataUrl);
+  } else {
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch(e){} }
+    blob = await renderFlyerCanvas();
+  }
+  return new File([blob], 'flyer-eglise.png', { type: 'image/png' });
+}
+
+// Smart share: native share sheet on mobile (image attached!), download fallback on desktop
+async function shareFlyer(includeText) {
+  const file = await getFlyerFile();
+  if (!file) { showToast('Importez d\'abord un flyer'); return; }
+  const text = includeText ? document.getElementById('waMessage').value : '';
+
+  // Try the native share sheet (mobile) — this attaches the image directly
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({
+        files: [file],
+        text: text || undefined,
+        title: 'Église Esprit Supérieur'
+      });
+      return; // shared successfully
+    } catch (e) {
+      // user cancelled or share failed → fall through to download
+      if (e && e.name === 'AbortError') return;
+    }
+  }
+
+  // Desktop fallback: copy text + download image + open WhatsApp
+  if (includeText) copyText(text);
+  const url = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'flyer-eglise.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast(includeText ? 'Flyer téléchargé + texte copié ✓ Joignez l\'image dans WhatsApp' : 'Flyer téléchargé ✓ Joignez-le dans WhatsApp');
+  setTimeout(() => { window.open(waConfig.groupLink || 'https://web.whatsapp.com', '_blank'); }, 800);
+}
+
 
 function populateEventDropdown() {
   const todayIso = new Date().toISOString().slice(0,10);
@@ -2161,26 +2218,27 @@ function initWhatsApp() {
     if (fileInput.files[0]) handleImportedFlyer(fileInput.files[0]);
   });
 
-  // Send flyer
+  // Share flyer (native share on mobile / download on desktop)
   document.getElementById('flyerSend').addEventListener('click', async () => {
     const includeText = document.getElementById('flyerIncludeText').checked;
-    const isImport = document.getElementById('flyerModeImport').classList.contains('active');
-
-    if (includeText) copyText(document.getElementById('waMessage').value);
-
-    if (isImport) {
-      if (!importedFlyerDataUrl) { showToast('Importez d\'abord un flyer'); return; }
-      triggerImportedDownload();
-    } else {
-      await downloadFlyer();
-    }
-    const link = waConfig.groupLink;
-    showToast(includeText ? 'Flyer téléchargé + texte copié ✓ Joignez l\'image dans WhatsApp' : 'Flyer téléchargé ✓ Joignez-le dans WhatsApp');
-    setTimeout(() => { window.open(link || 'https://web.whatsapp.com', '_blank'); }, 800);
+    showToast('Préparation du flyer…');
+    await shareFlyer(includeText);
   });
 
   // Initial flyer render once events are ready
   setTimeout(updateFlyer, 300);
+
+  // Adapt the flyer share button to the device capabilities
+  const canNativeShare = !!(navigator.canShare && navigator.share);
+  const label = document.getElementById('flyerSendLabel');
+  const note = document.getElementById('flyerSendNote');
+  if (canNativeShare) {
+    label.textContent = 'Partager le flyer';
+    note.textContent = '📲 Le menu de partage s\'ouvre : choisissez WhatsApp, puis le groupe ou un contact — l\'image sera déjà jointe.';
+  } else {
+    label.textContent = 'Télécharger & ouvrir WhatsApp';
+    note.textContent = '💡 Sur ordinateur : le flyer se télécharge et WhatsApp s\'ouvre. Glissez l\'image dans la conversation, puis collez le texte (Ctrl/Cmd+V).';
+  }
 }
 
 function handleImportedFlyer(file) {
