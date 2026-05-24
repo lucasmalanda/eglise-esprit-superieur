@@ -2140,16 +2140,25 @@ function initWhatsApp() {
   document.getElementById('waEventDropdown').addEventListener('change', refreshWaMessage);
 
   // Send to group: open the group link AND copy text (WhatsApp group links can't pre-fill text)
-  document.getElementById('waSendGroup').addEventListener('click', () => {
+  document.getElementById('waSendGroup').addEventListener('click', async () => {
     const link = waConfig.groupLink;
     const msg = document.getElementById('waMessage').value;
-    copyText(msg);
-    if (link) {
-      showToast('Message copié ✓ Collez-le dans le groupe (Ctrl/Cmd+V)');
-      window.open(link, '_blank');
-    } else {
+    if (!link) {
       showToast('Astuce : enregistrez d\'abord le lien du groupe à droite');
+      return;
     }
+    // Copy FIRST (while the page has focus), wait for it to finish, THEN open the group
+    let copied = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(msg);
+        copied = true;
+      }
+    } catch (e) { copied = false; }
+    if (!copied) { fallbackCopy(msg); }
+    showToast('Message copié ✓ Dans le groupe, appuyez longuement puis « Coller »');
+    // Small delay so the clipboard write is committed before focus is lost
+    setTimeout(() => { window.open(link, '_blank'); }, 600);
   });
 
   document.getElementById('waCopyBtn').addEventListener('click', () => {
