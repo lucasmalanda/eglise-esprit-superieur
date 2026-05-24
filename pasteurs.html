@@ -219,7 +219,10 @@
     gap: 4px;
     border-bottom: 1px solid var(--line-night);
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .ph-tabs::-webkit-scrollbar { display: none; }
   .ph-tab {
     padding: 16px 22px;
     background: none;
@@ -725,6 +728,11 @@
 
   @media (max-width: 768px) {
     .ph-header, .ph-tabs, .ph-main { padding-left: 16px; padding-right: 16px; }
+    .ph-header { padding-top: 18px; padding-bottom: 18px; }
+    .ph-brand { font-size: 17px; }
+    .ph-header-actions { gap: 8px; }
+    .ph-logout { padding: 8px 13px; font-size: 12px; }
+    .ph-tab { padding: 14px 16px; font-size: 13px; }
     .ph-main { padding-top: 28px; padding-bottom: 28px; }
     .field-row { grid-template-columns: 1fr; }
     .cal-month { min-width: auto; font-size: 22px; }
@@ -762,6 +770,16 @@
       flex-wrap: wrap;
     }
     .cal-hint { font-size: 12px; }
+
+    /* WhatsApp panel on mobile */
+    .wa-section { padding: 20px; }
+    .wa-section h3 { font-size: 19px; }
+    .wa-add-contact { grid-template-columns: 1fr; }
+    .wa-add-contact .wa-add-btn { width: 100%; }
+    .wa-send-row { flex-direction: column; }
+    .wa-send-row .wa-btn { width: 100%; justify-content: center; }
+    .wa-radio { padding: 13px 14px; }
+    .wa-bubble textarea { min-height: 150px; font-size: 15px; }
   }
 
   /* ---------- DAY DETAIL SHEET (mobile tap) ---------- */
