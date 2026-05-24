@@ -1155,12 +1155,15 @@
             </div>
 
             <div class="wa-send-row">
-              <button class="wa-btn wa-btn-green" id="waSendGroup">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3C4 15 3.5 13.5 3.5 12 3.5 7.3 7.3 3.5 12 3.5S20.5 7.3 20.5 12 16.7 20.2 12 20.2z"/></svg>
-                Envoyer au groupe
+              <button class="wa-btn wa-btn-green" id="waCopyBtn" style="flex:1;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copier le message
               </button>
-              <button class="wa-btn wa-btn-outline" id="waCopyBtn">Copier le texte</button>
             </div>
+            <button class="wa-btn wa-btn-outline" id="waOpenGroup" style="width:100%;justify-content:center;margin-top:10px;display:none;">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>
+              Ouvrir le groupe → puis « Coller »
+            </button>
           </div>
 
           <div class="wa-section">
@@ -2139,15 +2142,9 @@ function initWhatsApp() {
   });
   document.getElementById('waEventDropdown').addEventListener('change', refreshWaMessage);
 
-  // Send to group: open the group link AND copy text (WhatsApp group links can't pre-fill text)
-  document.getElementById('waSendGroup').addEventListener('click', async () => {
-    const link = waConfig.groupLink;
+  // Copy the message (reliable on mobile: copy happens on direct tap, no tab opening)
+  document.getElementById('waCopyBtn').addEventListener('click', async () => {
     const msg = document.getElementById('waMessage').value;
-    if (!link) {
-      showToast('Astuce : enregistrez d\'abord le lien du groupe à droite');
-      return;
-    }
-    // Copy FIRST (while the page has focus), wait for it to finish, THEN open the group
     let copied = false;
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -2156,14 +2153,19 @@ function initWhatsApp() {
       }
     } catch (e) { copied = false; }
     if (!copied) { fallbackCopy(msg); }
-    showToast('Message copié ✓ Dans le groupe, appuyez longuement puis « Coller »');
-    // Small delay so the clipboard write is committed before focus is lost
-    setTimeout(() => { window.open(link, '_blank'); }, 600);
+    showToast('Message copié ✓');
+    // Reveal the "open group" button (only if a group link is saved)
+    const openBtn = document.getElementById('waOpenGroup');
+    if (waConfig.groupLink) {
+      openBtn.style.display = 'inline-flex';
+    } else {
+      showToast('Message copié ✓ (enregistrez le lien du groupe à droite pour l\'ouvrir)');
+    }
   });
 
-  document.getElementById('waCopyBtn').addEventListener('click', () => {
-    copyText(document.getElementById('waMessage').value);
-    showToast('Texte copié ✓');
+  // Separate button: open the group AFTER copy, so the clipboard is safely filled
+  document.getElementById('waOpenGroup').addEventListener('click', () => {
+    if (waConfig.groupLink) window.open(waConfig.groupLink, '_blank');
   });
 
   document.getElementById('waSaveGroup').addEventListener('click', async () => {
