@@ -500,6 +500,197 @@
   .mbtn-export { background: var(--green-soft); color: #3d5e29; }
   .mbtn-export:hover { background: var(--green); color: #fff; }
 
+  /* ---------- WHATSAPP PANEL ---------- */
+  .wa-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .wa-section {
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .wa-section h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .wa-section h3 em { font-style: italic; color: var(--gold); }
+  .wa-section-sub {
+    font-size: 13px;
+    color: var(--muted-cream);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .wa-reminder-type {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .wa-radio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid var(--line-cream);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .25s, background .25s;
+  }
+  .wa-radio:hover { background: var(--bg-cream); }
+  .wa-radio.selected { border-color: var(--gold); background: rgba(212, 168, 90, 0.08); }
+  .wa-radio input { accent-color: var(--gold); width: 18px; height: 18px; }
+  .wa-radio-label { font-size: 14px; font-weight: 500; }
+  .wa-radio-desc { font-size: 12px; color: var(--muted-cream); }
+  .wa-event-select {
+    margin-top: 4px;
+    margin-bottom: 22px;
+    display: none;
+  }
+  .wa-event-select.show { display: block; }
+  .wa-preview {
+    background: #e5ddd5;
+    background-image: linear-gradient(rgba(229,221,213,0.6), rgba(229,221,213,0.6));
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .wa-bubble {
+    background: #dcf8c6;
+    border-radius: 10px 10px 10px 2px;
+    padding: 12px 14px;
+    max-width: 100%;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  .wa-bubble textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1a3a1a;
+    resize: vertical;
+    min-height: 130px;
+  }
+  .wa-bubble textarea:focus { outline: none; }
+  .wa-bubble-time {
+    text-align: right;
+    font-size: 10px;
+    color: #667;
+    margin-top: 4px;
+  }
+  .wa-send-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .wa-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 14px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    transition: transform .3s, background .3s;
+  }
+  .wa-btn:hover { transform: translateY(-2px); }
+  .wa-btn-green { background: #25D366; color: #fff; }
+  .wa-btn-green:hover { background: #1da851; }
+  .wa-btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--line-cream); }
+  .wa-btn-outline:hover { background: var(--bg-cream); }
+  .wa-btn svg { width: 18px; height: 18px; }
+
+  /* Contacts list */
+  .wa-contact {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--line-cream);
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .wa-contact-info { flex: 1; }
+  .wa-contact-name { font-weight: 600; font-size: 14px; }
+  .wa-contact-num { font-size: 12px; color: var(--muted-cream); }
+  .wa-contact-send {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: #25D366;
+    color: #fff;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s;
+  }
+  .wa-contact-send:hover { transform: scale(1.1); }
+  .wa-contact-del {
+    background: none;
+    border: none;
+    color: var(--rose);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .wa-add-contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .wa-add-contact input {
+    padding: 11px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line-cream);
+    font-size: 14px;
+    font-family: var(--sans);
+  }
+  .wa-add-contact input:focus { outline: none; border-color: var(--gold); }
+  .wa-add-btn {
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--bg-cream);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .wa-add-btn:hover { background: var(--gold); color: var(--ink); }
+  .wa-field { margin-bottom: 16px; }
+  .wa-field label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-cream);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .wa-field input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line-cream);
+    font-size: 14px;
+    font-family: var(--sans);
+  }
+  .wa-field input:focus { outline: none; border-color: var(--gold); }
+  .wa-empty { font-size: 13px; color: var(--muted-cream); font-style: italic; font-family: var(--display); padding: 8px 0; font-variation-settings:"opsz" 144,"SOFT" 100; }
+
+  @media (max-width: 900px) {
+    .wa-layout { grid-template-columns: 1fr; }
+  }
+
   /* ---------- PLACEHOLDER PANEL ---------- */
   .placeholder-panel {
     text-align: center;
@@ -690,6 +881,7 @@
 
   <nav class="ph-tabs">
     <button class="ph-tab active" data-panel="calendrier">📅 Calendrier pastoral</button>
+    <button class="ph-tab" data-panel="whatsapp">💬 Rappels WhatsApp</button>
     <button class="ph-tab" data-panel="ressources">📖 Ressources (à venir)</button>
     <button class="ph-tab" data-panel="annonces">📣 Annonces (à venir)</button>
   </nav>
@@ -737,6 +929,78 @@
         <div class="cal-legend-item"><span class="cal-legend-dot autre"></span> Autre</div>
       </div>
       <p class="cal-hint">Touchez un jour pour voir le détail et ajouter ou modifier un événement.</p>
+    </section>
+
+    <!-- WHATSAPP PANEL -->
+    <section class="ph-panel" id="panel-whatsapp">
+      <div class="wa-layout">
+        <div>
+          <div class="wa-section">
+            <h3>Composer un <em>rappel</em></h3>
+            <p class="wa-section-sub">Choisissez le type de rappel. Le message se génère automatiquement — vous pouvez le modifier avant l'envoi.</p>
+
+            <div class="wa-reminder-type" id="waReminderType">
+              <label class="wa-radio selected">
+                <input type="radio" name="waType" value="jour" checked>
+                <span><span class="wa-radio-label">Rappel du jour</span><br><span class="wa-radio-desc">Les événements et intercesseurs d'aujourd'hui</span></span>
+              </label>
+              <label class="wa-radio">
+                <input type="radio" name="waType" value="culte">
+                <span><span class="wa-radio-label">Prochain culte</span><br><span class="wa-radio-desc">Le prochain culte dominical</span></span>
+              </label>
+              <label class="wa-radio">
+                <input type="radio" name="waType" value="event">
+                <span><span class="wa-radio-label">Événement précis</span><br><span class="wa-radio-desc">Choisir un événement du calendrier</span></span>
+              </label>
+            </div>
+
+            <div class="wa-event-select" id="waEventSelect">
+              <div class="wa-field">
+                <label>Choisir l'événement</label>
+                <select id="waEventDropdown" style="width:100%;padding:13px 16px;border-radius:10px;border:1px solid var(--line-cream);font-size:14px;font-family:var(--sans);"></select>
+              </div>
+            </div>
+
+            <div class="wa-preview">
+              <div class="wa-bubble">
+                <textarea id="waMessage" spellcheck="false"></textarea>
+                <div class="wa-bubble-time">✓✓ Aperçu</div>
+              </div>
+            </div>
+
+            <div class="wa-send-row">
+              <button class="wa-btn wa-btn-green" id="waSendGroup">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.2-.4.1-.2 0-.3 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3 4.8 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"/><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3C4 15 3.5 13.5 3.5 12 3.5 7.3 7.3 3.5 12 3.5S20.5 7.3 20.5 12 16.7 20.2 12 20.2z"/></svg>
+                Envoyer au groupe
+              </button>
+              <button class="wa-btn wa-btn-outline" id="waCopyBtn">Copier le texte</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="wa-section">
+            <h3>Groupe <em>WhatsApp</em></h3>
+            <p class="wa-section-sub">Collez ici le lien d'invitation de votre groupe WhatsApp (depuis l'app : Infos du groupe → Inviter via un lien).</p>
+            <div class="wa-field">
+              <label>Lien du groupe</label>
+              <input type="text" id="waGroupLink" placeholder="https://chat.whatsapp.com/...">
+            </div>
+            <button class="wa-add-btn" id="waSaveGroup" style="width:100%;">Enregistrer le lien</button>
+          </div>
+
+          <div class="wa-section">
+            <h3>Contacts <em>individuels</em></h3>
+            <p class="wa-section-sub">Ajoutez des numéros pour envoyer un rappel personnel. Format international (ex. +41 79 123 45 67).</p>
+            <div id="waContactsList"></div>
+            <div class="wa-add-contact">
+              <input type="text" id="waNewName" placeholder="Nom">
+              <input type="tel" id="waNewNum" placeholder="+41...">
+              <button class="wa-add-btn" id="waAddContact">Ajouter</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- FUTURE PANELS -->
@@ -958,7 +1222,7 @@ function checkSession() {
 function unlock() {
   loginScreen.style.display = 'none';
   app.classList.add('unlocked');
-  initCalendar();
+  initCalendar().then(() => initWhatsApp());
 }
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -1256,6 +1520,210 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ============================================================
+//  WHATSAPP — rappels
+// ============================================================
+const WA_STORAGE_KEY = 'pastoral-whatsapp-v1';
+let waConfig = { groupLink: '', contacts: [] };
+
+async function loadWaConfig() {
+  if (storageAvailable) {
+    try {
+      const res = await window.storage.get(WA_STORAGE_KEY, true);
+      if (res && res.value) { waConfig = JSON.parse(res.value); return; }
+    } catch (e) {}
+  }
+  try {
+    const local = localStorage.getItem(WA_STORAGE_KEY);
+    if (local) { waConfig = JSON.parse(local); }
+  } catch (e) {}
+}
+async function saveWaConfig() {
+  const json = JSON.stringify(waConfig);
+  if (storageAvailable) { try { await window.storage.set(WA_STORAGE_KEY, json, true); } catch(e){} }
+  try { localStorage.setItem(WA_STORAGE_KEY, json); } catch(e){}
+}
+
+const JOURS_WA = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+function frenchDate(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dateObj = new Date(y, m-1, d);
+  return JOURS_WA[dateObj.getDay()] + ' ' + d + ' ' + MONTHS[m-1].toLowerCase();
+}
+
+// Build reminder message text based on selected type
+function buildReminderMessage(type, eventId) {
+  const todayIso = new Date().toISOString().slice(0,10);
+  let msg = '';
+
+  if (type === 'jour') {
+    const todays = events.filter(e => e.date === todayIso).sort((a,b)=>(a.start||'').localeCompare(b.start||''));
+    msg = '🙏 *Rappel du jour — ' + frenchDate(todayIso) + '*\n\n';
+    if (todays.length === 0) {
+      msg += 'Aucun événement prévu aujourd\'hui.';
+    } else {
+      todays.forEach(e => {
+        msg += '• *' + e.title + '*' + (e.start ? ' (' + e.start + (e.end?'–'+e.end:'') + ')' : '') + '\n';
+        if (e.notes) msg += '   ' + e.notes + '\n';
+      });
+      msg += '\n📍 Église Esprit Supérieur, Corminboeuf\nSoyons unis dans la prière ! 🕊️';
+    }
+  } else if (type === 'culte') {
+    const upcoming = events.filter(e => e.type==='culte' && e.date >= todayIso).sort((a,b)=>a.date.localeCompare(b.date))[0];
+    if (upcoming) {
+      msg = '⛪ *Rappel — Culte dominical*\n\n';
+      msg += '📅 ' + frenchDate(upcoming.date) + '\n';
+      msg += '🕊️ Intercession dès 12h55\n';
+      msg += '🕐 Culte à ' + (upcoming.start || '13:30') + '\n';
+      msg += '📍 Route du Pâqui 2, 1720 Corminboeuf\n\n';
+      msg += 'Nous vous attendons avec joie ! 🙌';
+    } else {
+      msg = 'Aucun culte à venir trouvé dans le calendrier.';
+    }
+  } else if (type === 'event' && eventId) {
+    const e = events.find(ev => ev.id === eventId);
+    if (e) {
+      msg = '🔔 *Rappel — ' + e.title + '*\n\n';
+      msg += '📅 ' + frenchDate(e.date) + '\n';
+      if (e.start) msg += '🕐 ' + e.start + (e.end ? '–'+e.end : '') + '\n';
+      if (e.notes) msg += '📝 ' + e.notes + '\n';
+      msg += '📍 Église Esprit Supérieur, Corminboeuf';
+    }
+  }
+  return msg;
+}
+
+function refreshWaMessage() {
+  const type = document.querySelector('input[name="waType"]:checked').value;
+  const eventId = document.getElementById('waEventDropdown').value;
+  document.getElementById('waMessage').value = buildReminderMessage(type, eventId);
+}
+
+function populateEventDropdown() {
+  const todayIso = new Date().toISOString().slice(0,10);
+  const dd = document.getElementById('waEventDropdown');
+  dd.innerHTML = '';
+  const upcoming = events.filter(e => e.date >= todayIso).sort((a,b)=> a.date.localeCompare(b.date) || (a.start||'').localeCompare(b.start||'')).slice(0, 60);
+  upcoming.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e.id;
+    opt.textContent = frenchDate(e.date) + ' — ' + e.title + (e.start?' ('+e.start+')':'');
+    dd.appendChild(opt);
+  });
+}
+
+function renderContacts() {
+  const list = document.getElementById('waContactsList');
+  list.innerHTML = '';
+  if (!waConfig.contacts.length) {
+    list.innerHTML = '<div class="wa-empty">Aucun contact enregistré pour l\'instant.</div>';
+    return;
+  }
+  waConfig.contacts.forEach((c, idx) => {
+    const row = document.createElement('div');
+    row.className = 'wa-contact';
+    row.innerHTML =
+      '<div class="wa-contact-info"><div class="wa-contact-name">' + escapeHtml(c.name) + '</div>' +
+      '<div class="wa-contact-num">' + escapeHtml(c.num) + '</div></div>';
+    const sendBtn = document.createElement('button');
+    sendBtn.className = 'wa-contact-send';
+    sendBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M2 21l1.65-3.8a9 9 0 1 1 3.4 2.9L2 21z" fill="none"/><path d="M5.5 12a6.5 6.5 0 1 1 3 5.5L5 18.5l1-2.8A6.4 6.4 0 0 1 5.5 12z" fill="none" stroke="currentColor" stroke-width="0"/><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3z" fill="none"/><path d="M9.5 7.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.5l-.4.5c-.1.1-.2.2-.1.4.3.6.7 1.1 1.4 1.6.5.3.8.4 1 .5.2 0 .3 0 .4-.1l.5-.6c.1-.2.3-.2.5-.1l1.5.7c.2.1.3.3.3.4 0 .9-.8 1.6-1.6 1.6-2.6 0-6-3.4-6-6 0-.8.7-1.6 1.5-1.8z"/></svg>';
+    sendBtn.title = 'Envoyer à ' + c.name;
+    sendBtn.addEventListener('click', () => sendToContact(c.num));
+    const delBtn = document.createElement('button');
+    delBtn.className = 'wa-contact-del';
+    delBtn.innerHTML = '×';
+    delBtn.title = 'Supprimer';
+    delBtn.addEventListener('click', async () => {
+      waConfig.contacts.splice(idx, 1);
+      await saveWaConfig();
+      renderContacts();
+    });
+    row.appendChild(sendBtn);
+    row.appendChild(delBtn);
+    list.appendChild(row);
+  });
+}
+
+function cleanNumber(num) {
+  // Keep digits only, strip leading + and spaces (wa.me wants digits, country code included)
+  return (num||'').replace(/[^\d]/g, '');
+}
+function sendToContact(num) {
+  const msg = encodeURIComponent(document.getElementById('waMessage').value);
+  const clean = cleanNumber(num);
+  window.open('https://wa.me/' + clean + '?text=' + msg, '_blank');
+}
+
+function initWhatsApp() {
+  loadWaConfig().then(() => {
+    document.getElementById('waGroupLink').value = waConfig.groupLink || '';
+    renderContacts();
+    populateEventDropdown();
+    refreshWaMessage();
+  });
+
+  // Radio selection visual + behavior
+  document.querySelectorAll('input[name="waType"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.wa-radio').forEach(r => r.classList.remove('selected'));
+      radio.closest('.wa-radio').classList.add('selected');
+      document.getElementById('waEventSelect').classList.toggle('show', radio.value === 'event');
+      refreshWaMessage();
+    });
+  });
+  document.getElementById('waEventDropdown').addEventListener('change', refreshWaMessage);
+
+  // Send to group: open the group link AND copy text (WhatsApp group links can't pre-fill text)
+  document.getElementById('waSendGroup').addEventListener('click', () => {
+    const link = waConfig.groupLink;
+    const msg = document.getElementById('waMessage').value;
+    copyText(msg);
+    if (link) {
+      showToast('Message copié ✓ Collez-le dans le groupe (Ctrl/Cmd+V)');
+      window.open(link, '_blank');
+    } else {
+      showToast('Astuce : enregistrez d\'abord le lien du groupe à droite');
+    }
+  });
+
+  document.getElementById('waCopyBtn').addEventListener('click', () => {
+    copyText(document.getElementById('waMessage').value);
+    showToast('Texte copié ✓');
+  });
+
+  document.getElementById('waSaveGroup').addEventListener('click', async () => {
+    waConfig.groupLink = document.getElementById('waGroupLink').value.trim();
+    await saveWaConfig();
+    showToast('Lien du groupe enregistré ✓');
+  });
+
+  document.getElementById('waAddContact').addEventListener('click', async () => {
+    const name = document.getElementById('waNewName').value.trim();
+    const num = document.getElementById('waNewNum').value.trim();
+    if (!name || !num) { showToast('Indiquez un nom et un numéro'); return; }
+    waConfig.contacts.push({ name, num });
+    await saveWaConfig();
+    document.getElementById('waNewName').value = '';
+    document.getElementById('waNewNum').value = '';
+    renderContacts();
+    showToast('Contact ajouté ✓');
+  });
+}
+
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
+  } else { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
 }
 
 // ---------- INIT ----------
