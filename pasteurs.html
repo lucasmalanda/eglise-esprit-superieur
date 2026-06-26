@@ -389,6 +389,7 @@
   .cal-event.priere { background: var(--rose-soft); border-color: var(--rose); color: #8a3f30; }
   .cal-event.culte { background: rgba(212, 168, 90, 0.2); border-color: var(--gold); color: #7a5a1f; }
   .cal-event.intercession { background: #d8e4ec; border-color: #4a7a96; color: #2c4a5c; }
+  .cal-event.creneau { background: #ece4f5; border-color: #7a5ea8; color: #4a3672; }
   .cal-event.autre { background: rgba(20, 21, 43, 0.08); border-color: var(--ink); color: var(--ink); }
 
   /* ---------- LEGEND ---------- */
@@ -406,6 +407,7 @@
   .cal-legend-dot.priere { background: var(--rose); }
   .cal-legend-dot.culte { background: var(--gold); }
   .cal-legend-dot.intercession { background: #4a7a96; }
+  .cal-legend-dot.creneau { background: #7a5ea8; }
   .cal-legend-dot.autre { background: var(--ink); }
 
   .cal-hint {
@@ -862,6 +864,943 @@
   }
   .flyer-include-text input { width: 18px; height: 18px; accent-color: var(--gold); }
 
+  /* ---------- PRAYER ROOM (Jitsi) ---------- */
+  .pr-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .pr-hero {
+    background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+    color: var(--bg-cream);
+    border-radius: 16px;
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pr-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(212, 168, 90, 0.25), transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .pr-hero::after {
+    content: '🕊️';
+    position: absolute;
+    top: 24px; right: 28px;
+    font-size: 32px;
+    opacity: 0.7;
+  }
+  .pr-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    font-weight: 600;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .pr-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 32px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    position: relative;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .pr-title em { font-style: italic; color: var(--gold-bright); }
+  .pr-sub {
+    color: rgba(246, 241, 230, 0.7);
+    font-size: 14px;
+    max-width: 520px;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .pr-launch-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .pr-launch-btn {
+    background: var(--gold-bright);
+    color: var(--ink);
+    border: none;
+    padding: 14px 26px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .pr-launch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -8px rgba(212, 168, 90, 0.5);
+  }
+  .pr-launch-btn svg { width: 18px; }
+  .pr-share-btn {
+    background: rgba(246, 241, 230, 0.1);
+    border: 1px solid rgba(246, 241, 230, 0.2);
+    color: var(--bg-cream);
+    padding: 14px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    transition: background .25s;
+  }
+  .pr-share-btn:hover { background: rgba(246, 241, 230, 0.18); }
+  .pr-share-btn svg { width: 16px; }
+
+  .pr-card {
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .pr-card h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 6px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .pr-card h3 em { font-style: italic; color: var(--gold); }
+  .pr-card-sub {
+    font-size: 13px;
+    color: var(--muted-cream);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .pr-custom-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+  }
+  .pr-custom-row input {
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line-cream);
+    font-size: 14px;
+    font-family: var(--sans);
+  }
+  .pr-custom-row input:focus { outline: none; border-color: var(--gold); }
+  .pr-custom-btn {
+    padding: 13px 22px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: var(--bg-cream);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pr-custom-btn:hover { background: var(--gold); color: var(--ink); }
+
+  .pr-options {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .pr-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted-cream);
+    cursor: pointer;
+  }
+  .pr-options input { accent-color: var(--gold); width: 16px; height: 16px; }
+
+  .pr-tips {
+    background: rgba(212, 168, 90, 0.08);
+    border-left: 3px solid var(--gold-soft);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted-cream);
+  }
+  .pr-tips strong { color: var(--ink); font-weight: 600; }
+
+  /* Course (Meet) card — distinct style from prayer */
+  .pr-course-card {
+    background: linear-gradient(135deg, #fff, #f7f0e0);
+    border: 1px solid var(--gold-soft);
+    border-radius: 14px;
+    padding: 24px;
+    margin-top: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pr-course-card::before {
+    content: '🎓';
+    position: absolute;
+    top: 18px; right: 22px;
+    font-size: 26px;
+    opacity: 0.7;
+  }
+  .pr-course-card h3 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 20px;
+    margin-bottom: 6px;
+    padding-right: 40px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .pr-course-card h3 em { font-style: italic; color: var(--gold); }
+  .pr-meet-warning {
+    background: rgba(212, 168, 90, 0.12);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 16px 0;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--muted-cream);
+  }
+  .pr-meet-warning strong { color: var(--ink); font-weight: 600; }
+  .pr-meet-warning ul { margin: 6px 0 0 0; padding-left: 18px; }
+  .pr-meet-warning li { margin-bottom: 3px; }
+  .pr-course-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .pr-course-btn {
+    flex: 1;
+    min-width: 180px;
+    padding: 13px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .pr-course-btn:hover { transform: translateY(-2px); }
+  .pr-course-btn.permanent {
+    background: var(--ink);
+    color: var(--bg-cream);
+  }
+  .pr-course-btn.permanent:hover { box-shadow: 0 12px 30px -10px rgba(20, 21, 43, 0.4); }
+  .pr-course-btn.new {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line-cream);
+  }
+  .pr-course-btn.new:hover { background: var(--bg-cream); }
+  .pr-course-btn svg { width: 16px; }
+  .pr-meet-link-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .pr-meet-link-row input {
+    padding: 11px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line-cream);
+    font-size: 13px;
+    font-family: var(--sans);
+  }
+  .pr-meet-link-row input:focus { outline: none; border-color: var(--gold); }
+  .pr-meet-link-row button {
+    padding: 11px 16px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--bg-cream);
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .pr-mode-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 18px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pr-mode-eyebrow::before, .pr-mode-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line-cream);
+  }
+
+  @media (max-width: 768px) {
+    .pr-course-btn { min-width: 100%; }
+    .pr-meet-link-row { grid-template-columns: 1fr; }
+    .pr-meet-link-row button { width: 100%; }
+  }
+
+  /* Active call view */
+  .pr-call {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1950;
+    background: #000;
+  }
+  .pr-call.show { display: flex; flex-direction: column; }
+  .pr-call-header {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .pr-call-title {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 500;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .pr-call-title em { color: var(--gold-bright); font-style: italic; }
+  .pr-call-actions { display: flex; gap: 10px; }
+  .pr-call-btn {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .25s;
+  }
+  .pr-call-btn:hover { background: rgba(255, 255, 255, 0.2); }
+  .pr-call-btn.leave { background: #c9362a; border-color: #c9362a; }
+  .pr-call-btn.leave:hover { background: #a82820; }
+  .pr-call-btn svg { width: 14px; }
+  .pr-call-frame {
+    flex: 1;
+    position: relative;
+    background: #000;
+  }
+  .pr-call-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  @media (max-width: 768px) {
+    .pr-hero { padding: 28px 22px; }
+    .pr-hero::after { font-size: 26px; top: 20px; right: 22px; }
+    .pr-title { font-size: 26px; }
+    .pr-launch-row { flex-direction: column; }
+    .pr-launch-btn, .pr-share-btn { width: 100%; justify-content: center; }
+    .pr-custom-row { grid-template-columns: 1fr; }
+    .pr-custom-btn { width: 100%; }
+    .pr-call-header { padding: 12px 14px; }
+    .pr-call-title { font-size: 14px; }
+    .pr-call-btn { padding: 7px 11px; font-size: 11px; }
+    .pr-call-btn span { display: none; }
+  }
+
+  /* ---------- PASTOR SLOTS MANAGER ---------- */
+  .slots-section {
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+  }
+  .slots-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .slots-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .slots-title em { font-style: italic; color: #7a5ea8; }
+  .slots-sub {
+    font-size: 13px;
+    color: var(--muted-cream);
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .slots-add-btn {
+    background: #7a5ea8;
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .25s;
+  }
+  .slots-add-btn:hover { background: #634a8c; }
+
+  .slot-card {
+    border: 1px solid var(--line-cream);
+    border-left: 4px solid #7a5ea8;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+    background: #fafaf5;
+  }
+  .slot-info { min-width: 0; }
+  .slot-pastor {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .slot-when {
+    font-size: 13px;
+    color: var(--muted-cream);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .slot-when .tag {
+    background: rgba(122, 94, 168, 0.12);
+    color: #4a3672;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .slot-when .tag.ponctuel { background: rgba(184, 137, 61, 0.15); color: #7a5a1f; }
+  .slot-actions { display: flex; gap: 6px; }
+  .slot-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--muted-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .25s, color .25s;
+  }
+  .slot-btn:hover { background: var(--bg-cream); color: var(--ink); }
+  .slot-btn svg { width: 14px; }
+  .slot-btn.notify { color: #25D366; }
+  .slot-btn.notify:hover { background: #e6f8ec; color: #1da851; }
+  .slot-btn.del { color: var(--rose); }
+  .slot-btn.del:hover { background: #fce8e3; color: #a82820; }
+
+  .slots-empty {
+    color: var(--muted-cream);
+    font-style: italic;
+    font-family: var(--display);
+    text-align: center;
+    padding: 16px 0;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  /* Upcoming slots banner (within next hour) */
+  .slots-upcoming {
+    background: linear-gradient(135deg, rgba(122, 94, 168, 0.1), rgba(184, 137, 61, 0.05));
+    border: 1px solid rgba(122, 94, 168, 0.25);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    display: none;
+    align-items: center;
+    gap: 14px;
+  }
+  .slots-upcoming.show { display: flex; }
+  .slots-upcoming-icon {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: #7a5ea8;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .slots-upcoming-text { flex: 1; min-width: 0; font-size: 13px; }
+  .slots-upcoming-text strong { color: #4a3672; }
+  .slots-upcoming-btn {
+    background: #25D366;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .slots-upcoming-btn:hover { background: #1da851; }
+
+  /* Slot modal */
+  .slot-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .slot-recurrence-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-cream);
+    border-radius: 100px;
+    padding: 4px;
+    margin-bottom: 14px;
+  }
+  .slot-rec-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: none;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-cream);
+    transition: background .25s, color .25s;
+  }
+  .slot-rec-tab.active { background: #fff; color: var(--ink); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+
+  @media (max-width: 768px) {
+    .slots-section { padding: 18px 16px; }
+    .slot-modal-grid { grid-template-columns: 1fr; }
+    .slot-card { grid-template-columns: 1fr; gap: 10px; }
+    .slot-actions { justify-content: flex-end; }
+  }
+
+  /* ---------- RESOURCES PANEL ---------- */
+  .res-hero {
+    background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+    color: var(--bg-cream);
+    border-radius: 16px;
+    padding: 32px 30px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .res-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212, 168, 90, 0.25), transparent 70%);
+    border-radius: 50%;
+  }
+  .res-hero::after {
+    content: '📚';
+    position: absolute;
+    top: 26px; right: 30px;
+    font-size: 30px;
+    opacity: 0.6;
+  }
+  .res-hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    font-weight: 600;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .res-hero-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    position: relative;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .res-hero-title em { font-style: italic; color: var(--gold-bright); }
+  .res-hero-sub {
+    color: rgba(246, 241, 230, 0.7);
+    font-size: 14px;
+    max-width: 540px;
+    margin-bottom: 22px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .res-add-btn {
+    background: var(--gold-bright);
+    color: var(--ink);
+    border: none;
+    padding: 13px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .res-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -8px rgba(212, 168, 90, 0.5);
+  }
+  .res-add-btn svg { width: 16px; }
+
+  .res-toolbar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .res-search {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .res-search input {
+    width: 100%;
+    padding: 13px 16px 13px 44px;
+    border-radius: 12px;
+    border: 1px solid var(--line-cream);
+    font-size: 14px;
+    font-family: var(--sans);
+    background: #fff;
+  }
+  .res-search input:focus { outline: none; border-color: var(--gold); }
+  .res-search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    width: 18px; height: 18px;
+    color: var(--muted-cream);
+    pointer-events: none;
+  }
+  .res-filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .res-chip {
+    padding: 9px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-cream);
+    transition: background .25s, color .25s, border-color .25s;
+  }
+  .res-chip:hover { background: var(--bg-cream); color: var(--ink); }
+  .res-chip.active { background: var(--ink); color: var(--bg-cream); border-color: var(--ink); }
+
+  .res-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .res-card {
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .25s, box-shadow .25s;
+    display: flex;
+    flex-direction: column;
+  }
+  .res-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -10px rgba(20, 21, 43, 0.18);
+  }
+  .res-thumb {
+    aspect-ratio: 16/9;
+    background: var(--bg-cream);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+  .res-thumb.fallback {
+    background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-bright);
+    font-size: 38px;
+  }
+  .res-thumb-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .res-card:hover .res-thumb-play { opacity: 1; }
+  .res-thumb-play svg { width: 18px; margin-left: 2px; }
+  .res-type-badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: rgba(20, 21, 43, 0.85);
+    color: var(--gold-bright);
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+  }
+  .res-card-body {
+    padding: 16px 18px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .res-card-title {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    letter-spacing: -0.005em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+    color: var(--ink);
+  }
+  .res-card-meta {
+    font-size: 12px;
+    color: var(--muted-cream);
+    margin-bottom: 10px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .res-card-meta .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--muted-cream); }
+  .res-card-summary {
+    font-size: 13px;
+    color: var(--muted-cream);
+    line-height: 1.5;
+    flex: 1;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .res-card-tags {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .res-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    background: var(--bg-cream);
+    color: var(--muted-cream);
+    border-radius: 100px;
+    letter-spacing: 0.02em;
+  }
+
+  .res-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--muted-cream);
+    padding: 60px 20px;
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+
+  /* Resource viewer overlay */
+  .res-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 1950;
+    background: rgba(7, 9, 36, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 30px 20px;
+  }
+  .res-viewer.show { display: flex; }
+  .res-viewer-content {
+    width: 100%;
+    max-width: 880px;
+    background: var(--bg-cream);
+    border-radius: 18px;
+    overflow: hidden;
+    animation: rise-fade .35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes rise-fade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .res-viewer-close {
+    position: absolute;
+    top: 24px; right: 28px;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(246, 241, 230, 0.15);
+    color: #fff;
+    border: 1px solid rgba(246, 241, 230, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .res-viewer-close:hover { background: rgba(246, 241, 230, 0.25); }
+  .res-viewer-close svg { width: 18px; }
+  .res-viewer-video {
+    position: relative;
+    aspect-ratio: 16/9;
+    background: #000;
+  }
+  .res-viewer-video iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .res-viewer-body { padding: 30px 32px 32px; }
+  .res-viewer-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .res-viewer-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .res-viewer-title em { font-style: italic; color: var(--gold); }
+  .res-viewer-meta {
+    color: var(--muted-cream);
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+  .res-viewer-summary {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink);
+    margin-bottom: 22px;
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--line-cream);
+  }
+  .res-viewer-summary h4 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .res-viewer-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .res-action {
+    padding: 11px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--ink);
+    transition: background .2s;
+  }
+  .res-action:hover { background: var(--bg-cream); }
+  .res-action svg { width: 14px; }
+  .res-action.primary { background: var(--ink); color: var(--bg-cream); border-color: var(--ink); }
+  .res-action.primary:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .res-action.delete { color: var(--rose); border-color: var(--rose); }
+  .res-action.delete:hover { background: var(--rose); color: #fff; }
+
+  /* PDF/Doc preview (when no video) */
+  .res-viewer-doc-preview {
+    aspect-ratio: 4/5;
+    background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+    color: var(--gold-bright);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    gap: 16px;
+  }
+  .res-viewer-doc-preview .label {
+    font-family: var(--display);
+    font-size: 16px;
+    color: rgba(246, 241, 230, 0.8);
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .res-hero { padding: 24px 20px; }
+    .res-hero-title { font-size: 24px; }
+    .res-toolbar { flex-direction: column; align-items: stretch; }
+    .res-grid { grid-template-columns: 1fr; }
+    .res-viewer { padding: 0; align-items: stretch; }
+    .res-viewer-content { border-radius: 0; }
+    .res-viewer-body { padding: 22px 20px 28px; }
+    .res-viewer-title { font-size: 22px; }
+  }
+
   /* ---------- PLACEHOLDER PANEL ---------- */
   .placeholder-panel {
     text-align: center;
@@ -930,6 +1869,7 @@
     .cal-event.priere { background: var(--rose); }
     .cal-event.culte { background: var(--gold); }
     .cal-event.intercession { background: #4a7a96; }
+    .cal-event.creneau { background: #7a5ea8; }
     .cal-event.autre { background: var(--ink); }
     .cal-dots {
       display: flex;
@@ -1010,6 +1950,7 @@
   .day-sheet-bar.priere { background: var(--rose); }
   .day-sheet-bar.culte { background: var(--gold); }
   .day-sheet-bar.intercession { background: #4a7a96; }
+  .day-sheet-bar.creneau { background: #7a5ea8; }
   .day-sheet-bar.autre { background: var(--ink); }
   .day-sheet-ev-title { font-weight: 600; font-size: 15px; margin-bottom: 3px; }
   .day-sheet-ev-time { font-size: 13px; color: var(--gold); margin-bottom: 4px; }
@@ -1068,13 +2009,37 @@
   <nav class="ph-tabs">
     <button class="ph-tab active" data-panel="calendrier">📅 Calendrier pastoral</button>
     <button class="ph-tab" data-panel="whatsapp">💬 Rappels WhatsApp</button>
-    <button class="ph-tab" data-panel="ressources">📖 Ressources (à venir)</button>
+    <button class="ph-tab" data-panel="priere">🎥 Visioconférence</button>
+    <button class="ph-tab" data-panel="ressources">📖 Ressources</button>
     <button class="ph-tab" data-panel="annonces">📣 Annonces (à venir)</button>
   </nav>
 
   <main class="ph-main">
     <!-- CALENDAR PANEL -->
     <section class="ph-panel active" id="panel-calendrier">
+
+      <!-- Upcoming slots banner (within next 60 min) -->
+      <div class="slots-upcoming" id="slotsUpcoming">
+        <div class="slots-upcoming-icon">⏰</div>
+        <div class="slots-upcoming-text" id="slotsUpcomingText"></div>
+        <button class="slots-upcoming-btn" id="slotsUpcomingNotify">Rappel WhatsApp</button>
+      </div>
+
+      <!-- Pastor slots manager -->
+      <div class="slots-section">
+        <div class="slots-header">
+          <div>
+            <div class="slots-title">Créneaux des <em>pasteurs</em></div>
+            <div class="slots-sub" style="margin-bottom: 0;">Attribuez à chaque pasteur son créneau de prière (récurrent ou ponctuel).</div>
+          </div>
+          <button class="slots-add-btn" id="slotsAddBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nouveau créneau
+          </button>
+        </div>
+        <div id="slotsList"></div>
+      </div>
+
       <div class="cal-toolbar">
         <div class="cal-nav">
           <button class="cal-nav-btn" id="prevMonth" aria-label="Mois précédent">‹</button>
@@ -1110,6 +2075,7 @@
       <div class="cal-legend">
         <div class="cal-legend-item"><span class="cal-legend-dot culte"></span> Culte</div>
         <div class="cal-legend-item"><span class="cal-legend-dot intercession"></span> Intercession</div>
+        <div class="cal-legend-item"><span class="cal-legend-dot creneau"></span> Créneau pasteur</div>
         <div class="cal-legend-item"><span class="cal-legend-dot formation"></span> Formation pastorale</div>
         <div class="cal-legend-item"><span class="cal-legend-dot priere"></span> Prière pastorale</div>
         <div class="cal-legend-item"><span class="cal-legend-dot autre"></span> Autre</div>
@@ -1259,14 +2225,236 @@
       </div>
     </section>
 
-    <!-- FUTURE PANELS -->
-    <section class="ph-panel" id="panel-ressources">
-      <div class="placeholder-panel">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        <h2>Ressources pastorales</h2>
-        <p>Cet espace accueillera bientôt vos documents, supports de formation et ressources partagées.</p>
+    <!-- VIDEOCONFERENCE PANEL -->
+    <section class="ph-panel" id="panel-priere">
+      <div class="pr-layout">
+
+        <!-- ===== INTERCESSION / PRAYER (Jitsi, integrated) ===== -->
+        <div class="pr-mode-eyebrow">🙏 Pour la prière</div>
+
+        <div class="pr-hero">
+          <div class="pr-eyebrow">Salle intégrée · Esprit Supérieur</div>
+          <h2 class="pr-title">Salle d'<em>intercession</em></h2>
+          <p class="pr-sub">Réunissez-vous en prière, où que vous soyez. La salle est ouverte en permanence — il suffit d'y entrer pour rejoindre les frères et sœurs déjà présents.</p>
+          <div class="pr-launch-row">
+            <button class="pr-launch-btn" id="prLaunchDefault">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+              Rejoindre la salle
+            </button>
+            <button class="pr-share-btn" id="prShareDefault">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+              Partager le lien
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom prayer room -->
+        <div class="pr-card">
+          <h3>Créer une salle de prière au <em>nom de votre choix</em></h3>
+          <p class="pr-card-sub">Pratique pour une prière thématique (ex. « Veillée du vendredi », « Prière des jeunes »). Chaque nom crée une salle distincte.</p>
+          <div class="pr-custom-row">
+            <input type="text" id="prCustomName" placeholder="Ex. Veillée du vendredi" maxlength="40">
+            <button class="pr-custom-btn" id="prCustomLaunch">Lancer cette salle</button>
+          </div>
+          <div class="pr-options">
+            <label><input type="checkbox" id="prMuteAudio"> Couper mon micro en entrant</label>
+            <label><input type="checkbox" id="prMuteVideo"> Couper ma caméra en entrant</label>
+          </div>
+        </div>
+
+        <div class="pr-tips">
+          <strong>💡 Bon à savoir :</strong> au premier lancement, votre navigateur va demander l'autorisation d'utiliser la caméra et le micro — acceptez pour participer. La salle ne demande aucun compte. Si la visio ne s'affiche pas sur iPhone Safari, utilisez Chrome ou Firefox sur mobile.
+        </div>
+
+        <!-- ===== COURSE / TEACHING (Google Meet, external) ===== -->
+        <div class="pr-mode-eyebrow">🎓 Pour les cours</div>
+
+        <div class="pr-course-card">
+          <h3>Cours pastoral sur <em>Google Meet</em></h3>
+          <p class="pr-card-sub" style="margin-bottom: 0;">Pour les cours, on utilise Google Meet — il offre l'enregistrement et la transcription automatiques, parfaits pour archiver et publier ensuite dans la section Ressources.</p>
+
+          <div class="pr-meet-warning">
+            <strong>📝 Avant de démarrer un cours :</strong>
+            <ul>
+              <li>Activez l'<strong>enregistrement</strong> (bouton ⋮ en bas → « Enregistrer la réunion »)</li>
+              <li>Activez les <strong>sous-titres en français</strong> (bouton CC) pour obtenir la transcription</li>
+              <li>L'enregistrement et la transcription seront automatiquement sauvegardés dans le Google Drive de l'organisateur</li>
+            </ul>
+          </div>
+
+          <div class="pr-course-actions">
+            <button class="pr-course-btn permanent" id="meetPermanentBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M22 8l-6 4 6 4V8z" fill="currentColor"/></svg>
+              Lancer la salle permanente
+            </button>
+            <button class="pr-course-btn new" id="meetNewBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Créer une nouvelle réunion
+            </button>
+          </div>
+
+          <div style="font-size: 12px; color: var(--muted-cream); margin-top: 14px;">
+            <strong style="color: var(--ink); font-weight: 600;">Lien Meet permanent</strong>
+            <div class="pr-meet-link-row">
+              <input type="text" id="meetPermanentLink" placeholder="https://meet.google.com/abc-defg-hij" autocomplete="off">
+              <button id="meetSaveLink">Enregistrer</button>
+            </div>
+            <div style="margin-top: 8px; font-size: 11px;">
+              Le Prophète ou l'organisateur du cours fournit ce lien (depuis Google Calendar → Meet → copier le lien permanent).
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
+
+    <!-- Active call (full-screen overlay) -->
+    <div class="pr-call" id="prCall">
+      <div class="pr-call-header">
+        <div class="pr-call-title" id="prCallTitle">Salle d'<em>intercession</em></div>
+        <div class="pr-call-actions">
+          <button class="pr-call-btn" id="prCallShare">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+            <span>Partager</span>
+          </button>
+          <button class="pr-call-btn" id="prCallExternal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>Nouvel onglet</span>
+          </button>
+          <button class="pr-call-btn leave" id="prCallLeave">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <span>Quitter</span>
+          </button>
+        </div>
+      </div>
+      <div class="pr-call-frame">
+        <iframe id="prCallFrame" allow="camera; microphone; fullscreen; display-capture; autoplay; clipboard-write" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <!-- FUTURE PANELS -->
+    <section class="ph-panel" id="panel-ressources">
+
+      <!-- Hero -->
+      <div class="res-hero">
+        <div class="res-hero-eyebrow">Bibliothèque · Esprit Supérieur</div>
+        <h2 class="res-hero-title">Cours, prédications &amp; <em>ressources</em></h2>
+        <p class="res-hero-sub">Retrouvez ici tous les enseignements partagés au sein de l'église — vidéos, documents et résumés à consulter en tout temps.</p>
+        <button class="res-add-btn" id="resAddBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter une ressource
+        </button>
+      </div>
+
+      <!-- Toolbar: search + filters -->
+      <div class="res-toolbar">
+        <div class="res-search">
+          <svg class="res-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="resSearch" placeholder="Rechercher (titre, intervenant, mot-clé)…">
+        </div>
+        <div class="res-filter-chips" id="resFilters">
+          <button class="res-chip active" data-filter="all">Tout</button>
+          <button class="res-chip" data-filter="cours">Cours</button>
+          <button class="res-chip" data-filter="predication">Prédications</button>
+          <button class="res-chip" data-filter="formation">Formations</button>
+          <button class="res-chip" data-filter="document">Documents</button>
+        </div>
+      </div>
+
+      <!-- Grid -->
+      <div class="res-grid" id="resGrid"></div>
+
+    </section>
+
+    <!-- ============ RESOURCE VIEWER OVERLAY ============ -->
+    <div class="res-viewer" id="resViewer">
+      <div class="res-viewer-content" id="resViewerContent">
+        <button class="res-viewer-close" id="resViewerClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div id="resViewerMedia"></div>
+        <div class="res-viewer-body">
+          <div class="res-viewer-eyebrow" id="resViewerEyebrow">—</div>
+          <h2 class="res-viewer-title" id="resViewerTitle">—</h2>
+          <div class="res-viewer-meta" id="resViewerMeta">—</div>
+          <div class="res-viewer-summary" id="resViewerSummaryWrap" style="display:none;">
+            <h4>📝 Résumé</h4>
+            <div id="resViewerSummary"></div>
+          </div>
+          <div class="res-viewer-actions" id="resViewerActions"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RESOURCE FORM MODAL ============ -->
+    <div class="modal-overlay" id="resFormOverlay">
+      <div class="modal" style="max-width: 600px;">
+        <div class="modal-header">
+          <h2 id="resFormTitle">Ajouter une ressource</h2>
+          <button class="modal-close" id="resFormClose" aria-label="Fermer">×</button>
+        </div>
+
+        <div class="field">
+          <label for="resType">Type de ressource</label>
+          <select id="resType">
+            <option value="cours">Cours pastoral</option>
+            <option value="predication">Prédication</option>
+            <option value="formation">Formation</option>
+            <option value="document">Document / Article</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="resTitle">Titre</label>
+          <input type="text" id="resTitle" placeholder="Ex. La grâce qui transforme">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="resSpeaker">Intervenant</label>
+            <input type="text" id="resSpeaker" placeholder="Ex. Prophète King Eric">
+          </div>
+          <div class="field">
+            <label for="resDate">Date</label>
+            <input type="date" id="resDate">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="resVideoUrl">Lien YouTube <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+          <input type="url" id="resVideoUrl" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+
+        <div class="field">
+          <label for="resDocUrl">Lien vers un document <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — PDF, Google Doc…)</span></label>
+          <input type="url" id="resDocUrl" placeholder="https://drive.google.com/...">
+        </div>
+
+        <div class="field">
+          <label for="resDriveEmbed">Lien Google Drive à intégrer <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — vidéo, audio, PDF lus dans la page)</span></label>
+          <input type="url" id="resDriveEmbed" placeholder="https://drive.google.com/file/d/.../view">
+          <div style="font-size: 11px; color: var(--muted-cream); margin-top: 6px; line-height: 1.5;">
+            Sur Drive : faites un clic droit sur le fichier → <strong>Partager</strong> → autorisez <strong>« Toute personne avec le lien »</strong>, puis copiez le lien ici.
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="resSummary">Résumé / Description <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+          <textarea id="resSummary" rows="4" placeholder="Quelques lignes pour résumer le contenu…" style="width:100%;padding:13px 16px;border-radius:10px;border:1px solid var(--line-cream);font-family:var(--sans);font-size:14px;resize:vertical;"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="resTags">Mots-clés <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(séparés par des virgules)</span></label>
+          <input type="text" id="resTags" placeholder="grâce, foi, esprit">
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="resFormCancel">Annuler</button>
+          <button class="btn btn-danger" id="resFormDelete" style="display:none;">Supprimer</button>
+          <button class="btn btn-primary" id="resFormSave">Enregistrer</button>
+        </div>
+      </div>
+    </div>
     <section class="ph-panel" id="panel-annonces">
       <div class="placeholder-panel">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -1288,6 +2476,76 @@
   </div>
 </div>
 
+<!-- ============ SLOT MODAL ============ -->
+<div class="modal-overlay" id="slotModalOverlay">
+  <div class="modal" style="max-width: 520px;">
+    <div class="modal-header">
+      <h2 id="slotModalTitle">Nouveau créneau</h2>
+      <button class="modal-close" id="slotModalClose" aria-label="Fermer">×</button>
+    </div>
+
+    <div class="field">
+      <label for="slotPastor">Nom du pasteur</label>
+      <input type="text" id="slotPastor" placeholder="Ex. Pst Timothée" maxlength="60">
+    </div>
+
+    <div class="field">
+      <label>Type de créneau</label>
+      <div class="slot-recurrence-tabs">
+        <button class="slot-rec-tab active" data-rec="weekly">Récurrent (chaque semaine)</button>
+        <button class="slot-rec-tab" data-rec="once">Ponctuel (une seule fois)</button>
+      </div>
+    </div>
+
+    <!-- Weekly: pick weekday -->
+    <div class="field" id="slotWeeklyField">
+      <label for="slotWeekday">Jour de la semaine</label>
+      <select id="slotWeekday">
+        <option value="1">Lundi</option>
+        <option value="2">Mardi</option>
+        <option value="3">Mercredi</option>
+        <option value="4">Jeudi</option>
+        <option value="5">Vendredi</option>
+        <option value="6">Samedi</option>
+        <option value="0">Dimanche</option>
+      </select>
+    </div>
+
+    <!-- Ponctuel: pick a single date -->
+    <div class="field" id="slotDateField" style="display:none;">
+      <label for="slotDate">Date</label>
+      <input type="date" id="slotDate">
+    </div>
+
+    <div class="slot-modal-grid">
+      <div class="field">
+        <label for="slotStart">Heure de début</label>
+        <input type="time" id="slotStart" value="14:00">
+      </div>
+      <div class="field">
+        <label for="slotEnd">Heure de fin</label>
+        <input type="time" id="slotEnd" value="15:00">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="slotPhone">Numéro WhatsApp du pasteur <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — pour les rappels)</span></label>
+      <input type="tel" id="slotPhone" placeholder="+41 79 123 45 67">
+    </div>
+
+    <div class="field">
+      <label for="slotNotes">Notes <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+      <input type="text" id="slotNotes" placeholder="Ex. Intercession pour les familles">
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="slotModalCancel">Annuler</button>
+      <button class="btn btn-danger" id="slotModalDelete" style="display:none;">Supprimer</button>
+      <button class="btn btn-primary" id="slotModalSave">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============ MODAL ============ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -1301,6 +2559,7 @@
       <select id="evType">
         <option value="culte">Culte</option>
         <option value="intercession">Intercession</option>
+        <option value="creneau">Créneau pasteur</option>
         <option value="formation">Formation pastorale</option>
         <option value="priere">Prière pastorale</option>
         <option value="autre">Autre</option>
@@ -1433,7 +2692,36 @@ const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Aoû
 const STORAGE_KEY = 'pastoral-events-v4';
 
 let events = [];
-let currentDate = new Date(2026, 4, 1); // Start on May 2026
+
+// Returns all events for a given ISO date: stored events + virtual slot events from pastorSlots
+function getDayEvents(iso) {
+  const stored = events.filter(ev => ev.date === iso);
+  let virtual = [];
+  if (typeof pastorSlots !== 'undefined' && pastorSlots.length) {
+    const [y,m,d] = iso.split('-').map(Number);
+    const dObj = new Date(y, m-1, d);
+    for (const s of pastorSlots) {
+      let match = false;
+      if (s.kind === 'weekly' && dObj.getDay() === s.weekday) match = true;
+      if (s.kind === 'once' && s.date === iso) match = true;
+      if (match) {
+        virtual.push({
+          id: 'slot-' + s.id + '-' + iso,
+          slotId: s.id,
+          isVirtualSlot: true,
+          title: 'Créneau · ' + s.pastor,
+          type: 'creneau',
+          date: iso,
+          start: s.start,
+          end: s.end,
+          notes: s.notes || ''
+        });
+      }
+    }
+  }
+  return [...stored, ...virtual].sort((a,b) => (a.start||'').localeCompare(b.start||''));
+}
+let currentDate = new Date(); // Start on the current month
 let editingId = null;
 let storageAvailable = typeof window !== 'undefined' && window.storage;
 
@@ -1478,7 +2766,9 @@ function checkSession() {
 function unlock() {
   loginScreen.style.display = 'none';
   app.classList.add('unlocked');
-  initCalendar().then(() => initWhatsApp());
+  initCalendar().then(() => { initSlots(); initWhatsApp(); });
+  initPrayerRoom();
+  initResources();
 }
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -1551,8 +2841,8 @@ function renderCalendar() {
     addHint.textContent = '+';
     cell.appendChild(addHint);
 
-    // Events for this day
-    const dayEvents = events.filter(ev => ev.date === iso).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+    // Events for this day (stored events + virtual slot events)
+    const dayEvents = getDayEvents(iso);
     const dotsWrap = document.createElement('div');
     dotsWrap.className = 'cal-dots';
     dayEvents.forEach(ev => {
@@ -1564,6 +2854,11 @@ function renderCalendar() {
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         if (isMobile()) { openDaySheet(iso); }
+        else if (ev.isVirtualSlot) {
+          // Open the slot editor instead of the event modal
+          const slot = pastorSlots.find(s => s.id === ev.slotId);
+          if (slot) openSlotModal(slot);
+        }
         else { openModal(ev); }
       });
       dotsWrap.appendChild(el);
@@ -1595,7 +2890,7 @@ function openDaySheet(iso) {
 
   const container = document.getElementById('daySheetEvents');
   container.innerHTML = '';
-  const dayEvents = events.filter(ev => ev.date === iso).sort((a,b) => (a.start||'').localeCompare(b.start||''));
+  const dayEvents = getDayEvents(iso);
 
   if (dayEvents.length === 0) {
     const empty = document.createElement('div');
@@ -1614,7 +2909,15 @@ function openDaySheet(iso) {
           '<div class="day-sheet-ev-time">' + time + '</div>' +
           (ev.notes ? '<div class="day-sheet-ev-notes">' + escapeHtml(ev.notes) + '</div>' : '') +
         '</div>';
-      row.addEventListener('click', () => { closeDaySheet(); openModal(ev); });
+      row.addEventListener('click', () => {
+        closeDaySheet();
+        if (ev.isVirtualSlot) {
+          const slot = pastorSlots.find(s => s.id === ev.slotId);
+          if (slot) openSlotModal(slot);
+        } else {
+          openModal(ev);
+        }
+      });
       container.appendChild(row);
     });
   }
@@ -2288,6 +3591,759 @@ function fallbackCopy(text) {
 }
 
 // ---------- INIT ----------
+// ============================================================
+//  PRAYER ROOM (Jitsi)
+// ============================================================
+// Unique, unguessable default room name (so it's stable but private to your church)
+const PR_DEFAULT_ROOM = 'EspritSuperieurIntercession-' + 'a3f8d2b1';
+const PR_JITSI_DOMAIN = 'meet.jit.si';
+
+function sanitizeRoomName(name) {
+  // Jitsi accepts most chars but spaces/special chars cause issues. Keep it URL-safe.
+  return name.trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-zA-Z0-9\-_éèêàâîïôöûüç]/g, '')
+    .substring(0, 60);
+}
+
+function buildJitsiUrl(roomName, opts) {
+  opts = opts || {};
+  const params = new URLSearchParams();
+  // Interface tweaks (subject is what the participant sees at the top of the call)
+  const subject = opts.subject || 'Église Esprit Supérieur';
+  params.set('config.subject', '"' + subject + '"');
+  if (opts.muteAudio) params.set('config.startWithAudioMuted', 'true');
+  if (opts.muteVideo) params.set('config.startWithVideoMuted', 'true');
+  // Hide some Jitsi branding/UI clutter
+  params.set('config.prejoinPageEnabled', 'false');
+  params.set('interfaceConfig.DEFAULT_BACKGROUND', '"#0e1230"');
+  return 'https://' + PR_JITSI_DOMAIN + '/' + encodeURIComponent(roomName) + '#' + params.toString();
+}
+
+function buildJitsiShareLink(roomName) {
+  // Plain link (no config params) — safest to share
+  return 'https://' + PR_JITSI_DOMAIN + '/' + encodeURIComponent(roomName);
+}
+
+let prCurrentRoom = null;
+let prCurrentTitle = '';
+
+function launchPrayerRoom(roomName, displayTitle, opts) {
+  prCurrentRoom = roomName;
+  prCurrentTitle = displayTitle;
+  const url = buildJitsiUrl(roomName, Object.assign({ subject: displayTitle }, opts || {}));
+  document.getElementById('prCallFrame').src = url;
+  // Display title in header (with italic accent on last word for style)
+  const words = displayTitle.split(' ');
+  let titleHtml = displayTitle;
+  if (words.length > 1) {
+    const last = words.pop();
+    titleHtml = escapeHtml(words.join(' ')) + ' <em>' + escapeHtml(last) + '</em>';
+  }
+  document.getElementById('prCallTitle').innerHTML = titleHtml;
+  document.getElementById('prCall').classList.add('show');
+  // Lock body scroll while in call
+  document.body.style.overflow = 'hidden';
+}
+
+function leavePrayerRoom() {
+  document.getElementById('prCall').classList.remove('show');
+  document.getElementById('prCallFrame').src = '';
+  document.body.style.overflow = '';
+}
+
+function sharePrayerRoom(roomName, displayTitle) {
+  const link = buildJitsiShareLink(roomName);
+  const msg = '🙏 Rejoignez-nous pour la prière\n\n' +
+              displayTitle + '\n' +
+              link + '\n\n' +
+              'Église Esprit Supérieur';
+  // Try native share first (mobile)
+  if (navigator.canShare && navigator.share) {
+    navigator.share({ title: displayTitle, text: msg, url: link })
+      .catch(() => { copyText(msg); showToast('Lien copié ✓ Partagez-le via WhatsApp'); });
+  } else {
+    copyText(msg);
+    showToast('Lien copié ✓ Partagez-le via WhatsApp');
+  }
+}
+
+function initPrayerRoom() {
+  // Default room launch
+  document.getElementById('prLaunchDefault').addEventListener('click', () => {
+    const muteA = document.getElementById('prMuteAudio').checked;
+    const muteV = document.getElementById('prMuteVideo').checked;
+    launchPrayerRoom(PR_DEFAULT_ROOM, "Salle d'intercession", { muteAudio: muteA, muteVideo: muteV });
+  });
+  document.getElementById('prShareDefault').addEventListener('click', () => {
+    sharePrayerRoom(PR_DEFAULT_ROOM, "Salle d'intercession");
+  });
+
+  // Custom room launch
+  document.getElementById('prCustomLaunch').addEventListener('click', () => {
+    const raw = document.getElementById('prCustomName').value;
+    const clean = sanitizeRoomName(raw);
+    if (!clean) { showToast('Donnez un nom à la salle'); return; }
+    // Prefix to avoid collisions with other Jitsi users worldwide
+    const roomName = 'EspritSuperieur-' + clean + '-b7e4';
+    const muteA = document.getElementById('prMuteAudio').checked;
+    const muteV = document.getElementById('prMuteVideo').checked;
+    launchPrayerRoom(roomName, raw.trim() || 'Salle de prière', { muteAudio: muteA, muteVideo: muteV });
+  });
+
+  // Call header actions
+  document.getElementById('prCallLeave').addEventListener('click', leavePrayerRoom);
+  document.getElementById('prCallShare').addEventListener('click', () => {
+    if (prCurrentRoom) sharePrayerRoom(prCurrentRoom, prCurrentTitle);
+  });
+  document.getElementById('prCallExternal').addEventListener('click', () => {
+    if (prCurrentRoom) {
+      window.open(buildJitsiShareLink(prCurrentRoom), '_blank');
+    }
+  });
+
+  // ----- Google Meet for courses -----
+  // Load saved permanent meet link
+  let savedMeetLink = '';
+  try { savedMeetLink = localStorage.getItem('meet-permanent-link') || ''; } catch(e){}
+  if (savedMeetLink) document.getElementById('meetPermanentLink').value = savedMeetLink;
+
+  document.getElementById('meetSaveLink').addEventListener('click', () => {
+    const v = document.getElementById('meetPermanentLink').value.trim();
+    try { localStorage.setItem('meet-permanent-link', v); } catch(e){}
+    showToast('Lien Meet enregistré ✓');
+  });
+
+  document.getElementById('meetPermanentBtn').addEventListener('click', () => {
+    const link = document.getElementById('meetPermanentLink').value.trim();
+    if (!link) {
+      showToast('Enregistrez d\'abord le lien Meet permanent ci-dessous');
+      document.getElementById('meetPermanentLink').focus();
+      return;
+    }
+    // Basic validation
+    if (!/meet\.google\.com/i.test(link)) {
+      showToast('Ce lien ne semble pas être un lien Google Meet');
+      return;
+    }
+    window.open(link, '_blank');
+  });
+
+  document.getElementById('meetNewBtn').addEventListener('click', () => {
+    // Google Meet "new meeting" URL — creates a new room on the fly
+    window.open('https://meet.google.com/new', '_blank');
+  });
+}
+
+// ============================================================
+//  PASTOR SLOTS — Personal time slots assigned to specific pastors
+// ============================================================
+const SLOTS_STORAGE_KEY = 'pastoral-slots-v1';
+let pastorSlots = []; // {id, pastor, kind:'weekly'|'once', weekday?, date?, start, end, phone?, notes?}
+
+const WEEKDAY_LABELS = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+
+async function loadSlots() {
+  if (storageAvailable) {
+    try {
+      const res = await window.storage.get(SLOTS_STORAGE_KEY, true);
+      if (res && res.value) { pastorSlots = JSON.parse(res.value); return; }
+    } catch(e){}
+  }
+  try {
+    const local = localStorage.getItem(SLOTS_STORAGE_KEY);
+    if (local) pastorSlots = JSON.parse(local);
+  } catch(e){}
+}
+async function saveSlots() {
+  const json = JSON.stringify(pastorSlots);
+  if (storageAvailable) { try { await window.storage.set(SLOTS_STORAGE_KEY, json, true); } catch(e){} }
+  try { localStorage.setItem(SLOTS_STORAGE_KEY, json); } catch(e){}
+}
+
+function slotIsoForDate(slot, dateObj) {
+  // Given a slot and a JS Date, return an ISO date string if the slot occurs on that date
+  if (slot.kind === 'once') return slot.date;
+  if (slot.kind === 'weekly' && dateObj.getDay() === slot.weekday) {
+    return dateObj.getFullYear() + '-' + String(dateObj.getMonth()+1).padStart(2,'0') + '-' + String(dateObj.getDate()).padStart(2,'0');
+  }
+  return null;
+}
+
+// Expand slots into virtual events for the current calendar window (so they appear in cells)
+function expandSlotsForWindow(startDate, endDate) {
+  const out = [];
+  const d = new Date(startDate);
+  while (d <= endDate) {
+    for (const s of pastorSlots) {
+      if (s.kind === 'weekly' && d.getDay() === s.weekday) {
+        const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        out.push({
+          id: 'slot-' + s.id + '-' + iso,
+          slotId: s.id,
+          isVirtualSlot: true,
+          title: 'Créneau · ' + s.pastor,
+          type: 'creneau',
+          date: iso,
+          start: s.start,
+          end: s.end,
+          notes: s.notes || ''
+        });
+      } else if (s.kind === 'once' && s.date) {
+        const ds = s.date;
+        const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        if (ds === iso) {
+          out.push({
+            id: 'slot-' + s.id + '-' + iso,
+            slotId: s.id,
+            isVirtualSlot: true,
+            title: 'Créneau · ' + s.pastor,
+            type: 'creneau',
+            date: iso,
+            start: s.start,
+            end: s.end,
+            notes: s.notes || ''
+          });
+        }
+      }
+    }
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
+
+// Render the slot list
+function renderSlots() {
+  const list = document.getElementById('slotsList');
+  list.innerHTML = '';
+  if (!pastorSlots.length) {
+    list.innerHTML = '<div class="slots-empty">Aucun créneau attribué pour l\'instant.</div>';
+    return;
+  }
+  // Sort: weekly first (by weekday), then once (by date)
+  const sorted = [...pastorSlots].sort((a,b) => {
+    if (a.kind !== b.kind) return a.kind === 'weekly' ? -1 : 1;
+    if (a.kind === 'weekly') return (a.weekday - b.weekday) || a.start.localeCompare(b.start);
+    return (a.date || '').localeCompare(b.date || '') || a.start.localeCompare(b.start);
+  });
+  sorted.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'slot-card';
+    let when = '';
+    if (s.kind === 'weekly') {
+      when = '<span class="tag">Chaque ' + WEEKDAY_LABELS[s.weekday].toLowerCase() + '</span>' +
+             '<span>' + s.start + ' – ' + s.end + '</span>';
+    } else {
+      const [y,m,d] = s.date.split('-').map(Number);
+      const dObj = new Date(y, m-1, d);
+      when = '<span class="tag ponctuel">' + WEEKDAY_LABELS[dObj.getDay()].toLowerCase() + ' ' + d + ' ' + MONTHS[m-1].toLowerCase() + '</span>' +
+             '<span>' + s.start + ' – ' + s.end + '</span>';
+    }
+    card.innerHTML =
+      '<div class="slot-info">' +
+        '<div class="slot-pastor">' + escapeHtml(s.pastor) + '</div>' +
+        '<div class="slot-when">' + when + (s.notes ? '<span style="opacity:0.7">· ' + escapeHtml(s.notes) + '</span>' : '') + '</div>' +
+      '</div>' +
+      '<div class="slot-actions">' +
+        (s.phone ? '<button class="slot-btn notify" data-act="notify" data-id="' + s.id + '" title="Envoyer le rappel WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg></button>' : '') +
+        '<button class="slot-btn" data-act="edit" data-id="' + s.id + '" title="Modifier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+        '<button class="slot-btn del" data-act="del" data-id="' + s.id + '" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
+      '</div>';
+    list.appendChild(card);
+  });
+  // Attach handlers
+  list.querySelectorAll('.slot-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const act = btn.dataset.act;
+      const id = btn.dataset.id;
+      const slot = pastorSlots.find(s => s.id === id);
+      if (!slot) return;
+      if (act === 'edit') openSlotModal(slot);
+      if (act === 'del') deleteSlot(slot);
+      if (act === 'notify') notifySlotPastor(slot);
+    });
+  });
+}
+
+// Build a human-readable next-occurrence date for a slot
+function nextSlotOccurrence(slot) {
+  const now = new Date();
+  if (slot.kind === 'once') {
+    return new Date(slot.date + 'T' + slot.start + ':00');
+  }
+  // weekly: find next matching weekday at or after today
+  const target = new Date(now);
+  target.setHours(parseInt(slot.start.split(':')[0],10), parseInt(slot.start.split(':')[1],10), 0, 0);
+  // Move forward to the next occurrence of slot.weekday
+  let daysAhead = (slot.weekday - target.getDay() + 7) % 7;
+  if (daysAhead === 0 && target < now) daysAhead = 7; // today already passed → next week
+  target.setDate(target.getDate() + daysAhead);
+  return target;
+}
+
+// Compose a WhatsApp reminder for a pastor's slot
+function buildSlotReminderMessage(slot) {
+  const next = nextSlotOccurrence(slot);
+  const dayLabel = WEEKDAY_LABELS[next.getDay()].toLowerCase();
+  const dateLabel = dayLabel + ' ' + next.getDate() + ' ' + MONTHS[next.getMonth()].toLowerCase();
+  return '🙏 *Rappel — votre créneau de prière*\n\n' +
+         'Cher(ère) ' + slot.pastor + ',\n\n' +
+         '📅 ' + dateLabel + '\n' +
+         '🕐 ' + slot.start + ' – ' + slot.end + '\n' +
+         (slot.notes ? '🕊️ ' + slot.notes + '\n' : '') +
+         '\nQue le Seigneur vous accompagne dans ce temps de prière.\n\n' +
+         '*Église Esprit Supérieur*';
+}
+
+function notifySlotPastor(slot) {
+  if (!slot.phone) { showToast('Aucun numéro pour ' + slot.pastor); return; }
+  const msg = buildSlotReminderMessage(slot);
+  const digits = slot.phone.replace(/[^\d]/g, '');
+  window.open('https://wa.me/' + digits + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+async function deleteSlot(slot) {
+  if (!confirm('Supprimer le créneau de ' + slot.pastor + ' ?')) return;
+  pastorSlots = pastorSlots.filter(s => s.id !== slot.id);
+  await saveSlots();
+  renderSlots();
+  renderCalendar();
+  refreshUpcomingSlots();
+}
+
+// ----- Slot modal -----
+let editingSlot = null;
+
+function openSlotModal(slot) {
+  editingSlot = slot || null;
+  document.getElementById('slotModalTitle').textContent = slot ? 'Modifier le créneau' : 'Nouveau créneau';
+  document.getElementById('slotModalDelete').style.display = slot ? 'inline-flex' : 'none';
+  document.getElementById('slotPastor').value = slot ? slot.pastor : '';
+  document.getElementById('slotStart').value = slot ? slot.start : '14:00';
+  document.getElementById('slotEnd').value = slot ? slot.end : '15:00';
+  document.getElementById('slotPhone').value = slot ? (slot.phone || '') : '';
+  document.getElementById('slotNotes').value = slot ? (slot.notes || '') : '';
+  const kind = slot ? slot.kind : 'weekly';
+  document.querySelectorAll('.slot-rec-tab').forEach(t => t.classList.toggle('active', t.dataset.rec === kind));
+  toggleRecurrenceFields(kind);
+  if (kind === 'weekly') {
+    document.getElementById('slotWeekday').value = slot ? slot.weekday : 2; // Tuesday default
+  } else {
+    document.getElementById('slotDate').value = slot && slot.date ? slot.date : new Date().toISOString().slice(0,10);
+  }
+  document.getElementById('slotModalOverlay').classList.add('show');
+}
+function closeSlotModal() {
+  document.getElementById('slotModalOverlay').classList.remove('show');
+  editingSlot = null;
+}
+function toggleRecurrenceFields(kind) {
+  document.getElementById('slotWeeklyField').style.display = kind === 'weekly' ? 'block' : 'none';
+  document.getElementById('slotDateField').style.display = kind === 'once' ? 'block' : 'none';
+}
+
+async function saveSlotFromModal() {
+  const pastor = document.getElementById('slotPastor').value.trim();
+  if (!pastor) { showToast('Indiquez le nom du pasteur'); return; }
+  const kind = document.querySelector('.slot-rec-tab.active').dataset.rec;
+  const start = document.getElementById('slotStart').value;
+  const end = document.getElementById('slotEnd').value;
+  if (!start || !end) { showToast('Indiquez les heures de début et de fin'); return; }
+  const phone = document.getElementById('slotPhone').value.trim();
+  const notes = document.getElementById('slotNotes').value.trim();
+
+  const slot = editingSlot ? editingSlot : { id: 'slot_' + Date.now() + '_' + Math.random().toString(36).slice(2,6) };
+  slot.pastor = pastor;
+  slot.kind = kind;
+  slot.start = start;
+  slot.end = end;
+  slot.phone = phone;
+  slot.notes = notes;
+  if (kind === 'weekly') {
+    slot.weekday = parseInt(document.getElementById('slotWeekday').value, 10);
+    delete slot.date;
+  } else {
+    const date = document.getElementById('slotDate').value;
+    if (!date) { showToast('Choisissez une date'); return; }
+    slot.date = date;
+    delete slot.weekday;
+  }
+
+  if (!editingSlot) pastorSlots.push(slot);
+  await saveSlots();
+  closeSlotModal();
+  renderSlots();
+  renderCalendar();
+  refreshUpcomingSlots();
+  showToast('Créneau enregistré ✓');
+}
+
+// ----- Upcoming slots banner -----
+function findSlotsWithinNextHour() {
+  const now = new Date();
+  const cutoff = new Date(now.getTime() + 60 * 60 * 1000);
+  const matches = [];
+  for (const s of pastorSlots) {
+    const start = parseSlotStartToday(s);
+    if (start && start >= now && start <= cutoff) {
+      matches.push({ slot: s, start });
+    }
+  }
+  return matches;
+}
+function parseSlotStartToday(slot) {
+  const now = new Date();
+  const [h, m] = slot.start.split(':').map(Number);
+  if (slot.kind === 'once' && slot.date) {
+    const [y,mo,d] = slot.date.split('-').map(Number);
+    return new Date(y, mo-1, d, h, m, 0);
+  }
+  if (slot.kind === 'weekly' && now.getDay() === slot.weekday) {
+    const t = new Date(now);
+    t.setHours(h, m, 0, 0);
+    return t;
+  }
+  return null;
+}
+function refreshUpcomingSlots() {
+  const banner = document.getElementById('slotsUpcoming');
+  const text = document.getElementById('slotsUpcomingText');
+  const btn = document.getElementById('slotsUpcomingNotify');
+  const matches = findSlotsWithinNextHour();
+  if (!matches.length) { banner.classList.remove('show'); return; }
+  // Show the soonest one
+  matches.sort((a,b) => a.start - b.start);
+  const m = matches[0];
+  const minutes = Math.max(0, Math.round((m.start - new Date()) / 60000));
+  text.innerHTML = '<strong>' + escapeHtml(m.slot.pastor) + '</strong> a son créneau dans ' + minutes + ' min (' + m.slot.start + ' – ' + m.slot.end + ').';
+  banner.classList.add('show');
+  btn.onclick = () => notifySlotPastor(m.slot);
+  if (!m.slot.phone) btn.textContent = 'Numéro manquant';
+  else btn.textContent = 'Rappel WhatsApp';
+}
+
+function initSlots() {
+  loadSlots().then(() => {
+    renderSlots();
+    renderCalendar();
+    refreshUpcomingSlots();
+    // Refresh banner every minute
+    setInterval(refreshUpcomingSlots, 60000);
+  });
+
+  document.getElementById('slotsAddBtn').addEventListener('click', () => openSlotModal(null));
+  document.getElementById('slotModalClose').addEventListener('click', closeSlotModal);
+  document.getElementById('slotModalCancel').addEventListener('click', closeSlotModal);
+  document.getElementById('slotModalOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('slotModalOverlay')) closeSlotModal();
+  });
+  document.getElementById('slotModalSave').addEventListener('click', saveSlotFromModal);
+  document.getElementById('slotModalDelete').addEventListener('click', () => {
+    if (editingSlot) deleteSlot(editingSlot);
+    closeSlotModal();
+  });
+  document.querySelectorAll('.slot-rec-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.slot-rec-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      toggleRecurrenceFields(tab.dataset.rec);
+    });
+  });
+}
+
+// ============================================================
+//  RESOURCES — Library of courses, sermons, documents
+// ============================================================
+const RES_STORAGE_KEY = 'pastoral-resources-v1';
+let resources = [];
+let resCurrentFilter = 'all';
+let resCurrentSearch = '';
+let editingResource = null;
+
+const RES_TYPE_LABELS = {
+  cours: 'Cours pastoral',
+  predication: 'Prédication',
+  formation: 'Formation',
+  document: 'Document'
+};
+const RES_TYPE_ICONS = { cours: '📘', predication: '🎙️', formation: '🎓', document: '📄' };
+
+async function loadResources() {
+  if (storageAvailable) {
+    try {
+      const res = await window.storage.get(RES_STORAGE_KEY, true);
+      if (res && res.value) { resources = JSON.parse(res.value); return; }
+    } catch(e){}
+  }
+  try {
+    const local = localStorage.getItem(RES_STORAGE_KEY);
+    if (local) resources = JSON.parse(local);
+  } catch(e){}
+}
+async function saveResources() {
+  const json = JSON.stringify(resources);
+  if (storageAvailable) { try { await window.storage.set(RES_STORAGE_KEY, json, true); } catch(e){} }
+  try { localStorage.setItem(RES_STORAGE_KEY, json); } catch(e){}
+}
+
+// Extract YouTube video ID from any YouTube URL
+function extractYouTubeId(url) {
+  if (!url) return null;
+  // youtube.com/watch?v=XXXX, youtu.be/XXXX, youtube.com/embed/XXXX, youtube.com/live/XXXX
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|live\/|v\/))([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+// Convert a Google Drive share link to an embed-ready URL (file.../preview, or folders embed)
+function toDriveEmbedUrl(url) {
+  if (!url) return null;
+  // File: https://drive.google.com/file/d/FILE_ID/view → /preview
+  let m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/file/d/' + m[1] + '/preview';
+  // Folder: https://drive.google.com/drive/folders/FOLDER_ID → /embeddedfolderview
+  m = url.match(/drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://drive.google.com/embeddedfolderview?id=' + m[1] + '#list';
+  // Google Docs: https://docs.google.com/document/d/DOC_ID/edit → /preview
+  m = url.match(/docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return 'https://docs.google.com/' + m[1] + '/d/' + m[2] + '/preview';
+  return null;
+}
+
+// Format date for display (French)
+function formatResDate(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-').map(Number);
+  const dObj = new Date(y, m-1, d);
+  return d + ' ' + MONTHS[m-1].toLowerCase() + ' ' + y;
+}
+
+// Filter & search the resources list
+function getFilteredResources() {
+  const search = resCurrentSearch.toLowerCase().trim();
+  return resources
+    .filter(r => resCurrentFilter === 'all' || r.type === resCurrentFilter)
+    .filter(r => {
+      if (!search) return true;
+      const haystack = [r.title, r.speaker, r.summary, (r.tags || []).join(' ')]
+        .filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(search);
+    })
+    .sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+}
+
+function renderResources() {
+  const grid = document.getElementById('resGrid');
+  const filtered = getFilteredResources();
+  grid.innerHTML = '';
+  if (!filtered.length) {
+    const empty = document.createElement('div');
+    empty.className = 'res-empty';
+    empty.textContent = resources.length === 0
+      ? 'Aucune ressource pour l\'instant. Cliquez sur « Ajouter une ressource » pour commencer.'
+      : 'Aucune ressource ne correspond à votre recherche.';
+    grid.appendChild(empty);
+    return;
+  }
+  filtered.forEach(r => {
+    const ytId = extractYouTubeId(r.videoUrl);
+    const card = document.createElement('div');
+    card.className = 'res-card';
+    let thumbHtml;
+    if (ytId) {
+      thumbHtml = '<div class="res-thumb" style="background-image:url(\'https://img.youtube.com/vi/' + ytId + '/hqdefault.jpg\');">' +
+                    '<div class="res-type-badge">' + RES_TYPE_LABELS[r.type] + '</div>' +
+                    '<div class="res-thumb-play"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg></div>' +
+                  '</div>';
+    } else {
+      thumbHtml = '<div class="res-thumb fallback">' +
+                    RES_TYPE_ICONS[r.type] +
+                    '<div class="res-type-badge">' + RES_TYPE_LABELS[r.type] + '</div>' +
+                  '</div>';
+    }
+    const tagsHtml = (r.tags && r.tags.length)
+      ? '<div class="res-card-tags">' + r.tags.map(t => '<span class="res-tag">' + escapeHtml(t) + '</span>').join('') + '</div>'
+      : '';
+    card.innerHTML = thumbHtml +
+      '<div class="res-card-body">' +
+        '<div class="res-card-title">' + escapeHtml(r.title) + '</div>' +
+        '<div class="res-card-meta">' +
+          (r.speaker ? '<span>' + escapeHtml(r.speaker) + '</span>' : '') +
+          (r.speaker && r.date ? '<span class="dot"></span>' : '') +
+          (r.date ? '<span>' + formatResDate(r.date) + '</span>' : '') +
+        '</div>' +
+        (r.summary ? '<div class="res-card-summary">' + escapeHtml(r.summary) + '</div>' : '<div class="res-card-summary" style="font-style:italic;color:var(--muted-cream);">Pas de résumé pour l\'instant.</div>') +
+        tagsHtml +
+      '</div>';
+    card.addEventListener('click', () => openResourceViewer(r));
+    grid.appendChild(card);
+  });
+}
+
+// ----- Resource viewer -----
+function openResourceViewer(r) {
+  const ytId = extractYouTubeId(r.videoUrl);
+  const driveEmbed = toDriveEmbedUrl(r.driveEmbed);
+  const media = document.getElementById('resViewerMedia');
+  if (ytId) {
+    media.innerHTML =
+      '<div class="res-viewer-video">' +
+        '<iframe src="https://www.youtube.com/embed/' + ytId + '?rel=0&autoplay=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+      '</div>';
+  } else if (driveEmbed) {
+    media.innerHTML =
+      '<div class="res-viewer-video" style="aspect-ratio:4/3;">' +
+        '<iframe src="' + driveEmbed + '" allow="autoplay" allowfullscreen></iframe>' +
+      '</div>';
+  } else {
+    media.innerHTML =
+      '<div class="res-viewer-doc-preview">' +
+        RES_TYPE_ICONS[r.type] +
+        '<div class="label">' + RES_TYPE_LABELS[r.type] + '</div>' +
+      '</div>';
+  }
+  document.getElementById('resViewerEyebrow').textContent = RES_TYPE_LABELS[r.type];
+  // Italicize last word for style
+  const words = r.title.split(' ');
+  let titleHtml = escapeHtml(r.title);
+  if (words.length > 1) {
+    const last = words.pop();
+    titleHtml = escapeHtml(words.join(' ')) + ' <em>' + escapeHtml(last) + '</em>';
+  }
+  document.getElementById('resViewerTitle').innerHTML = titleHtml;
+  document.getElementById('resViewerMeta').textContent =
+    [r.speaker, formatResDate(r.date)].filter(Boolean).join(' · ');
+  const summaryWrap = document.getElementById('resViewerSummaryWrap');
+  if (r.summary) {
+    document.getElementById('resViewerSummary').textContent = r.summary;
+    summaryWrap.style.display = 'block';
+  } else {
+    summaryWrap.style.display = 'none';
+  }
+  // Actions
+  const actions = document.getElementById('resViewerActions');
+  actions.innerHTML = '';
+  if (r.videoUrl) {
+    const btn = document.createElement('a');
+    btn.className = 'res-action';
+    btn.target = '_blank';
+    btn.href = r.videoUrl;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Ouvrir sur YouTube';
+    actions.appendChild(btn);
+  }
+  if (r.docUrl) {
+    const btn = document.createElement('a');
+    btn.className = 'res-action';
+    btn.target = '_blank';
+    btn.href = r.docUrl;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Voir le document';
+    actions.appendChild(btn);
+  }
+  if (r.driveEmbed) {
+    const btn = document.createElement('a');
+    btn.className = 'res-action';
+    btn.target = '_blank';
+    btn.href = r.driveEmbed;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="14 2 14 8 20 8"/><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg> Ouvrir dans Drive';
+    actions.appendChild(btn);
+  }
+  const editBtn = document.createElement('button');
+  editBtn.className = 'res-action';
+  editBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Modifier';
+  editBtn.addEventListener('click', () => { closeResourceViewer(); openResourceForm(r); });
+  actions.appendChild(editBtn);
+
+  document.getElementById('resViewer').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeResourceViewer() {
+  document.getElementById('resViewer').classList.remove('show');
+  document.getElementById('resViewerMedia').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+// ----- Resource form -----
+function openResourceForm(r) {
+  editingResource = r || null;
+  document.getElementById('resFormTitle').textContent = r ? 'Modifier la ressource' : 'Ajouter une ressource';
+  document.getElementById('resFormDelete').style.display = r ? 'inline-flex' : 'none';
+  document.getElementById('resType').value = r ? r.type : 'cours';
+  document.getElementById('resTitle').value = r ? r.title : '';
+  document.getElementById('resSpeaker').value = r ? (r.speaker || '') : '';
+  document.getElementById('resDate').value = r ? (r.date || '') : new Date().toISOString().slice(0,10);
+  document.getElementById('resVideoUrl').value = r ? (r.videoUrl || '') : '';
+  document.getElementById('resDocUrl').value = r ? (r.docUrl || '') : '';
+  document.getElementById('resDriveEmbed').value = r ? (r.driveEmbed || '') : '';
+  document.getElementById('resSummary').value = r ? (r.summary || '') : '';
+  document.getElementById('resTags').value = r ? (r.tags || []).join(', ') : '';
+  document.getElementById('resFormOverlay').classList.add('show');
+}
+function closeResourceForm() {
+  document.getElementById('resFormOverlay').classList.remove('show');
+  editingResource = null;
+}
+
+async function saveResourceFromForm() {
+  const title = document.getElementById('resTitle').value.trim();
+  if (!title) { showToast('Donnez un titre à la ressource'); return; }
+  const r = editingResource ? editingResource : { id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2,6) };
+  r.type = document.getElementById('resType').value;
+  r.title = title;
+  r.speaker = document.getElementById('resSpeaker').value.trim();
+  r.date = document.getElementById('resDate').value;
+  r.videoUrl = document.getElementById('resVideoUrl').value.trim();
+  r.docUrl = document.getElementById('resDocUrl').value.trim();
+  r.driveEmbed = document.getElementById('resDriveEmbed').value.trim();
+  r.summary = document.getElementById('resSummary').value.trim();
+  r.tags = document.getElementById('resTags').value.split(',').map(t => t.trim()).filter(Boolean);
+  if (!editingResource) resources.push(r);
+  await saveResources();
+  closeResourceForm();
+  renderResources();
+  showToast(editingResource ? 'Ressource modifiée ✓' : 'Ressource ajoutée ✓');
+}
+
+async function deleteResource(r) {
+  if (!confirm('Supprimer « ' + r.title + ' » ?')) return;
+  resources = resources.filter(x => x.id !== r.id);
+  await saveResources();
+  renderResources();
+}
+
+function initResources() {
+  loadResources().then(() => renderResources());
+
+  document.getElementById('resAddBtn').addEventListener('click', () => openResourceForm(null));
+  document.getElementById('resFormClose').addEventListener('click', closeResourceForm);
+  document.getElementById('resFormCancel').addEventListener('click', closeResourceForm);
+  document.getElementById('resFormSave').addEventListener('click', saveResourceFromForm);
+  document.getElementById('resFormDelete').addEventListener('click', () => {
+    if (editingResource) deleteResource(editingResource);
+    closeResourceForm();
+  });
+  document.getElementById('resFormOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('resFormOverlay')) closeResourceForm();
+  });
+
+  document.getElementById('resViewerClose').addEventListener('click', closeResourceViewer);
+  document.getElementById('resViewer').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('resViewer')) closeResourceViewer();
+  });
+
+  document.getElementById('resSearch').addEventListener('input', (e) => {
+    resCurrentSearch = e.target.value;
+    renderResources();
+  });
+  document.querySelectorAll('#resFilters .res-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#resFilters .res-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      resCurrentFilter = chip.dataset.filter;
+      renderResources();
+    });
+  });
+}
+
 checkSession();
 </script>
 </body>
