@@ -1407,6 +1407,147 @@
     .slot-actions { justify-content: flex-end; }
   }
 
+  /* ---------- RICH TEXT EDITOR ---------- */
+  .rte-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px;
+    background: var(--bg-cream);
+    border: 1px solid var(--line-cream);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .rte-btn {
+    background: none;
+    border: 1px solid transparent;
+    padding: 7px 10px;
+    border-radius: 6px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: background .2s, border-color .2s;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .rte-btn:hover { background: #fff; border-color: var(--line-cream); }
+  .rte-btn.active { background: var(--ink); color: var(--bg-cream); }
+  .rte-btn svg { width: 14px; height: 14px; }
+  .rte-btn b, .rte-btn strong { font-weight: 800; }
+  .rte-btn i, .rte-btn em { font-style: italic; }
+  .rte-btn.sep {
+    width: 1px;
+    padding: 0;
+    margin: 4px 4px;
+    background: var(--line-cream);
+    cursor: default;
+    min-width: 1px;
+  }
+  .rte-btn.sep:hover { background: var(--line-cream); border-color: transparent; }
+  .rte-editor {
+    border: 1px solid var(--line-cream);
+    border-radius: 0 0 10px 10px;
+    padding: 16px 18px;
+    min-height: 250px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: #fff;
+    outline: none;
+  }
+  .rte-editor:focus { border-color: var(--gold); }
+  .rte-editor:empty:before {
+    content: attr(data-placeholder);
+    color: var(--muted-cream);
+    font-style: italic;
+    pointer-events: none;
+  }
+  /* Styled content inside the editor and viewer */
+  .rte-editor h1, .rte-content h1 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 22px;
+    margin: 18px 0 8px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .rte-editor h2, .rte-content h2 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 18px;
+    margin: 16px 0 6px;
+    color: var(--gold);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .rte-editor h3, .rte-content h3 {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 16px;
+    margin: 14px 0 5px;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .rte-editor p, .rte-content p { margin: 0 0 10px; }
+  .rte-editor strong, .rte-content strong { font-weight: 700; }
+  .rte-editor em, .rte-content em { font-style: italic; color: var(--gold); }
+  .rte-editor ul, .rte-content ul,
+  .rte-editor ol, .rte-content ol {
+    margin: 8px 0 12px 24px;
+    padding: 0;
+  }
+  .rte-editor li, .rte-content li { margin-bottom: 4px; line-height: 1.6; }
+  .rte-editor blockquote, .rte-content blockquote {
+    border-left: 3px solid var(--gold-soft);
+    padding: 4px 16px;
+    margin: 12px 0;
+    font-style: italic;
+    color: var(--muted-cream);
+    background: var(--bg-cream);
+    border-radius: 0 6px 6px 0;
+  }
+  .rte-editor a, .rte-content a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-decoration-color: rgba(184, 137, 61, 0.4);
+  }
+  .rte-editor a:hover, .rte-content a:hover {
+    text-decoration-color: var(--gold);
+  }
+  .rte-editor :first-child { margin-top: 0; }
+  .rte-editor :last-child { margin-bottom: 0; }
+  .rte-content :first-child { margin-top: 0; }
+  .rte-content :last-child { margin-bottom: 0; }
+
+  /* Make the viewer summary block bigger when there's rich content */
+  .res-viewer-summary.has-rich-notes {
+    padding: 22px 26px;
+  }
+  .res-viewer-summary.has-rich-notes h4 {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line-cream);
+  }
+
+  @media (max-width: 768px) {
+    .rte-toolbar { padding: 6px; gap: 2px; }
+    .rte-btn { padding: 7px 8px; font-size: 12px; min-width: 28px; }
+    .rte-editor { padding: 14px; min-height: 200px; font-size: 14px; }
+    .rte-editor h1, .rte-content h1 { font-size: 20px; }
+    .rte-editor h2, .rte-content h2 { font-size: 16px; }
+  }
+
   /* ---------- RESOURCES PANEL ---------- */
   .res-hero {
     background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
@@ -2414,8 +2555,21 @@
         </div>
 
         <div class="field">
-          <label for="resSubtitle">Sous-titre <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — thème, série, contexte)</span></label>
-          <input type="text" id="resSubtitle" placeholder="Ex. Série « Marcher par la foi » · Épisode 3">
+          <label for="resContext">Contexte du cours</label>
+          <select id="resContext">
+            <option value="">— Aucun —</option>
+            <option value="cours-lundi">Cours du lundi</option>
+            <option value="veillee-vendredi">Veillée du vendredi</option>
+            <option value="intercession">Prière d'intercession</option>
+            <option value="culte-dominical">Culte dominical</option>
+            <option value="seminaire">Séminaire / Conférence</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="resSubtitle">Précision <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — thème, épisode, contexte)</span></label>
+          <input type="text" id="resSubtitle" placeholder="Ex. Thème : L'ordination · Épisode 3">
         </div>
 
         <div class="field-row">
@@ -2448,8 +2602,25 @@
         </div>
 
         <div class="field">
-          <label for="resSummary">Résumé / Description <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
-          <textarea id="resSummary" rows="4" placeholder="Quelques lignes pour résumer le contenu…" style="width:100%;padding:13px 16px;border-radius:10px;border:1px solid var(--line-cream);font-family:var(--sans);font-size:14px;resize:vertical;"></textarea>
+          <label>Notes du cours <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — utilisez la barre d'outils pour mettre en forme)</span></label>
+          <div class="rte-toolbar" id="resRteToolbar">
+            <button type="button" class="rte-btn" data-cmd="h1" title="Titre principal">H<sub style="font-size:9px;">1</sub></button>
+            <button type="button" class="rte-btn" data-cmd="h2" title="Sous-titre">H<sub style="font-size:9px;">2</sub></button>
+            <button type="button" class="rte-btn" data-cmd="h3" title="Titre de section">H<sub style="font-size:9px;">3</sub></button>
+            <button type="button" class="rte-btn" data-cmd="p" title="Paragraphe normal">P</button>
+            <span class="rte-btn sep"></span>
+            <button type="button" class="rte-btn" data-cmd="bold" title="Gras (Ctrl+B)"><b>B</b></button>
+            <button type="button" class="rte-btn" data-cmd="italic" title="Italique (Ctrl+I)"><i>I</i></button>
+            <button type="button" class="rte-btn" data-cmd="underline" title="Souligné (Ctrl+U)" style="text-decoration:underline;">U</button>
+            <span class="rte-btn sep"></span>
+            <button type="button" class="rte-btn" data-cmd="ul" title="Liste à puces">• Liste</button>
+            <button type="button" class="rte-btn" data-cmd="ol" title="Liste numérotée">1. Liste</button>
+            <button type="button" class="rte-btn" data-cmd="quote" title="Citation">❝</button>
+            <span class="rte-btn sep"></span>
+            <button type="button" class="rte-btn" data-cmd="link" title="Insérer un lien">🔗</button>
+            <button type="button" class="rte-btn" data-cmd="clean" title="Effacer la mise en forme">↺</button>
+          </div>
+          <div id="resSummary" class="rte-editor" contenteditable="true" data-placeholder="Commencez à écrire vos notes ici… Vous pouvez utiliser les boutons ci-dessus pour ajouter des titres, mettre en gras, créer des listes, etc."></div>
         </div>
 
         <div class="field">
@@ -4077,6 +4248,14 @@ const RES_TYPE_LABELS = {
   document: 'Document'
 };
 const RES_TYPE_ICONS = { cours: '📘', predication: '🎙️', formation: '🎓', document: '📄' };
+const RES_CONTEXT_LABELS = {
+  'cours-lundi': 'Cours du lundi',
+  'veillee-vendredi': 'Veillée du vendredi',
+  'intercession': "Prière d'intercession",
+  'culte-dominical': 'Culte dominical',
+  'seminaire': 'Séminaire / Conférence',
+  'autre': 'Autre'
+};
 
 async function loadResources() {
   if (storageAvailable) {
@@ -4134,7 +4313,8 @@ function getFilteredResources() {
     .filter(r => resCurrentFilter === 'all' || r.type === resCurrentFilter)
     .filter(r => {
       if (!search) return true;
-      const haystack = [r.title, r.subtitle, r.notesBy, r.speaker, r.summary, (r.tags || []).join(' ')]
+      const contextText = r.context && RES_CONTEXT_LABELS[r.context] ? RES_CONTEXT_LABELS[r.context] : '';
+      const haystack = [r.title, contextText, r.subtitle, r.notesBy, r.speaker, r.summary, (r.tags || []).join(' ')]
         .filter(Boolean).join(' ').toLowerCase();
       return haystack.includes(search);
     })
@@ -4176,16 +4356,26 @@ function renderResources() {
     // Display: subtitle (if any) under title, then date + notesBy in meta line
     // Backward compat: old `speaker` field still shows if present and no notesBy
     const meta = r.notesBy || r.speaker;
+    // For the card preview, strip HTML tags to show clean text snippet
+    let summaryPreview = '';
+    if (r.summary) {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = r.summary;
+      summaryPreview = tmp.textContent.trim();
+    }
     card.innerHTML = thumbHtml +
       '<div class="res-card-body">' +
         '<div class="res-card-title">' + escapeHtml(r.title) + '</div>' +
-        (r.subtitle ? '<div style="font-size:12px;color:var(--gold);font-style:italic;margin-bottom:6px;font-family:var(--display);">' + escapeHtml(r.subtitle) + '</div>' : '') +
+        ((r.context || r.subtitle) ? '<div style="font-size:12px;margin-bottom:6px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;">' +
+          (r.context && RES_CONTEXT_LABELS[r.context] ? '<span style="background:rgba(122,94,168,0.12);color:#4a3672;padding:2px 8px;border-radius:100px;font-weight:500;font-size:11px;">' + escapeHtml(RES_CONTEXT_LABELS[r.context]) + '</span>' : '') +
+          (r.subtitle ? '<span style="color:var(--gold);font-style:italic;font-family:var(--display);">' + escapeHtml(r.subtitle) + '</span>' : '') +
+        '</div>' : '') +
         '<div class="res-card-meta">' +
           (r.date ? '<span>' + formatResDate(r.date) + '</span>' : '') +
           (r.date && meta ? '<span class="dot"></span>' : '') +
           (meta ? '<span>Notes : ' + escapeHtml(meta) + '</span>' : '') +
         '</div>' +
-        (r.summary ? '<div class="res-card-summary">' + escapeHtml(r.summary) + '</div>' : '<div class="res-card-summary" style="font-style:italic;color:var(--muted-cream);">Pas de résumé pour l\'instant.</div>') +
+        (summaryPreview ? '<div class="res-card-summary">' + escapeHtml(summaryPreview) + '</div>' : '<div class="res-card-summary" style="font-style:italic;color:var(--muted-cream);">Pas de notes pour l\'instant.</div>') +
         tagsHtml +
       '</div>';
     card.addEventListener('click', () => openResourceViewer(r));
@@ -4224,11 +4414,19 @@ function openResourceViewer(r) {
     titleHtml = escapeHtml(words.join(' ')) + ' <em>' + escapeHtml(last) + '</em>';
   }
   document.getElementById('resViewerTitle').innerHTML = titleHtml;
-  // Build meta: subtitle (italic gold) on its own line, then "Date · Notes prises par X"
+  // Build meta: context badge + subtitle on first line, then date + notesBy below
   const viewerNotesBy = r.notesBy || r.speaker;
   let metaHtml = '';
-  if (r.subtitle) {
-    metaHtml += '<div style="font-family:var(--display);font-style:italic;color:var(--gold);font-size:15px;margin-bottom:6px;">' + escapeHtml(r.subtitle) + '</div>';
+  const contextLabel = r.context && RES_CONTEXT_LABELS[r.context];
+  if (contextLabel || r.subtitle) {
+    metaHtml += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">';
+    if (contextLabel) {
+      metaHtml += '<span style="background:rgba(122,94,168,0.15);color:#4a3672;padding:4px 11px;border-radius:100px;font-weight:600;font-size:11px;letter-spacing:0.05em;">' + escapeHtml(contextLabel) + '</span>';
+    }
+    if (r.subtitle) {
+      metaHtml += '<span style="font-family:var(--display);font-style:italic;color:var(--gold);font-size:15px;">' + escapeHtml(r.subtitle) + '</span>';
+    }
+    metaHtml += '</div>';
   }
   const bottomBits = [];
   if (r.date) bottomBits.push(formatResDate(r.date));
@@ -4237,7 +4435,17 @@ function openResourceViewer(r) {
   document.getElementById('resViewerMeta').innerHTML = metaHtml;
   const summaryWrap = document.getElementById('resViewerSummaryWrap');
   if (r.summary) {
-    document.getElementById('resViewerSummary').textContent = r.summary;
+    const sumEl = document.getElementById('resViewerSummary');
+    // If summary contains HTML, render as rich content; else wrap plain text in paragraph
+    if (/<\/?(p|h[1-6]|ul|ol|li|strong|em|u|blockquote|a|br)[\s>]/i.test(r.summary)) {
+      sumEl.innerHTML = sanitizeRichHtml(r.summary);
+      sumEl.classList.add('rte-content');
+      summaryWrap.classList.add('has-rich-notes');
+    } else {
+      sumEl.innerHTML = escapeHtml(r.summary).replace(/\n/g, '<br>');
+      sumEl.classList.remove('rte-content');
+      summaryWrap.classList.remove('has-rich-notes');
+    }
     summaryWrap.style.display = 'block';
   } else {
     summaryWrap.style.display = 'none';
@@ -4291,6 +4499,7 @@ function openResourceForm(r) {
   document.getElementById('resFormDelete').style.display = r ? 'inline-flex' : 'none';
   document.getElementById('resType').value = r ? r.type : 'cours';
   document.getElementById('resTitle').value = r ? r.title : '';
+  document.getElementById('resContext').value = r ? (r.context || '') : '';
   document.getElementById('resSubtitle').value = r ? (r.subtitle || '') : '';
   // Backward compat: old "speaker" field becomes notesBy if no notesBy yet
   document.getElementById('resNotesBy').value = r ? (r.notesBy || r.speaker || '') : '';
@@ -4298,7 +4507,19 @@ function openResourceForm(r) {
   document.getElementById('resVideoUrl').value = r ? (r.videoUrl || '') : '';
   document.getElementById('resDocUrl').value = r ? (r.docUrl || '') : '';
   document.getElementById('resDriveEmbed').value = r ? (r.driveEmbed || '') : '';
-  document.getElementById('resSummary').value = r ? (r.summary || '') : '';
+  // Summary: support legacy plain text + new rich HTML
+  const sumEl = document.getElementById('resSummary');
+  if (r && r.summary) {
+    // Detect: if it contains HTML tags, treat as rich content; else treat as plain text
+    if (/<\/?(p|h[1-6]|ul|ol|li|strong|em|u|blockquote|a|br)[\s>]/i.test(r.summary)) {
+      sumEl.innerHTML = sanitizeRichHtml(r.summary);
+    } else {
+      // Legacy plain text → preserve line breaks
+      sumEl.innerHTML = '<p>' + escapeHtml(r.summary).replace(/\n/g, '<br>') + '</p>';
+    }
+  } else {
+    sumEl.innerHTML = '';
+  }
   document.getElementById('resTags').value = r ? (r.tags || []).join(', ') : '';
   document.getElementById('resFormOverlay').classList.add('show');
 }
@@ -4313,6 +4534,7 @@ async function saveResourceFromForm() {
   const r = editingResource ? editingResource : { id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2,6) };
   r.type = document.getElementById('resType').value;
   r.title = title;
+  r.context = document.getElementById('resContext').value;
   r.subtitle = document.getElementById('resSubtitle').value.trim();
   r.notesBy = document.getElementById('resNotesBy').value.trim();
   // Clean up legacy field if present (we keep using subtitle/notesBy going forward)
@@ -4321,7 +4543,11 @@ async function saveResourceFromForm() {
   r.videoUrl = document.getElementById('resVideoUrl').value.trim();
   r.docUrl = document.getElementById('resDocUrl').value.trim();
   r.driveEmbed = document.getElementById('resDriveEmbed').value.trim();
-  r.summary = document.getElementById('resSummary').value.trim();
+  // Read rich HTML from contenteditable, sanitize, and strip if empty
+  const sumEl = document.getElementById('resSummary');
+  const rawHtml = sumEl.innerHTML.trim();
+  const stripped = sumEl.textContent.trim();
+  r.summary = stripped ? sanitizeRichHtml(rawHtml) : '';
   r.tags = document.getElementById('resTags').value.split(',').map(t => t.trim()).filter(Boolean);
   if (!editingResource) resources.push(r);
   await saveResources();
@@ -4339,6 +4565,9 @@ async function deleteResource(r) {
 
 function initResources() {
   loadResources().then(() => renderResources());
+
+  // Initialize the rich-text editor for the resource form
+  initRichEditor(document.getElementById('resSummary'), document.getElementById('resRteToolbar'));
 
   document.getElementById('resAddBtn').addEventListener('click', () => openResourceForm(null));
   document.getElementById('resFormClose').addEventListener('click', closeResourceForm);
@@ -4368,6 +4597,150 @@ function initResources() {
       resCurrentFilter = chip.dataset.filter;
       renderResources();
     });
+  });
+}
+
+// ============================================================
+//  RICH TEXT EDITOR — used for resource notes
+// ============================================================
+// Sanitize HTML: keep only safe tags and attributes (prevents XSS)
+function sanitizeRichHtml(html) {
+  if (!html) return '';
+  const ALLOWED_TAGS = new Set(['P','H1','H2','H3','STRONG','B','EM','I','U','UL','OL','LI','BLOCKQUOTE','BR','A','SPAN','DIV']);
+  const ALLOWED_ATTRS = { 'A': ['href','target','rel'] };
+  const wrap = document.createElement('div');
+  wrap.innerHTML = html;
+  function walk(node) {
+    const children = Array.from(node.childNodes);
+    for (const c of children) {
+      if (c.nodeType === 1) { // element
+        if (!ALLOWED_TAGS.has(c.tagName)) {
+          // Replace forbidden element with its inner content
+          while (c.firstChild) node.insertBefore(c.firstChild, c);
+          node.removeChild(c);
+        } else {
+          // Filter attributes
+          const allow = ALLOWED_ATTRS[c.tagName] || [];
+          Array.from(c.attributes).forEach(a => {
+            if (!allow.includes(a.name.toLowerCase())) c.removeAttribute(a.name);
+          });
+          // For links: only allow http(s) and ensure target=_blank rel=noopener
+          if (c.tagName === 'A') {
+            const href = c.getAttribute('href') || '';
+            if (!/^https?:\/\//i.test(href) && !/^mailto:/i.test(href)) c.removeAttribute('href');
+            c.setAttribute('target', '_blank');
+            c.setAttribute('rel', 'noopener noreferrer');
+          }
+          // Convert legacy DIV/SPAN to paragraph-like (avoids weird browser output)
+          if (c.tagName === 'DIV') {
+            // unwrap
+            while (c.firstChild) node.insertBefore(c.firstChild, c);
+            node.removeChild(c);
+            continue;
+          }
+          walk(c);
+        }
+      } else if (c.nodeType !== 3) {
+        // Remove comments / processing instructions
+        node.removeChild(c);
+      }
+    }
+  }
+  walk(wrap);
+  return wrap.innerHTML;
+}
+
+function initRichEditor(editorEl, toolbarEl) {
+  if (!editorEl || !toolbarEl) return;
+
+  // Helper: run a formatting command on the current selection
+  function exec(cmd, arg) {
+    editorEl.focus();
+    document.execCommand(cmd, false, arg || null);
+  }
+  function wrapBlock(tag) {
+    editorEl.focus();
+    document.execCommand('formatBlock', false, tag);
+  }
+  function insertLink() {
+    const url = prompt('Adresse du lien :', 'https://');
+    if (!url) return;
+    editorEl.focus();
+    document.execCommand('createLink', false, url);
+    // Ensure target/rel are set after sanitization
+  }
+  function clearFormat() {
+    editorEl.focus();
+    document.execCommand('removeFormat');
+    document.execCommand('formatBlock', false, 'p');
+  }
+
+  toolbarEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.rte-btn');
+    if (!btn || btn.classList.contains('sep')) return;
+    const cmd = btn.dataset.cmd;
+    switch (cmd) {
+      case 'h1': wrapBlock('H1'); break;
+      case 'h2': wrapBlock('H2'); break;
+      case 'h3': wrapBlock('H3'); break;
+      case 'p':  wrapBlock('P'); break;
+      case 'bold': exec('bold'); break;
+      case 'italic': exec('italic'); break;
+      case 'underline': exec('underline'); break;
+      case 'ul': exec('insertUnorderedList'); break;
+      case 'ol': exec('insertOrderedList'); break;
+      case 'quote': wrapBlock('BLOCKQUOTE'); break;
+      case 'link': insertLink(); break;
+      case 'clean': clearFormat(); break;
+    }
+    updateToolbarState();
+  });
+
+  // Update active state of toolbar based on cursor position
+  function updateToolbarState() {
+    toolbarEl.querySelectorAll('.rte-btn').forEach(b => b.classList.remove('active'));
+    try {
+      const checks = [
+        ['bold', () => document.queryCommandState('bold')],
+        ['italic', () => document.queryCommandState('italic')],
+        ['underline', () => document.queryCommandState('underline')],
+      ];
+      checks.forEach(([cmd, fn]) => {
+        try {
+          if (fn()) {
+            const b = toolbarEl.querySelector('[data-cmd="' + cmd + '"]');
+            if (b) b.classList.add('active');
+          }
+        } catch (e) {}
+      });
+    } catch (e) {}
+  }
+  editorEl.addEventListener('keyup', updateToolbarState);
+  editorEl.addEventListener('mouseup', updateToolbarState);
+
+  // When user pastes, strip formatting from external apps (Word, Google Docs)
+  editorEl.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain') || '';
+    document.execCommand('insertText', false, text);
+  });
+
+  // Ensure pressing Enter creates a <p> by default (not a <div>)
+  editorEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      // Let the browser handle it but normalize blocks afterwards
+      setTimeout(() => {
+        // Wrap any naked divs as paragraphs
+        const divs = editorEl.querySelectorAll('div');
+        divs.forEach(d => {
+          if (!d.querySelector('div,p,h1,h2,h3,ul,ol,blockquote')) {
+            const p = document.createElement('p');
+            while (d.firstChild) p.appendChild(d.firstChild);
+            d.parentNode.replaceChild(p, d);
+          }
+        });
+      }, 0);
+    }
   });
 }
 
