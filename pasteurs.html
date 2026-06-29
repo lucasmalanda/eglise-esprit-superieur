@@ -1666,6 +1666,7 @@
     align-items: flex-start;
     justify-content: center;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 30px 20px;
   }
   .res-viewer.show { display: flex; }
@@ -1674,7 +1675,7 @@
     max-width: 880px;
     background: var(--bg-cream);
     border-radius: 18px;
-    overflow: hidden;
+    overflow: visible; /* let inner content flow; parent scrolls */
     animation: rise-fade .35s cubic-bezier(0.16, 1, 0.3, 1);
   }
   @keyframes rise-fade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -1796,9 +1797,12 @@
     .res-toolbar { flex-direction: column; align-items: stretch; }
     .res-grid { grid-template-columns: 1fr; }
     .res-viewer { padding: 0; align-items: stretch; }
-    .res-viewer-content { border-radius: 0; }
-    .res-viewer-body { padding: 22px 20px 28px; }
+    .res-viewer-content { border-radius: 0; min-height: 100%; }
+    .res-viewer-body { padding: 22px 20px 32px; }
     .res-viewer-title { font-size: 22px; }
+    /* On mobile, doc preview takes a smaller fixed height so summary is visible */
+    .res-viewer-doc-preview { aspect-ratio: auto; height: 200px; font-size: 48px; }
+    .res-viewer-doc-preview .label { font-size: 14px; }
   }
 
   /* ---------- PLACEHOLDER PANEL ---------- */
@@ -2409,10 +2413,15 @@
           <input type="text" id="resTitle" placeholder="Ex. La grâce qui transforme">
         </div>
 
+        <div class="field">
+          <label for="resSubtitle">Sous-titre <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel — thème, série, contexte)</span></label>
+          <input type="text" id="resSubtitle" placeholder="Ex. Série « Marcher par la foi » · Épisode 3">
+        </div>
+
         <div class="field-row">
           <div class="field">
-            <label for="resSpeaker">Intervenant</label>
-            <input type="text" id="resSpeaker" placeholder="Ex. Prophète King Eric">
+            <label for="resNotesBy">Notes prises par <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+            <input type="text" id="resNotesBy" placeholder="Ex. Pst Timothée">
           </div>
           <div class="field">
             <label for="resDate">Date</label>
@@ -4125,7 +4134,7 @@ function getFilteredResources() {
     .filter(r => resCurrentFilter === 'all' || r.type === resCurrentFilter)
     .filter(r => {
       if (!search) return true;
-      const haystack = [r.title, r.speaker, r.summary, (r.tags || []).join(' ')]
+      const haystack = [r.title, r.subtitle, r.notesBy, r.speaker, r.summary, (r.tags || []).join(' ')]
         .filter(Boolean).join(' ').toLowerCase();
       return haystack.includes(search);
     })
@@ -4164,13 +4173,17 @@ function renderResources() {
     const tagsHtml = (r.tags && r.tags.length)
       ? '<div class="res-card-tags">' + r.tags.map(t => '<span class="res-tag">' + escapeHtml(t) + '</span>').join('') + '</div>'
       : '';
+    // Display: subtitle (if any) under title, then date + notesBy in meta line
+    // Backward compat: old `speaker` field still shows if present and no notesBy
+    const meta = r.notesBy || r.speaker;
     card.innerHTML = thumbHtml +
       '<div class="res-card-body">' +
         '<div class="res-card-title">' + escapeHtml(r.title) + '</div>' +
+        (r.subtitle ? '<div style="font-size:12px;color:var(--gold);font-style:italic;margin-bottom:6px;font-family:var(--display);">' + escapeHtml(r.subtitle) + '</div>' : '') +
         '<div class="res-card-meta">' +
-          (r.speaker ? '<span>' + escapeHtml(r.speaker) + '</span>' : '') +
-          (r.speaker && r.date ? '<span class="dot"></span>' : '') +
           (r.date ? '<span>' + formatResDate(r.date) + '</span>' : '') +
+          (r.date && meta ? '<span class="dot"></span>' : '') +
+          (meta ? '<span>Notes : ' + escapeHtml(meta) + '</span>' : '') +
         '</div>' +
         (r.summary ? '<div class="res-card-summary">' + escapeHtml(r.summary) + '</div>' : '<div class="res-card-summary" style="font-style:italic;color:var(--muted-cream);">Pas de résumé pour l\'instant.</div>') +
         tagsHtml +
@@ -4211,8 +4224,17 @@ function openResourceViewer(r) {
     titleHtml = escapeHtml(words.join(' ')) + ' <em>' + escapeHtml(last) + '</em>';
   }
   document.getElementById('resViewerTitle').innerHTML = titleHtml;
-  document.getElementById('resViewerMeta').textContent =
-    [r.speaker, formatResDate(r.date)].filter(Boolean).join(' · ');
+  // Build meta: subtitle (italic gold) on its own line, then "Date · Notes prises par X"
+  const viewerNotesBy = r.notesBy || r.speaker;
+  let metaHtml = '';
+  if (r.subtitle) {
+    metaHtml += '<div style="font-family:var(--display);font-style:italic;color:var(--gold);font-size:15px;margin-bottom:6px;">' + escapeHtml(r.subtitle) + '</div>';
+  }
+  const bottomBits = [];
+  if (r.date) bottomBits.push(formatResDate(r.date));
+  if (viewerNotesBy) bottomBits.push('Notes prises par ' + viewerNotesBy);
+  if (bottomBits.length) metaHtml += '<div>' + escapeHtml(bottomBits.join(' · ')) + '</div>';
+  document.getElementById('resViewerMeta').innerHTML = metaHtml;
   const summaryWrap = document.getElementById('resViewerSummaryWrap');
   if (r.summary) {
     document.getElementById('resViewerSummary').textContent = r.summary;
@@ -4269,7 +4291,9 @@ function openResourceForm(r) {
   document.getElementById('resFormDelete').style.display = r ? 'inline-flex' : 'none';
   document.getElementById('resType').value = r ? r.type : 'cours';
   document.getElementById('resTitle').value = r ? r.title : '';
-  document.getElementById('resSpeaker').value = r ? (r.speaker || '') : '';
+  document.getElementById('resSubtitle').value = r ? (r.subtitle || '') : '';
+  // Backward compat: old "speaker" field becomes notesBy if no notesBy yet
+  document.getElementById('resNotesBy').value = r ? (r.notesBy || r.speaker || '') : '';
   document.getElementById('resDate').value = r ? (r.date || '') : new Date().toISOString().slice(0,10);
   document.getElementById('resVideoUrl').value = r ? (r.videoUrl || '') : '';
   document.getElementById('resDocUrl').value = r ? (r.docUrl || '') : '';
@@ -4289,7 +4313,10 @@ async function saveResourceFromForm() {
   const r = editingResource ? editingResource : { id: 'res_' + Date.now() + '_' + Math.random().toString(36).slice(2,6) };
   r.type = document.getElementById('resType').value;
   r.title = title;
-  r.speaker = document.getElementById('resSpeaker').value.trim();
+  r.subtitle = document.getElementById('resSubtitle').value.trim();
+  r.notesBy = document.getElementById('resNotesBy').value.trim();
+  // Clean up legacy field if present (we keep using subtitle/notesBy going forward)
+  if (r.speaker) delete r.speaker;
   r.date = document.getElementById('resDate').value;
   r.videoUrl = document.getElementById('resVideoUrl').value.trim();
   r.docUrl = document.getElementById('resDocUrl').value.trim();
