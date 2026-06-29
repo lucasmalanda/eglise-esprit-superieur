@@ -2485,10 +2485,16 @@
         <div class="res-hero-eyebrow">Bibliothèque · Esprit Supérieur</div>
         <h2 class="res-hero-title">Cours, prédications &amp; <em>ressources</em></h2>
         <p class="res-hero-sub">Retrouvez ici tous les enseignements partagés au sein de l'église — vidéos, documents et résumés à consulter en tout temps.</p>
-        <button class="res-add-btn" id="resAddBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Ajouter une ressource
-        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; position:relative;">
+          <button class="res-add-btn" id="resAddBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ajouter une ressource
+          </button>
+          <button class="res-add-btn" id="resPublishBtn" style="background:#fff;color:var(--ink);border:1px solid var(--ink);display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Publier les modifications
+          </button>
+        </div>
       </div>
 
       <!-- Toolbar: search + filters -->
@@ -2531,7 +2537,58 @@
       </div>
     </div>
 
-    <!-- ============ RESOURCE FORM MODAL ============ -->
+    <!-- Publish modal — guides the user to push ressources.json to GitHub -->
+    <div class="modal-overlay" id="resPublishOverlay">
+      <div class="modal" style="max-width: 560px;">
+        <div class="modal-header">
+          <h2>📤 Publier vos modifications</h2>
+          <button class="modal-close" id="resPublishClose" aria-label="Fermer">×</button>
+        </div>
+
+        <p style="font-size:14px;color:var(--muted-cream);line-height:1.6;margin-bottom:16px;">
+          Vos changements sont enregistrés sur votre appareil. Pour qu'ils soient visibles par tous les pasteurs, suivez ces 3 étapes :
+        </p>
+
+        <div style="background:var(--bg-cream);border-radius:12px;padding:18px 20px;margin-bottom:18px;">
+          <div style="display:flex;gap:14px;margin-bottom:14px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg-cream);display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:13px;">1</div>
+            <div style="flex:1;font-size:13px;line-height:1.5;">
+              <strong>Copiez le contenu</strong> du fichier mis à jour en cliquant sur le bouton ci-dessous.
+              <button class="btn btn-primary" id="resPublishCopy" style="margin-top:10px;width:100%;">
+                📋 Copier le contenu du fichier
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;margin-bottom:14px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg-cream);display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:13px;">2</div>
+            <div style="flex:1;font-size:13px;line-height:1.5;">
+              <strong>Allez sur GitHub</strong> et ouvrez le fichier <code style="background:#fff;padding:2px 6px;border-radius:4px;font-size:12px;">ressources.json</code> :
+              <a href="https://github.com/lucasmalanda/eglise-esprit-superieur/edit/main/ressources.json" target="_blank" class="btn btn-primary" style="margin-top:10px;width:100%;text-align:center;display:inline-flex;justify-content:center;text-decoration:none;">
+                🔗 Ouvrir le fichier sur GitHub
+              </a>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:14px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg-cream);display:flex;align-items:center;justify-content:center;font-weight:600;flex-shrink:0;font-size:13px;">3</div>
+            <div style="flex:1;font-size:13px;line-height:1.5;">
+              <strong>Remplacez tout le contenu</strong> du fichier (Ctrl+A puis coller), puis cliquez <strong>« Commit changes »</strong> en bas de la page GitHub.
+              <div style="margin-top:8px;color:var(--muted-cream);font-size:12px;font-style:italic;">
+                Vercel redéploie automatiquement en ~30 secondes. ✨
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="resPublishCancel">Plus tard</button>
+          <button class="btn btn-primary" id="resPublishDone">J'ai publié ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resource form modal -->
     <div class="modal-overlay" id="resFormOverlay">
       <div class="modal" style="max-width: 600px;">
         <div class="modal-header">
@@ -4258,12 +4315,22 @@ const RES_CONTEXT_LABELS = {
 };
 
 async function loadResources() {
-  if (storageAvailable) {
-    try {
-      const res = await window.storage.get(RES_STORAGE_KEY, true);
-      if (res && res.value) { resources = JSON.parse(res.value); return; }
-    } catch(e){}
+  // 1. Try to fetch the shared resources file from the server (Vercel/GitHub)
+  try {
+    const r = await fetch('ressources.json?t=' + Date.now(), { cache: 'no-store' });
+    if (r.ok) {
+      const data = await r.json();
+      if (data && Array.isArray(data.resources)) {
+        resources = data.resources;
+        // Mirror in localStorage as a cache so the site works offline too
+        try { localStorage.setItem(RES_STORAGE_KEY, JSON.stringify(resources)); } catch(e){}
+        return;
+      }
+    }
+  } catch (e) {
+    // Network error or file not found — silently fall through to local
   }
+  // 2. Fallback to localStorage (own edits not yet pushed, or offline)
   try {
     const local = localStorage.getItem(RES_STORAGE_KEY);
     if (local) resources = JSON.parse(local);
@@ -4271,8 +4338,47 @@ async function loadResources() {
 }
 async function saveResources() {
   const json = JSON.stringify(resources);
-  if (storageAvailable) { try { await window.storage.set(RES_STORAGE_KEY, json, true); } catch(e){} }
+  // Save to localStorage so the user sees their changes immediately
   try { localStorage.setItem(RES_STORAGE_KEY, json); } catch(e){}
+  // Mark that local changes are unpushed (used to show the "push to GitHub" hint)
+  try { localStorage.setItem(RES_STORAGE_KEY + ':unpushed', '1'); } catch(e){}
+  // Update the "publish" button visibility
+  refreshPublishHint();
+}
+
+// Build the JSON file content to be pushed to GitHub
+function buildResourcesJsonForExport() {
+  const data = {
+    version: 1,
+    updated_at: new Date().toISOString().slice(0, 10),
+    resources: resources
+  };
+  return JSON.stringify(data, null, 2);
+}
+
+// Copy the JSON to clipboard and guide the user to GitHub
+async function copyResourcesJsonForPush() {
+  const json = buildResourcesJsonForExport();
+  try {
+    await navigator.clipboard.writeText(json);
+    showToast('📋 JSON copié — collez-le sur GitHub dans ressources.json');
+  } catch (e) {
+    // Fallback: show a textarea so they can copy manually
+    window.prompt('Copiez ce contenu et collez-le dans ressources.json sur GitHub :', json);
+  }
+}
+
+function refreshPublishHint() {
+  const btn = document.getElementById('resPublishBtn');
+  if (!btn) return;
+  let unpushed = false;
+  try { unpushed = localStorage.getItem(RES_STORAGE_KEY + ':unpushed') === '1'; } catch(e){}
+  btn.style.display = unpushed ? 'inline-flex' : 'none';
+}
+
+function markAsPushed() {
+  try { localStorage.removeItem(RES_STORAGE_KEY + ':unpushed'); } catch(e){}
+  refreshPublishHint();
 }
 
 // Extract YouTube video ID from any YouTube URL
@@ -4572,9 +4678,13 @@ async function deleteResource(r) {
 }
 
 // Build a direct link to a specific resource that opens it on arrival
+// Uses ?ressource=... query parameter (not #fragment) because some apps
+// like WhatsApp on iOS strip the fragment from shared URLs.
 function buildResourceLink(r) {
   const url = new URL(window.location.href);
-  url.hash = 'ressource=' + r.id;
+  // Clean any existing query/hash to start fresh
+  url.hash = '';
+  url.search = '?ressource=' + encodeURIComponent(r.id);
   return url.toString();
 }
 
@@ -4589,9 +4699,11 @@ async function shareResourceLink(r) {
     '\n\nEspace pasteurs — Église Esprit Supérieur';
 
   // Try native share on mobile (opens WhatsApp, Mail, etc.)
-  if (navigator.canShare && navigator.share) {
+  // IMPORTANT: pass only `text` (not `url`) — iOS WhatsApp picks URL field
+  // and ignores text, so we put the link inside the text instead.
+  if (navigator.share) {
     try {
-      await navigator.share({ title: r.title, text: shareText, url: link });
+      await navigator.share({ title: r.title, text: shareText });
       return;
     } catch (e) {
       // User cancelled or share failed; fall back to copy
@@ -4607,12 +4719,21 @@ async function shareResourceLink(r) {
   }
 }
 
-// Check the URL hash for a pending resource to open (called after unlock)
+// Check the URL for a pending resource to open (called after unlock)
+// Supports both ?ressource=ID (new, recommended) and #ressource=ID (legacy)
 function openResourceFromHash() {
+  const search = window.location.search || '';
   const hash = window.location.hash || '';
-  const match = hash.match(/ressource=([a-zA-Z0-9_]+)/);
-  if (!match) return;
-  const id = match[1];
+  let id = null;
+  // Preferred: query parameter
+  const queryMatch = search.match(/[?&]ressource=([a-zA-Z0-9_]+)/);
+  if (queryMatch) id = queryMatch[1];
+  // Legacy: hash fragment
+  if (!id) {
+    const hashMatch = hash.match(/ressource=([a-zA-Z0-9_]+)/);
+    if (hashMatch) id = hashMatch[1];
+  }
+  if (!id) return;
   // Wait until resources are loaded
   const tryOpen = (attempts) => {
     const r = resources.find(x => x.id === id);
@@ -4626,8 +4747,8 @@ function openResourceFromHash() {
       if (panel) panel.classList.add('active');
       // Open the viewer
       openResourceViewer(r);
-      // Clean up the hash so refresh doesn't replay
-      try { history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e){}
+      // Clean up the URL so refresh doesn't replay
+      try { history.replaceState(null, '', window.location.pathname); } catch(e){}
     } else if (attempts > 0) {
       setTimeout(() => tryOpen(attempts - 1), 200);
     }
@@ -4638,14 +4759,38 @@ function openResourceFromHash() {
 function initResources() {
   loadResources().then(() => {
     renderResources();
-    // If URL contains #ressource=ID, open that resource automatically
+    // If URL contains ?ressource=ID or #ressource=ID, open that resource automatically
     openResourceFromHash();
+    // Show publish hint if there are unpushed local edits
+    refreshPublishHint();
   });
 
   // Initialize the rich-text editor for the resource form
   initRichEditor(document.getElementById('resSummary'), document.getElementById('resRteToolbar'));
 
   document.getElementById('resAddBtn').addEventListener('click', () => openResourceForm(null));
+
+  // Publish flow
+  document.getElementById('resPublishBtn').addEventListener('click', () => {
+    document.getElementById('resPublishOverlay').classList.add('show');
+  });
+  document.getElementById('resPublishClose').addEventListener('click', () => {
+    document.getElementById('resPublishOverlay').classList.remove('show');
+  });
+  document.getElementById('resPublishCancel').addEventListener('click', () => {
+    document.getElementById('resPublishOverlay').classList.remove('show');
+  });
+  document.getElementById('resPublishOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('resPublishOverlay')) {
+      document.getElementById('resPublishOverlay').classList.remove('show');
+    }
+  });
+  document.getElementById('resPublishCopy').addEventListener('click', copyResourcesJsonForPush);
+  document.getElementById('resPublishDone').addEventListener('click', () => {
+    markAsPushed();
+    document.getElementById('resPublishOverlay').classList.remove('show');
+    showToast('Merci ! Vos modifications seront visibles d\'ici 30 secondes.');
+  });
   document.getElementById('resFormClose').addEventListener('click', closeResourceForm);
   document.getElementById('resFormCancel').addEventListener('click', closeResourceForm);
   document.getElementById('resFormSave').addEventListener('click', saveResourceFromForm);
