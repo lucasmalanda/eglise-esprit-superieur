@@ -5761,6 +5761,53 @@ const GOALS_FS_DOC = 'goals';
 // Flag to prevent save loops when receiving updates from Firestore
 let goalsSyncingFromRemote = false;
 
+// 🌱 SEED — Données initiales à envoyer à Firebase si la base est vide
+// (reconstitué depuis les captures d'écran de l'espace pasteurs)
+// Ce seed est utilisé UNE SEULE FOIS : dès que Firebase a des données, il n'est plus utilisé
+const SEED_TIMESTAMP = '2026-09-25T14:55:00.000Z';
+function mkContrib(type, amount, name, note) {
+  return {
+    id: 'c_seed_' + Math.random().toString(36).slice(2, 10),
+    type: type,
+    amount: amount,
+    name: name || '',
+    note: note || '',
+    date: SEED_TIMESTAMP
+  };
+}
+const GOALS_SEED = [
+  {
+    id: 'g_seed_loyer_' + Math.random().toString(36).slice(2, 8),
+    name: "Remboursement du loyer de l'église",
+    description: '',
+    target: 80000,
+    collected: 3603,
+    iban: '',
+    twint: '',
+    updatedAt: SEED_TIMESTAMP,
+    contributions: [
+      // Reçus (8 dons — total 3603 CHF)
+      mkContrib('recu', 200, 'Iris'),
+      mkContrib('recu', 300, 'Amandine'),
+      mkContrib('recu', 400, 'Pasteur Lucas'),
+      mkContrib('recu', 1000, 'Pasteure Elisée'),
+      mkContrib('recu', 233, 'Béatrice'),
+      mkContrib('recu', 270, 'Anael'),
+      mkContrib('recu', 500, 'Veronique'),
+      mkContrib('recu', 700, 'Juslène'),
+      // Promesses (8 promesses — total 4750 CHF)
+      mkContrib('promesse', 400, 'Pasteur Satulu'),
+      mkContrib('promesse', 500, 'Bienvenue', 'entre 500 et 1000 fin septembre'),
+      mkContrib('promesse', 2000, 'Lydie'),
+      mkContrib('promesse', 450, 'Pasteur Jack'),
+      mkContrib('promesse', 300, 'Pasteur Laurent'),
+      mkContrib('promesse', 600, 'Pasteur Samuel'),
+      mkContrib('promesse', 300, 'Pasteure Esther Eli'),
+      mkContrib('promesse', 200, 'Pasteur Eric'),
+    ]
+  }
+];
+
 async function loadGoals() {
   // 1. Show local cache immediately (so UI isn't empty while Firestore loads)
   let hadLocalGoals = false;
@@ -5777,29 +5824,38 @@ async function loadGoals() {
       const doc = await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).get();
       if (doc.exists) {
         const data = doc.data();
-        if (data && Array.isArray(data.items)) {
+        if (data && Array.isArray(data.items) && data.items.length > 0) {
           // Firestore has data — this wins over local cache
           goals = data.items;
           try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals)); } catch(e){}
-        }
-      } else if (hadLocalGoals) {
-        // 🚀 MIGRATION: Firestore is empty but we have local goals from before Firebase
-        // Upload them so other devices can see them too
-        console.log('📤 Migration: envoi des objectifs locaux vers Firebase...');
-        try {
-          await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).set({
-            items: goals,
-            updatedAt: new Date().toISOString(),
-            _migratedFromLocal: true
-          });
-          console.log('✅ Migration réussie — ' + goals.length + ' objectif(s) synchronisé(s)');
-        } catch (migErr) {
-          console.warn('Migration failed:', migErr);
+          return;
         }
       }
+      // 🌱 SEED: Firestore is empty. Push local goals OR the built-in seed
+      const toPush = hadLocalGoals ? goals : GOALS_SEED;
+      const reason = hadLocalGoals ? 'local migration' : 'initial seed';
+      console.log('📤 Push vers Firebase (' + reason + ') — ' + toPush.length + ' objectif(s)');
+      try {
+        await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).set({
+          items: toPush,
+          updatedAt: new Date().toISOString(),
+          _sourceOfPush: reason
+        });
+        goals = toPush;
+        try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals)); } catch(e){}
+        console.log('✅ Push réussi vers Firebase');
+      } catch (migErr) {
+        console.warn('Push failed:', migErr);
+        // Fall back: at least use the seed locally so UI isn't empty
+        if (!hadLocalGoals) goals = GOALS_SEED;
+      }
     } catch (e) {
-      console.warn('Firestore load failed, using local cache:', e);
+      console.warn('Firestore load failed, using local cache/seed:', e);
+      if (!hadLocalGoals) goals = GOALS_SEED;
     }
+  } else if (!hadLocalGoals) {
+    // No Firebase, no local — use seed at least
+    goals = GOALS_SEED;
   }
 }
 
