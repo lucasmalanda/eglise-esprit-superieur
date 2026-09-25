@@ -1946,6 +1946,321 @@
     .res-viewer-doc-preview .label { font-size: 14px; }
   }
 
+  /* ---------- GOALS / OBJECTIFS PANEL ---------- */
+  .goals-hero {
+    background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+    color: var(--bg-cream);
+    border-radius: 16px;
+    padding: 32px 30px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .goals-hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212, 168, 90, 0.25), transparent 70%);
+    border-radius: 50%;
+  }
+  .goals-hero::after {
+    content: '🎯';
+    position: absolute;
+    top: 26px; right: 30px;
+    font-size: 30px;
+    opacity: 0.7;
+  }
+  .goals-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-bright);
+    font-weight: 600;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .goals-hero-title {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+    position: relative;
+    font-variation-settings: "opsz" 144, "SOFT" 50;
+  }
+  .goals-hero-title em { font-style: italic; color: var(--gold-bright); }
+  .goals-hero-sub {
+    color: rgba(246, 241, 230, 0.7);
+    font-size: 14px;
+    max-width: 540px;
+    margin-bottom: 22px;
+    line-height: 1.6;
+    position: relative;
+  }
+  .goals-add-btn {
+    background: var(--gold-bright);
+    color: var(--ink);
+    border: none;
+    padding: 13px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .goals-add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px -8px rgba(212, 168, 90, 0.5);
+  }
+  .goals-add-btn svg { width: 16px; }
+
+  .goal-card {
+    background: #fff;
+    border: 1px solid var(--line-cream);
+    border-radius: 16px;
+    padding: 28px 30px;
+    margin-bottom: 18px;
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .goal-card:hover {
+    box-shadow: 0 14px 30px -12px rgba(20, 21, 43, 0.15);
+  }
+  .goal-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .goal-card-title {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .goal-card-title em { font-style: italic; color: var(--gold); }
+  .goal-card-sub {
+    font-size: 13px;
+    color: var(--muted-cream);
+    line-height: 1.5;
+  }
+  .goal-card-menu {
+    display: flex;
+    gap: 6px;
+  }
+  .goal-btn-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--muted-cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s, color .2s;
+  }
+  .goal-btn-icon:hover { background: var(--bg-cream); color: var(--ink); }
+  .goal-btn-icon svg { width: 15px; }
+  .goal-btn-icon.del { color: var(--rose); }
+  .goal-btn-icon.del:hover { background: #fce8e3; color: #a82820; }
+
+  /* The gauge itself */
+  .gauge-wrap {
+    margin: 14px 0 20px;
+  }
+  .gauge-numbers {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .gauge-collected {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .gauge-collected em { font-style: italic; color: var(--gold); }
+  .gauge-target {
+    font-size: 15px;
+    color: var(--muted-cream);
+  }
+  .gauge-target strong { color: var(--ink); font-weight: 600; }
+  .gauge-bar {
+    position: relative;
+    background: var(--bg-cream);
+    border-radius: 100px;
+    height: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(20, 21, 43, 0.08);
+  }
+  .gauge-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-bright) 0%, var(--gold) 100%);
+    border-radius: 100px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 12px rgba(212, 168, 90, 0.4);
+    position: relative;
+  }
+  .gauge-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    animation: gauge-shine 2.5s ease-in-out infinite;
+  }
+  @keyframes gauge-shine {
+    0% { transform: translateX(-100%); }
+    50%, 100% { transform: translateX(200%); }
+  }
+  .gauge-fill.complete {
+    background: linear-gradient(90deg, #7ba85e 0%, #5a8c3f 100%);
+    box-shadow: 0 0 14px rgba(123, 168, 94, 0.5);
+  }
+  .gauge-percent-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .gauge-percent {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--gold);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .gauge-percent.complete { color: #5a8c3f; }
+  .gauge-remaining {
+    color: var(--muted-cream);
+    font-size: 13px;
+  }
+  .gauge-remaining strong { color: var(--ink); font-weight: 600; }
+
+  .goal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .goal-action {
+    padding: 11px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--line-cream);
+    background: #fff;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .goal-action:hover { background: var(--bg-cream); }
+  .goal-action svg { width: 14px; }
+  .goal-action.primary {
+    background: var(--ink);
+    color: var(--bg-cream);
+    border-color: var(--ink);
+  }
+  .goal-action.primary:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .goal-action.contribute {
+    background: #7ba85e;
+    color: #fff;
+    border-color: #7ba85e;
+  }
+  .goal-action.contribute:hover { background: #5a8c3f; border-color: #5a8c3f; }
+  .goal-action.share {
+    background: #25D366;
+    color: #fff;
+    border-color: #25D366;
+  }
+  .goal-action.share:hover { background: #1da851; border-color: #1da851; }
+
+  /* Bank details block (shown when share is clicked or in a card) */
+  .goal-bank {
+    margin-top: 16px;
+    padding: 16px 18px;
+    background: var(--bg-cream);
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.7;
+    display: none;
+  }
+  .goal-bank.show { display: block; }
+  .goal-bank-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+  }
+  .goal-bank-label {
+    color: var(--muted-cream);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .goal-bank-value {
+    font-family: var(--display);
+    font-weight: 500;
+    color: var(--ink);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+  .goal-bank-copy {
+    background: none;
+    border: none;
+    color: var(--gold);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background .2s;
+  }
+  .goal-bank-copy:hover { background: rgba(184, 137, 61, 0.12); }
+
+  .goals-empty {
+    background: #fff;
+    border: 2px dashed var(--line-cream);
+    border-radius: 14px;
+    padding: 50px 30px;
+    text-align: center;
+    color: var(--muted-cream);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 16px;
+    font-variation-settings: "opsz" 144, "SOFT" 100;
+  }
+  .goals-empty p { margin: 0; }
+
+  @media (max-width: 768px) {
+    .goals-hero { padding: 24px 20px; }
+    .goals-hero-title { font-size: 24px; }
+    .goal-card { padding: 22px 20px; }
+    .goal-card-title { font-size: 19px; }
+    .gauge-collected { font-size: 26px; }
+    .goal-actions { flex-direction: column; }
+    .goal-action { width: 100%; justify-content: center; }
+    .goal-card-menu { align-self: flex-end; }
+  }
+
   /* ---------- PLACEHOLDER PANEL ---------- */
   .placeholder-panel {
     text-align: center;
@@ -2156,6 +2471,7 @@
     <button class="ph-tab" data-panel="whatsapp">💬 Rappels WhatsApp</button>
     <button class="ph-tab" data-panel="priere">🎥 Visioconférence</button>
     <button class="ph-tab" data-panel="ressources">📖 Ressources</button>
+    <button class="ph-tab" data-panel="objectifs">🎯 Objectifs</button>
     <button class="ph-tab" data-panel="annonces">📣 Annonces (à venir)</button>
   </nav>
 
@@ -2692,6 +3008,96 @@
         </div>
       </div>
     </div>
+    <!-- OBJECTIFS PANEL -->
+    <section class="ph-panel" id="panel-objectifs">
+
+      <!-- Hero -->
+      <div class="goals-hero">
+        <div class="goals-eyebrow">Financement · Esprit Supérieur</div>
+        <h2 class="goals-hero-title">Objectifs <em>financiers</em></h2>
+        <p class="goals-hero-sub">Suivez la progression des collectes en cours pour l'église — loyer, événements, missions. Chaque contribution nous rapproche du but.</p>
+        <button class="goals-add-btn" id="goalsAddBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nouvel objectif
+        </button>
+      </div>
+
+      <!-- List of goals -->
+      <div id="goalsList"></div>
+
+    </section>
+
+    <!-- ============ GOAL FORM MODAL ============ -->
+    <div class="modal-overlay" id="goalFormOverlay">
+      <div class="modal" style="max-width: 560px;">
+        <div class="modal-header">
+          <h2 id="goalFormTitle">Nouvel objectif</h2>
+          <button class="modal-close" id="goalFormClose" aria-label="Fermer">×</button>
+        </div>
+
+        <div class="field">
+          <label for="goalName">Nom de l'objectif</label>
+          <input type="text" id="goalName" placeholder="Ex. Loyer de l'église 2026" maxlength="80">
+        </div>
+
+        <div class="field">
+          <label for="goalDesc">Description <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+          <input type="text" id="goalDesc" placeholder="Ex. Collecte pour le loyer annuel de la salle">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="goalTarget">Objectif à atteindre (CHF)</label>
+            <input type="number" id="goalTarget" placeholder="80000" min="1" step="100">
+          </div>
+          <div class="field">
+            <label for="goalCollected">Déjà collecté (CHF)</label>
+            <input type="number" id="goalCollected" placeholder="0" min="0" step="1">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="goalIban">IBAN de l'église <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+          <input type="text" id="goalIban" placeholder="CH00 0000 0000 0000 0000 0">
+        </div>
+
+        <div class="field">
+          <label for="goalTwint">Numéro TWINT <span style="color: var(--muted-cream); font-weight: 400; font-size: 11px;">(optionnel)</span></label>
+          <input type="tel" id="goalTwint" placeholder="+41 77 982 42 19">
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="goalFormCancel">Annuler</button>
+          <button class="btn btn-danger" id="goalFormDelete" style="display:none;">Supprimer</button>
+          <button class="btn btn-primary" id="goalFormSave">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CONTRIBUTION MODAL ============ -->
+    <div class="modal-overlay" id="goalContribOverlay">
+      <div class="modal" style="max-width: 460px;">
+        <div class="modal-header">
+          <h2>Ajouter une contribution</h2>
+          <button class="modal-close" id="goalContribClose" aria-label="Fermer">×</button>
+        </div>
+
+        <p style="font-size:13px; color: var(--muted-cream); margin-bottom: 14px; line-height: 1.5;">
+          Le montant sera ajouté au total collecté de l'objectif.
+        </p>
+
+        <div class="field">
+          <label for="goalContribAmount">Montant à ajouter (CHF)</label>
+          <input type="number" id="goalContribAmount" placeholder="500" min="1" step="1" autofocus>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="goalContribCancel">Annuler</button>
+          <button class="btn btn-primary" id="goalContribSave">Ajouter au total</button>
+        </div>
+      </div>
+    </div>
+
     <section class="ph-panel" id="panel-annonces">
       <div class="placeholder-panel">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
@@ -3006,6 +3412,7 @@ function unlock() {
   initCalendar().then(() => { initSlots(); initWhatsApp(); });
   initPrayerRoom();
   initResources();
+  initGoals();
 }
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -4962,6 +5369,279 @@ function initRichEditor(editorEl, toolbarEl) {
         });
       }, 0);
     }
+  });
+}
+
+// ============================================================
+//  OBJECTIFS FINANCIERS — Fundraising goals with visual gauge
+// ============================================================
+const GOALS_STORAGE_KEY = 'pastoral-goals-v1';
+let goals = [];
+let editingGoal = null;
+let contributingGoal = null;
+
+async function loadGoals() {
+  try {
+    const local = localStorage.getItem(GOALS_STORAGE_KEY);
+    if (local) goals = JSON.parse(local);
+  } catch(e){}
+}
+async function saveGoals() {
+  const json = JSON.stringify(goals);
+  try { localStorage.setItem(GOALS_STORAGE_KEY, json); } catch(e){}
+}
+
+// Format a CHF amount with Swiss thousand separators
+function formatCHF(n) {
+  if (n === null || n === undefined || isNaN(n)) return '0';
+  return Math.round(n).toLocaleString('fr-CH').replace(/,/g, "'");
+}
+
+function renderGoals() {
+  const list = document.getElementById('goalsList');
+  list.innerHTML = '';
+  if (!goals.length) {
+    list.innerHTML = '<div class="goals-empty"><p>Aucun objectif pour l\'instant. Cliquez sur « Nouvel objectif » pour en créer un.</p></div>';
+    return;
+  }
+  goals.forEach(g => {
+    const target = Math.max(1, Number(g.target) || 0);
+    const collected = Math.max(0, Number(g.collected) || 0);
+    const pct = Math.min(100, (collected / target) * 100);
+    const isComplete = collected >= target;
+    const remaining = Math.max(0, target - collected);
+
+    const card = document.createElement('div');
+    card.className = 'goal-card';
+    card.dataset.goalId = g.id;
+
+    // Italicize collected amount's currency for style
+    card.innerHTML =
+      '<div class="goal-card-head">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div class="goal-card-title">' + escapeHtml(g.name) + '</div>' +
+          (g.description ? '<div class="goal-card-sub">' + escapeHtml(g.description) + '</div>' : '') +
+        '</div>' +
+        '<div class="goal-card-menu">' +
+          '<button class="goal-btn-icon" data-act="edit" title="Modifier"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+          '<button class="goal-btn-icon del" data-act="del" title="Supprimer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="gauge-wrap">' +
+        '<div class="gauge-numbers">' +
+          '<div class="gauge-collected">' + formatCHF(collected) + ' <em>CHF</em></div>' +
+          '<div class="gauge-target">sur <strong>' + formatCHF(target) + ' CHF</strong></div>' +
+        '</div>' +
+        '<div class="gauge-bar">' +
+          '<div class="gauge-fill' + (isComplete ? ' complete' : '') + '" style="width:0%;" data-target-width="' + pct.toFixed(1) + '%"></div>' +
+        '</div>' +
+        '<div class="gauge-percent-row">' +
+          '<div class="gauge-percent' + (isComplete ? ' complete' : '') + '">' + pct.toFixed(0) + '%</div>' +
+          '<div class="gauge-remaining">' +
+            (isComplete
+              ? '🎉 Objectif atteint !'
+              : 'Reste : <strong>' + formatCHF(remaining) + ' CHF</strong>') +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="goal-actions">' +
+        '<button class="goal-action contribute" data-act="contribute">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+          ' Ajouter une contribution' +
+        '</button>' +
+        ((g.iban || g.twint) ? '<button class="goal-action share" data-act="share">' +
+          '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.8 3 1.2 4.8 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2z"/></svg>' +
+          ' Partager les coordonnées' +
+        '</button>' : '') +
+        ((g.iban || g.twint) ? '<button class="goal-action" data-act="toggleBank">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>' +
+          ' Voir IBAN / TWINT' +
+        '</button>' : '') +
+      '</div>' +
+      ((g.iban || g.twint) ? '<div class="goal-bank" id="bank-' + g.id + '">' +
+        (g.iban ? '<div class="goal-bank-row">' +
+          '<div><div class="goal-bank-label">IBAN</div><div class="goal-bank-value">' + escapeHtml(g.iban) + '</div></div>' +
+          '<button class="goal-bank-copy" data-copy="' + escapeHtml(g.iban) + '">📋 Copier</button>' +
+        '</div>' : '') +
+        (g.twint ? '<div class="goal-bank-row">' +
+          '<div><div class="goal-bank-label">TWINT</div><div class="goal-bank-value">' + escapeHtml(g.twint) + '</div></div>' +
+          '<button class="goal-bank-copy" data-copy="' + escapeHtml(g.twint) + '">📋 Copier</button>' +
+        '</div>' : '') +
+      '</div>' : '');
+
+    list.appendChild(card);
+  });
+
+  // Attach handlers
+  list.querySelectorAll('.goal-card').forEach(card => {
+    const id = card.dataset.goalId;
+    const g = goals.find(x => x.id === id);
+    if (!g) return;
+
+    card.querySelectorAll('[data-act]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const act = btn.dataset.act;
+        if (act === 'edit') openGoalForm(g);
+        if (act === 'del') deleteGoal(g);
+        if (act === 'contribute') openContribModal(g);
+        if (act === 'share') shareGoalCoords(g);
+        if (act === 'toggleBank') {
+          const bank = document.getElementById('bank-' + g.id);
+          if (bank) bank.classList.toggle('show');
+        }
+      });
+    });
+
+    card.querySelectorAll('.goal-bank-copy').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const val = btn.dataset.copy;
+        try {
+          await navigator.clipboard.writeText(val);
+          showToast('Copié ✓');
+        } catch (err) {
+          window.prompt('Copiez cette valeur :', val);
+        }
+      });
+    });
+  });
+
+  // Animate gauges filling up
+  setTimeout(() => {
+    list.querySelectorAll('.gauge-fill').forEach(el => {
+      el.style.width = el.dataset.targetWidth || '0%';
+    });
+  }, 100);
+}
+
+function openGoalForm(g) {
+  editingGoal = g || null;
+  document.getElementById('goalFormTitle').textContent = g ? 'Modifier l\'objectif' : 'Nouvel objectif';
+  document.getElementById('goalFormDelete').style.display = g ? 'inline-flex' : 'none';
+  document.getElementById('goalName').value = g ? g.name : '';
+  document.getElementById('goalDesc').value = g ? (g.description || '') : '';
+  document.getElementById('goalTarget').value = g ? g.target : '';
+  document.getElementById('goalCollected').value = g ? g.collected : '';
+  document.getElementById('goalIban').value = g ? (g.iban || '') : '';
+  document.getElementById('goalTwint').value = g ? (g.twint || '') : '';
+  document.getElementById('goalFormOverlay').classList.add('show');
+}
+function closeGoalForm() {
+  document.getElementById('goalFormOverlay').classList.remove('show');
+  editingGoal = null;
+}
+
+async function saveGoalFromForm() {
+  const name = document.getElementById('goalName').value.trim();
+  if (!name) { showToast('Donnez un nom à l\'objectif'); return; }
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  if (!target || target < 1) { showToast('Indiquez un montant à atteindre'); return; }
+  const collected = parseFloat(document.getElementById('goalCollected').value) || 0;
+
+  const g = editingGoal ? editingGoal : { id: 'g_' + Date.now() + '_' + Math.random().toString(36).slice(2,6) };
+  g.name = name;
+  g.description = document.getElementById('goalDesc').value.trim();
+  g.target = target;
+  g.collected = collected;
+  g.iban = document.getElementById('goalIban').value.trim();
+  g.twint = document.getElementById('goalTwint').value.trim();
+  g.updatedAt = new Date().toISOString();
+
+  if (!editingGoal) goals.push(g);
+  await saveGoals();
+  closeGoalForm();
+  renderGoals();
+  showToast(editingGoal ? 'Objectif modifié ✓' : 'Objectif créé ✓');
+}
+
+async function deleteGoal(g) {
+  if (!confirm('Supprimer l\'objectif « ' + g.name + ' » ?')) return;
+  goals = goals.filter(x => x.id !== g.id);
+  await saveGoals();
+  renderGoals();
+}
+
+// Contribution modal
+function openContribModal(g) {
+  contributingGoal = g;
+  document.getElementById('goalContribAmount').value = '';
+  document.getElementById('goalContribOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('goalContribAmount').focus(), 100);
+}
+function closeContribModal() {
+  document.getElementById('goalContribOverlay').classList.remove('show');
+  contributingGoal = null;
+}
+async function saveContribution() {
+  if (!contributingGoal) return closeContribModal();
+  const amount = parseFloat(document.getElementById('goalContribAmount').value);
+  if (!amount || amount < 1) { showToast('Indiquez un montant valide'); return; }
+  contributingGoal.collected = (Number(contributingGoal.collected) || 0) + amount;
+  contributingGoal.updatedAt = new Date().toISOString();
+  await saveGoals();
+  const wasComplete = contributingGoal.collected >= contributingGoal.target;
+  closeContribModal();
+  renderGoals();
+  showToast(wasComplete ? '🎉 Objectif atteint !' : '+' + formatCHF(amount) + ' CHF ajouté ✓');
+}
+
+// Share coordinates via native share / clipboard
+async function shareGoalCoords(g) {
+  const target = Math.max(1, Number(g.target) || 0);
+  const collected = Math.max(0, Number(g.collected) || 0);
+  const pct = Math.min(100, (collected / target) * 100);
+  const remaining = Math.max(0, target - collected);
+
+  let msg = '🎯 *' + g.name + '*\n\n' +
+    'Objectif : ' + formatCHF(target) + ' CHF\n' +
+    'Collecté : ' + formatCHF(collected) + ' CHF (' + pct.toFixed(0) + '%)\n' +
+    (collected >= target ? '✨ Objectif atteint, merci à tous !' : 'Reste : ' + formatCHF(remaining) + ' CHF') + '\n\n';
+
+  if (g.iban || g.twint) {
+    msg += '💳 *Pour contribuer :*\n';
+    if (g.iban) msg += 'IBAN : ' + g.iban + '\n';
+    if (g.twint) msg += 'TWINT : ' + g.twint + '\n';
+  }
+  msg += '\n🙏 Merci pour votre soutien !\n*Église Esprit Supérieur*';
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: g.name, text: msg });
+      return;
+    } catch (e) { /* fallback */ }
+  }
+  try {
+    await navigator.clipboard.writeText(msg);
+    showToast('Message copié ✓ Collez-le dans WhatsApp');
+  } catch (e) {
+    window.prompt('Copiez ce message :', msg);
+  }
+}
+
+function initGoals() {
+  loadGoals().then(() => renderGoals());
+
+  document.getElementById('goalsAddBtn').addEventListener('click', () => openGoalForm(null));
+  document.getElementById('goalFormClose').addEventListener('click', closeGoalForm);
+  document.getElementById('goalFormCancel').addEventListener('click', closeGoalForm);
+  document.getElementById('goalFormSave').addEventListener('click', saveGoalFromForm);
+  document.getElementById('goalFormDelete').addEventListener('click', () => {
+    if (editingGoal) deleteGoal(editingGoal);
+    closeGoalForm();
+  });
+  document.getElementById('goalFormOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('goalFormOverlay')) closeGoalForm();
+  });
+
+  document.getElementById('goalContribClose').addEventListener('click', closeContribModal);
+  document.getElementById('goalContribCancel').addEventListener('click', closeContribModal);
+  document.getElementById('goalContribSave').addEventListener('click', saveContribution);
+  document.getElementById('goalContribOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('goalContribOverlay')) closeContribModal();
+  });
+  document.getElementById('goalContribAmount').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveContribution();
   });
 }
 
