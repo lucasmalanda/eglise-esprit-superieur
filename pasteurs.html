@@ -6361,15 +6361,79 @@ function initGoals() {
   }
 }
 
-// Share a direct link to the Objectifs page
+// Encode current goals state into a compact URL-safe string
+// Strips out sensitive donor names — only aggregate contributions data is shared
+function encodeGoalsForSharing() {
+  const sanitized = goals.map(g => ({
+    id: g.id,
+    name: g.name,
+    description: g.description || '',
+    target: g.target,
+    collected: g.collected,
+    iban: g.iban || '',
+    twint: g.twint || '',
+    // Contributions: keep type/amount only, strip names/notes for privacy
+    c: (g.contributions || []).map(c => ({
+      t: c.type || 'recu',
+      a: c.amount
+    }))
+  }));
+  const json = JSON.stringify({ v: 1, g: sanitized });
+  // Base64 encode, then make URL-safe
+  return btoa(unescape(encodeURIComponent(json)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+// Decode shared goals from URL fragment
+function decodeGoalsFromString(encoded) {
+  try {
+    // Undo URL-safe base64
+    let b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    // Add padding back
+    while (b64.length % 4) b64 += '=';
+    const json = decodeURIComponent(escape(atob(b64)));
+    const data = JSON.parse(json);
+    if (!data || !Array.isArray(data.g)) return null;
+    // Rehydrate: rebuild goals with contributions (anonymous)
+    return data.g.map(g => ({
+      id: g.id,
+      name: g.name,
+      description: g.description || '',
+      target: g.target,
+      collected: g.collected,
+      iban: g.iban || '',
+      twint: g.twint || '',
+      contributions: (g.c || []).map((c, i) => ({
+        id: 'shared_' + i,
+        type: c.t || 'recu',
+        amount: c.a,
+        name: '',
+        note: '',
+        date: ''
+      })),
+      _shared: true // marker for shared view
+    }));
+  } catch (e) {
+    return null;
+  }
+}
+
+// Share a direct link to the Objectifs page — INCLUDES a snapshot of current goals
 async function shareGoalsPageLink() {
   const url = new URL(window.location.href);
-  url.hash = '';
   url.search = '?panel=objectifs';
+  // Encode current goals state in the URL fragment (never sent to server, stays client-side)
+  if (goals.length) {
+    url.hash = 'jauge=' + encodeGoalsForSharing();
+  } else {
+    url.hash = '';
+  }
   const link = url.toString();
   const msg = '🎯 *Objectifs financiers — Église Esprit Supérieur*\n\n' +
-    'Consultez la progression des collectes en cours :\n' + link +
-    '\n\n_Accès réservé aux pasteurs (mot de passe requis)_';
+    'Voici l\'état actuel de nos collectes en cours :\n' + link +
+    '\n\n_Cliquez le lien pour voir la jauge de progression en direct._';
   if (navigator.share) {
     try {
       await navigator.share({ title: 'Objectifs — Esprit Supérieur', text: msg });
@@ -6378,10 +6442,56 @@ async function shareGoalsPageLink() {
   }
   try {
     await navigator.clipboard.writeText(link);
-    showToast('Lien copié ✓');
+    showToast('Lien copié ✓ (avec l\'état actuel de la jauge)');
   } catch(e) {
     window.prompt('Copiez ce lien :', link);
   }
+}
+
+// Flag: are we currently displaying a shared snapshot?
+let sharedViewActive = false;
+
+// Check the URL for shared goals data (#jauge=...) and display them in read-only view
+function checkForSharedGoalsView() {
+  const hash = window.location.hash || '';
+  const match = hash.match(/jauge=([A-Za-z0-9_-]+)/);
+  if (!match) return false;
+  const decoded = decodeGoalsFromString(match[1]);
+  if (!decoded || !decoded.length) return false;
+  // Replace in-memory goals with the shared snapshot
+  goals = decoded;
+  sharedViewActive = true;
+  renderGoals();
+  // Show a banner at the top of the Objectifs panel
+  showSharedViewBanner();
+  return true;
+}
+
+function showSharedViewBanner() {
+  const panel = document.getElementById('panel-objectifs');
+  if (!panel) return;
+  // Remove any existing banner first
+  const existing = panel.querySelector('.shared-view-banner');
+  if (existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.className = 'shared-view-banner';
+  banner.style.cssText = 'background:linear-gradient(135deg,rgba(212,168,90,0.15),rgba(184,137,61,0.08));border:1px solid rgba(184,137,61,0.35);border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;font-size:13px;line-height:1.5;color:var(--ink);';
+  banner.innerHTML =
+    '<div style="font-size:22px;">👁️</div>' +
+    '<div style="flex:1;">' +
+      '<strong>Vous consultez une vue partagée</strong><br>' +
+      '<span style="color:var(--muted-cream);font-size:12px;">Instantané des objectifs financiers de l\'église, partagé par WhatsApp. Pour voir la version à jour, demandez un nouveau lien.</span>' +
+    '</div>' +
+    '<button id="exitSharedView" style="background:var(--ink);color:var(--bg-cream);border:none;padding:8px 14px;border-radius:100px;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;">Voir mes objectifs</button>';
+  panel.insertBefore(banner, panel.firstChild);
+  // Wire up the exit button
+  document.getElementById('exitSharedView').addEventListener('click', () => {
+    // Clear the hash and reload goals from local
+    try { history.replaceState(null, '', window.location.pathname + '?panel=objectifs'); } catch(e){}
+    sharedViewActive = false;
+    banner.remove();
+    loadGoals().then(() => renderGoals());
+  });
 }
 
 // Open a specific panel from URL (?panel=objectifs, ?panel=ressources, etc.)
@@ -6397,8 +6507,16 @@ function openPanelFromUrl() {
     document.querySelectorAll('.ph-panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     panel.classList.add('active');
-    // Clean the URL so refresh doesn't replay
-    try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+    // If URL contains shared goals data (#jauge=...), decode and display
+    // (do this BEFORE cleaning the URL, and we don't clean the URL if there's a shared view)
+    const hasSharedData = /jauge=/.test(window.location.hash || '');
+    if (hasSharedData && panelName === 'objectifs') {
+      // Delay slightly to let initGoals load first
+      setTimeout(checkForSharedGoalsView, 200);
+    } else {
+      // Clean the URL so refresh doesn't replay
+      try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+    }
   }
 }
 
