@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Objectifs — Église Esprit Supérieur</title>
+  <!-- Redirection instantanée (fallback si JavaScript désactivé) -->
+  <meta http-equiv="refresh" content="0; url=/pasteurs.html?panel=objectifs">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Outfit:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #f6f1e6;
+      --bg-night: #0e1230;
+      --bg-night-deep: #070924;
+      --gold: #b8893d;
+      --gold-bright: #d4a85a;
+      --ink: #14152b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-cream);
+      color: var(--ink);
+      font-family: 'Outfit', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .redirect-card {
+      background: linear-gradient(135deg, var(--bg-night), var(--bg-night-deep));
+      color: var(--bg-cream);
+      border-radius: 20px;
+      padding: 40px 34px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -20px rgba(20, 21, 43, 0.3);
+    }
+    .redirect-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(212, 168, 90, 0.3), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .redirect-icon {
+      font-size: 44px;
+      margin-bottom: 16px;
+      display: inline-block;
+      animation: pulse 1.5s ease-in-out infinite;
+      position: relative;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+    .redirect-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold-bright);
+      font-weight: 600;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .redirect-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 26px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .redirect-title em { font-style: italic; color: var(--gold-bright); font-weight: 400; }
+    .redirect-msg {
+      color: rgba(246, 241, 230, 0.75);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .redirect-loader {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(246, 241, 230, 0.15);
+      border-top-color: var(--gold-bright);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .redirect-link {
+      display: inline-block;
+      color: var(--gold-bright);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212, 168, 90, 0.4);
+      padding-bottom: 2px;
+      font-size: 13px;
+      font-weight: 500;
+      position: relative;
+    }
+    .redirect-link:hover { color: #fff; border-color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="redirect-card">
+    <div class="redirect-eyebrow">Église Esprit Supérieur</div>
+    <div class="redirect-icon">🎯</div>
+    <h1 class="redirect-title">Objectifs <em>financiers</em></h1>
+    <div class="redirect-loader" role="status" aria-label="Chargement"></div>
+    <p class="redirect-msg">Redirection vers l'espace pasteurs…</p>
+    <a href="/pasteurs.html?panel=objectifs" class="redirect-link">Cliquez ici si la page ne s'ouvre pas</a>
+  </div>
+
+  <script>
+    // Redirection JavaScript immédiate (plus rapide que le meta refresh)
+    // On utilise replace() pour ne pas polluer l'historique du navigateur
+    (function() {
+      try {
+        window.location.replace('/pasteurs.html?panel=objectifs');
+      } catch (e) {
+        // Fallback : le meta refresh dans le <head> prendra le relais
+      }
+    })();
+  </script>
+</body>
+</html>
