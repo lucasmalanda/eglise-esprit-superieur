@@ -5763,9 +5763,13 @@ let goalsSyncingFromRemote = false;
 
 async function loadGoals() {
   // 1. Show local cache immediately (so UI isn't empty while Firestore loads)
+  let hadLocalGoals = false;
   try {
     const local = localStorage.getItem(GOALS_STORAGE_KEY);
-    if (local) goals = JSON.parse(local);
+    if (local) {
+      goals = JSON.parse(local);
+      hadLocalGoals = Array.isArray(goals) && goals.length > 0;
+    }
   } catch(e){}
   // 2. Then try Firestore (source of truth for shared data)
   if (firebaseDb) {
@@ -5774,9 +5778,23 @@ async function loadGoals() {
       if (doc.exists) {
         const data = doc.data();
         if (data && Array.isArray(data.items)) {
+          // Firestore has data — this wins over local cache
           goals = data.items;
-          // Update local cache
           try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals)); } catch(e){}
+        }
+      } else if (hadLocalGoals) {
+        // 🚀 MIGRATION: Firestore is empty but we have local goals from before Firebase
+        // Upload them so other devices can see them too
+        console.log('📤 Migration: envoi des objectifs locaux vers Firebase...');
+        try {
+          await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).set({
+            items: goals,
+            updatedAt: new Date().toISOString(),
+            _migratedFromLocal: true
+          });
+          console.log('✅ Migration réussie — ' + goals.length + ' objectif(s) synchronisé(s)');
+        } catch (migErr) {
+          console.warn('Migration failed:', migErr);
         }
       }
     } catch (e) {
@@ -5808,19 +5826,49 @@ async function saveGoals() {
   }
 }
 
-// Small visual indicator: 🟢 synchronisé / 🟡 en cours / 🔴 erreur
-function updateSyncStatus(state) {
+// Detailed visual indicator with helpful messages
+function updateSyncStatus(state, detail) {
   const el = document.getElementById('goalsSyncStatus');
   if (!el) return;
   if (state === 'synced') {
-    el.innerHTML = '<span style="color:#5a8c3f;">●</span> Synchronisé';
-    el.style.color = 'var(--muted-cream)';
+    el.innerHTML = '<span style="color:#5a8c3f;">●</span> Synchronisé Firebase ✓';
   } else if (state === 'syncing') {
     el.innerHTML = '<span style="color:var(--gold);">●</span> Synchronisation…';
   } else if (state === 'offline') {
-    el.innerHTML = '<span style="color:var(--muted-cream);">●</span> Hors ligne';
+    el.innerHTML = '<span style="color:var(--muted-cream);">●</span> Hors ligne (local seulement)';
   } else if (state === 'error') {
-    el.innerHTML = '<span style="color:var(--rose);">●</span> Erreur de synchronisation';
+    el.innerHTML = '<span style="color:#e83a30;">●</span> ⚠️ ' + (detail || 'Erreur Firebase');
+    el.style.color = '#e83a30';
+  } else if (state === 'no-sdk') {
+    el.innerHTML = '<span style="color:#e83a30;">●</span> ⚠️ SDK Firebase non chargé (ancien fichier ?)';
+    el.style.color = '#e83a30';
+  }
+}
+
+// Real Firebase connectivity test — writes a small test document, reads it, cleans up
+async function testFirebaseConnection() {
+  if (!firebaseDb) {
+    updateSyncStatus('no-sdk');
+    return false;
+  }
+  try {
+    // Write a test doc
+    const testRef = firebaseDb.collection('pastoral_data').doc('_connection_test');
+    await testRef.set({ timestamp: new Date().toISOString(), test: true });
+    // Read it back
+    const readBack = await testRef.get();
+    if (!readBack.exists) throw new Error('Write ok, but read failed');
+    // Clean up
+    await testRef.delete();
+    return true;
+  } catch (e) {
+    console.error('Firebase test failed:', e);
+    let msg = 'Erreur Firebase';
+    if (e.code === 'permission-denied') msg = 'Règles Firebase bloquent l\'accès';
+    else if (e.code === 'unavailable') msg = 'Firebase hors ligne';
+    else if (e.message) msg = e.message.substring(0, 40);
+    updateSyncStatus('error', msg);
+    return false;
   }
 }
 
@@ -6414,11 +6462,17 @@ async function shareGoalCoords(g) {
 
 function initGoals() {
   updateSyncStatus('syncing');
-  loadGoals().then(() => {
+  loadGoals().then(async () => {
     renderGoals();
-    updateSyncStatus(firebaseDb ? 'synced' : 'offline');
-    // Subscribe to real-time updates so all pastors see changes instantly
-    subscribeToGoalsRealtime();
+    // Real connectivity test — write & read a doc to verify Firebase truly works
+    const firebaseOk = await testFirebaseConnection();
+    if (firebaseOk) {
+      updateSyncStatus('synced');
+      subscribeToGoalsRealtime();
+    } else if (!firebaseDb) {
+      updateSyncStatus('no-sdk');
+    }
+    // If test failed, updateSyncStatus was already called with the error inside testFirebaseConnection
   });
 
   document.getElementById('goalsAddBtn').addEventListener('click', () => openGoalForm(null));
