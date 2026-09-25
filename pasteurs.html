@@ -2690,6 +2690,10 @@
     font-variation-settings: "opsz" 144, "SOFT" 100;
   }
 </style>
+
+<!-- Firebase SDK (compat build — global `firebase` object) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -3281,6 +3285,9 @@
             Lien vers cette page
           </button>
         </div>
+        <div id="goalsSyncStatus" style="position:relative; margin-top:14px; font-size:11px; color:rgba(246,241,230,0.6); letter-spacing:0.02em;">
+          <span style="color:var(--muted-cream);">●</span> Chargement…
+        </div>
       </div>
 
       <!-- List of goals -->
@@ -3587,6 +3594,30 @@ const SHARED_PASSWORD = "Esprit2026";
 // --- CONFIG : mot de passe admin (pour modifier/supprimer les dons enregistrés) ---
 // À conserver secret parmi les pasteurs de confiance. Pour le changer, remplacez la valeur ci-dessous.
 const ADMIN_PASSWORD = "Admin2026";
+
+// ============================================================
+//  FIREBASE — Configuration pour partage temps réel des objectifs
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDPKiDrrsvi0uPnBfkYuRjCm9Qdi9Yuf8A",
+  authDomain: "esprit-superieur.firebaseapp.com",
+  projectId: "esprit-superieur",
+  storageBucket: "esprit-superieur.firebasestorage.app",
+  messagingSenderId: "586639275263",
+  appId: "1:586639275263:web:621488da116e1e4c9788ca"
+};
+let firebaseDb = null;
+try {
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    firebaseDb = firebase.firestore();
+    console.log('✅ Firebase initialisé');
+  } else {
+    console.warn('⚠️ Firebase SDK non chargé — fallback localStorage');
+  }
+} catch (e) {
+  console.error('Erreur init Firebase:', e);
+}
 
 // --- Données par défaut (calendrier pastoral mai → octobre 2026) ---
 // Récurrences extraites du PDF :
@@ -5723,15 +5754,97 @@ let goals = [];
 let editingGoal = null;
 let contributingGoal = null;
 
+// Firestore path: pastoral_data / goals — one document containing { items: [...] }
+const GOALS_FS_COLLECTION = 'pastoral_data';
+const GOALS_FS_DOC = 'goals';
+
+// Flag to prevent save loops when receiving updates from Firestore
+let goalsSyncingFromRemote = false;
+
 async function loadGoals() {
+  // 1. Show local cache immediately (so UI isn't empty while Firestore loads)
   try {
     const local = localStorage.getItem(GOALS_STORAGE_KEY);
     if (local) goals = JSON.parse(local);
   } catch(e){}
+  // 2. Then try Firestore (source of truth for shared data)
+  if (firebaseDb) {
+    try {
+      const doc = await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).get();
+      if (doc.exists) {
+        const data = doc.data();
+        if (data && Array.isArray(data.items)) {
+          goals = data.items;
+          // Update local cache
+          try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals)); } catch(e){}
+        }
+      }
+    } catch (e) {
+      console.warn('Firestore load failed, using local cache:', e);
+    }
+  }
 }
+
 async function saveGoals() {
+  // Skip saving if this change came from a remote update (avoid loops)
+  if (goalsSyncingFromRemote) return;
   const json = JSON.stringify(goals);
+  // Always save locally first (instant, offline-friendly)
   try { localStorage.setItem(GOALS_STORAGE_KEY, json); } catch(e){}
+  // Then push to Firestore (shared across devices)
+  if (firebaseDb) {
+    try {
+      await firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC).set({
+        items: goals,
+        updatedAt: new Date().toISOString()
+      });
+      updateSyncStatus('synced');
+    } catch (e) {
+      console.warn('Firestore save failed:', e);
+      updateSyncStatus('error');
+    }
+  } else {
+    updateSyncStatus('offline');
+  }
+}
+
+// Small visual indicator: 🟢 synchronisé / 🟡 en cours / 🔴 erreur
+function updateSyncStatus(state) {
+  const el = document.getElementById('goalsSyncStatus');
+  if (!el) return;
+  if (state === 'synced') {
+    el.innerHTML = '<span style="color:#5a8c3f;">●</span> Synchronisé';
+    el.style.color = 'var(--muted-cream)';
+  } else if (state === 'syncing') {
+    el.innerHTML = '<span style="color:var(--gold);">●</span> Synchronisation…';
+  } else if (state === 'offline') {
+    el.innerHTML = '<span style="color:var(--muted-cream);">●</span> Hors ligne';
+  } else if (state === 'error') {
+    el.innerHTML = '<span style="color:var(--rose);">●</span> Erreur de synchronisation';
+  }
+}
+
+// Subscribe to real-time updates from Firestore
+// When another device changes the goals, we get notified and update the UI
+function subscribeToGoalsRealtime() {
+  if (!firebaseDb) return;
+  firebaseDb.collection(GOALS_FS_COLLECTION).doc(GOALS_FS_DOC)
+    .onSnapshot(doc => {
+      if (sharedViewActive) return; // don't override shared view
+      if (!doc.exists) return;
+      const data = doc.data();
+      if (!data || !Array.isArray(data.items)) return;
+      // Update local state (but flag so we don't loop back to save)
+      goalsSyncingFromRemote = true;
+      goals = data.items;
+      try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals)); } catch(e){}
+      renderGoals();
+      goalsSyncingFromRemote = false;
+      updateSyncStatus('synced');
+    }, err => {
+      console.warn('Firestore subscription error:', err);
+      updateSyncStatus('error');
+    });
 }
 
 // Format a CHF amount with Swiss thousand separators
@@ -6300,7 +6413,13 @@ async function shareGoalCoords(g) {
 }
 
 function initGoals() {
-  loadGoals().then(() => renderGoals());
+  updateSyncStatus('syncing');
+  loadGoals().then(() => {
+    renderGoals();
+    updateSyncStatus(firebaseDb ? 'synced' : 'offline');
+    // Subscribe to real-time updates so all pastors see changes instantly
+    subscribeToGoalsRealtime();
+  });
 
   document.getElementById('goalsAddBtn').addEventListener('click', () => openGoalForm(null));
   document.getElementById('goalFormClose').addEventListener('click', closeGoalForm);
