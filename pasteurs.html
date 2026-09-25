@@ -3154,10 +3154,16 @@
         <div class="goals-eyebrow">Financement · Esprit Supérieur</div>
         <h2 class="goals-hero-title">Objectifs <em>financiers</em></h2>
         <p class="goals-hero-sub">Suivez la progression des collectes en cours pour l'église — loyer, événements, missions. Chaque contribution nous rapproche du but.</p>
-        <button class="goals-add-btn" id="goalsAddBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nouvel objectif
-        </button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; position:relative;">
+          <button class="goals-add-btn" id="goalsAddBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nouvel objectif
+          </button>
+          <button class="goals-add-btn" id="goalsShareBtn" style="background:rgba(246,241,230,0.1); color:var(--bg-cream); border:1px solid rgba(246,241,230,0.25);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+            Lien vers cette page
+          </button>
+        </div>
       </div>
 
       <!-- List of goals -->
@@ -3617,6 +3623,8 @@ function unlock() {
   initPrayerRoom();
   initResources();
   initGoals();
+  // If URL contains ?panel=<name>, switch to that panel automatically
+  setTimeout(openPanelFromUrl, 50);
 }
 loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -5773,17 +5781,38 @@ async function deleteGoal(g) {
 }
 
 // Contribution modal
-function openContribModal(g) {
+// Admin unlock state — session-only (reset when browser closes)
+let goalsAdminUnlocked = false;
+// Current contribution being edited (null = adding new)
+let editingContribId = null;
+
+function openContribModal(g, contribToEdit) {
   contributingGoal = g;
-  document.getElementById('goalContribAmount').value = '';
-  document.getElementById('goalContribName').value = '';
-  document.getElementById('goalContribNote').value = '';
-  document.getElementById('goalContribOverlay').classList.add('show');
+  editingContribId = contribToEdit ? contribToEdit.id : null;
+  const overlay = document.getElementById('goalContribOverlay');
+  const modalTitle = overlay.querySelector('.modal-header h2');
+  const saveBtn = document.getElementById('goalContribSave');
+
+  if (contribToEdit) {
+    modalTitle.textContent = 'Modifier ce don';
+    saveBtn.textContent = 'Enregistrer les modifications';
+    document.getElementById('goalContribAmount').value = contribToEdit.amount || '';
+    document.getElementById('goalContribName').value = contribToEdit.name || '';
+    document.getElementById('goalContribNote').value = contribToEdit.note || '';
+  } else {
+    modalTitle.textContent = 'Ajouter une contribution';
+    saveBtn.textContent = 'Ajouter au total';
+    document.getElementById('goalContribAmount').value = '';
+    document.getElementById('goalContribName').value = '';
+    document.getElementById('goalContribNote').value = '';
+  }
+  overlay.classList.add('show');
   setTimeout(() => document.getElementById('goalContribAmount').focus(), 100);
 }
 function closeContribModal() {
   document.getElementById('goalContribOverlay').classList.remove('show');
   contributingGoal = null;
+  editingContribId = null;
 }
 async function saveContribution() {
   if (!contributingGoal) return closeContribModal();
@@ -5792,25 +5821,43 @@ async function saveContribution() {
   const name = document.getElementById('goalContribName').value.trim();
   const note = document.getElementById('goalContribNote').value.trim();
 
-  // Add to contributions history
   if (!contributingGoal.contributions) contributingGoal.contributions = [];
-  contributingGoal.contributions.push({
-    id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
-    amount: amount,
-    name: name,
-    note: note,
-    date: new Date().toISOString()
-  });
 
-  // Update the total
-  contributingGoal.collected = (Number(contributingGoal.collected) || 0) + amount;
+  if (editingContribId) {
+    // Edit mode: update the existing contribution
+    const existing = contributingGoal.contributions.find(c => c.id === editingContribId);
+    if (existing) {
+      const oldAmount = Number(existing.amount) || 0;
+      existing.amount = amount;
+      existing.name = name;
+      existing.note = note;
+      // Adjust the collected total by the difference
+      const delta = amount - oldAmount;
+      contributingGoal.collected = Math.max(0, (Number(contributingGoal.collected) || 0) + delta);
+    }
+  } else {
+    // Add mode
+    contributingGoal.contributions.push({
+      id: 'c_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+      amount: amount,
+      name: name,
+      note: note,
+      date: new Date().toISOString()
+    });
+    contributingGoal.collected = (Number(contributingGoal.collected) || 0) + amount;
+  }
   contributingGoal.updatedAt = new Date().toISOString();
   await saveGoals();
   const wasComplete = contributingGoal.collected >= contributingGoal.target;
-  const currentGoal = contributingGoal; // preserve before closeContribModal resets it
+  const currentGoal = contributingGoal;
+  const wasEdit = !!editingContribId;
   closeContribModal();
   renderGoals();
-  showToast(wasComplete ? '🎉 Objectif atteint !' : '+' + formatCHF(amount) + ' CHF ajouté ✓' + (name ? ' (' + name + ')' : ''));
+  if (wasEdit) {
+    showToast('Don modifié ✓');
+  } else {
+    showToast(wasComplete ? '🎉 Objectif atteint !' : '+' + formatCHF(amount) + ' CHF ajouté ✓' + (name ? ' (' + name + ')' : ''));
+  }
   // If the history modal was open, refresh it
   if (document.getElementById('goalHistoryOverlay').classList.contains('show') && historyGoal && historyGoal.id === currentGoal.id) {
     renderHistoryList();
@@ -5823,12 +5870,46 @@ let historyGoal = null;
 function openHistoryModal(g) {
   historyGoal = g;
   document.getElementById('goalHistoryTitle').textContent = 'Historique — ' + g.name;
+  updateAdminButton();
   renderHistoryList();
   document.getElementById('goalHistoryOverlay').classList.add('show');
 }
 function closeHistoryModal() {
   document.getElementById('goalHistoryOverlay').classList.remove('show');
   historyGoal = null;
+}
+function updateAdminButton() {
+  const btn = document.getElementById('goalAdminBtn');
+  const label = document.getElementById('goalAdminBtnLabel');
+  if (goalsAdminUnlocked) {
+    btn.classList.add('unlocked');
+    label.textContent = 'Admin déverrouillé';
+    btn.title = 'Cliquez pour reverrouiller';
+  } else {
+    btn.classList.remove('unlocked');
+    label.textContent = 'Mode admin';
+    btn.title = 'Déverrouiller pour modifier / supprimer';
+  }
+}
+function toggleAdminMode() {
+  if (goalsAdminUnlocked) {
+    // Lock it back
+    goalsAdminUnlocked = false;
+    updateAdminButton();
+    renderHistoryList();
+    showToast('🔒 Mode admin verrouillé');
+    return;
+  }
+  const code = window.prompt('🔐 Entrez le code admin pour modifier / supprimer les dons enregistrés :');
+  if (code === null) return; // cancelled
+  if (code !== ADMIN_PASSWORD) {
+    showToast('❌ Code admin incorrect');
+    return;
+  }
+  goalsAdminUnlocked = true;
+  updateAdminButton();
+  renderHistoryList();
+  showToast('🔓 Mode admin déverrouillé');
 }
 function renderHistoryList() {
   if (!historyGoal) return;
@@ -5841,17 +5922,52 @@ function renderHistoryList() {
   const totalCollected = Number(historyGoal.collected) || 0;
   const untracked = totalCollected - totalTracked;
   let summaryHtml = '<strong>' + contribs.length + ' don' + (contribs.length !== 1 ? 's' : '') + ' enregistré' + (contribs.length !== 1 ? 's' : '') + '</strong> — total : ' + formatCHF(totalTracked) + ' CHF';
-  if (untracked > 0) {
-    summaryHtml += '<br><span style="font-size:12px;">Solde initial (sans détail) : ' + formatCHF(untracked) + ' CHF</span>';
-  } else if (untracked < 0) {
+  if (untracked < 0) {
     summaryHtml += '<br><span style="font-size:12px; color: var(--rose);">⚠️ Le total enregistré dépasse le total collecté de ' + formatCHF(-untracked) + ' CHF</span>';
   }
   summary.innerHTML = summaryHtml;
 
   // List
   list.innerHTML = '';
+
+  // Initial balance row (shown when > 0, or when admin mode and existing goal)
+  if (untracked > 0 || (goalsAdminUnlocked && untracked !== 0)) {
+    const initialRow = document.createElement('div');
+    initialRow.className = 'history-initial';
+    initialRow.innerHTML =
+      '<div class="history-initial-info">' +
+        '<div class="history-initial-amount">' + formatCHF(untracked) + ' CHF</div>' +
+        '<div class="history-name" style="font-weight:500;">Solde initial</div>' +
+        '<div class="history-initial-label">Montant collecté avant l\'enregistrement individuel des dons</div>' +
+      '</div>' +
+      '<div class="history-initial-actions' + (goalsAdminUnlocked ? '' : ' locked') + '">' +
+        '<button class="history-edit" data-act="editInitial" title="Modifier le solde initial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+        '<button class="history-del" data-act="delInitial" title="Supprimer le solde initial"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
+      '</div>';
+    list.appendChild(initialRow);
+
+    initialRow.querySelector('[data-act="editInitial"]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!goalsAdminUnlocked) return;
+      openInitialBalanceModal();
+    });
+    initialRow.querySelector('[data-act="delInitial"]').addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!goalsAdminUnlocked) return;
+      if (!confirm('Supprimer le solde initial de ' + formatCHF(untracked) + ' CHF ?\n\nLe total collecté sera réduit d\'autant.')) return;
+      historyGoal.collected = totalTracked;
+      historyGoal.updatedAt = new Date().toISOString();
+      await saveGoals();
+      renderHistoryList();
+      renderGoals();
+      showToast('Solde initial supprimé');
+    });
+  }
+
   if (!contribs.length) {
-    list.innerHTML = '<div class="history-empty">Aucun don enregistré pour l\'instant.<br>Cliquez sur « + Ajouter un don » pour commencer.</div>';
+    if (untracked <= 0) {
+      list.innerHTML += '<div class="history-empty">Aucun don enregistré pour l\'instant.<br>Cliquez sur « + Ajouter un don » pour commencer.</div>';
+    }
     return;
   }
   // Sort most recent first
@@ -5871,27 +5987,76 @@ function renderHistoryList() {
         '<div class="history-meta">' + (dateStr ? '<span>' + dateStr + '</span>' : '') + '</div>' +
         (c.note ? '<div class="history-note">' + escapeHtml(c.note) + '</div>' : '') +
       '</div>' +
-      '<button class="history-del" data-id="' + c.id + '" title="Supprimer ce don"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>';
+      '<div class="history-actions' + (goalsAdminUnlocked ? '' : ' locked') + '">' +
+        '<button class="history-edit" data-act="edit" data-id="' + c.id + '" title="Modifier ce don"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
+        '<button class="history-del" data-act="del" data-id="' + c.id + '" title="Supprimer ce don"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg></button>' +
+      '</div>';
     list.appendChild(item);
   });
-  // Attach delete handlers
-  list.querySelectorAll('.history-del').forEach(btn => {
+  // Attach handlers
+  list.querySelectorAll('.history-item [data-act]').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
+      if (!goalsAdminUnlocked) return;
       const id = btn.dataset.id;
       const c = (historyGoal.contributions || []).find(x => x.id === id);
       if (!c) return;
-      const label = c.name ? c.name : 'don anonyme';
-      if (!confirm('Supprimer ce don de ' + formatCHF(c.amount) + ' CHF (' + label + ') ?\n\nLe total collecté sera réduit d\'autant.')) return;
-      historyGoal.contributions = historyGoal.contributions.filter(x => x.id !== id);
-      historyGoal.collected = Math.max(0, (Number(historyGoal.collected) || 0) - (Number(c.amount) || 0));
-      historyGoal.updatedAt = new Date().toISOString();
-      await saveGoals();
-      renderHistoryList();
-      renderGoals();
-      showToast('Don supprimé');
+      if (btn.dataset.act === 'edit') {
+        openContribModal(historyGoal, c);
+      } else if (btn.dataset.act === 'del') {
+        const label = c.name ? c.name : 'don anonyme';
+        if (!confirm('Supprimer ce don de ' + formatCHF(c.amount) + ' CHF (' + label + ') ?\n\nLe total collecté sera réduit d\'autant.')) return;
+        historyGoal.contributions = historyGoal.contributions.filter(x => x.id !== id);
+        historyGoal.collected = Math.max(0, (Number(historyGoal.collected) || 0) - (Number(c.amount) || 0));
+        historyGoal.updatedAt = new Date().toISOString();
+        await saveGoals();
+        renderHistoryList();
+        renderGoals();
+        showToast('Don supprimé');
+      }
     });
   });
+}
+
+// ----- Initial balance edit modal -----
+function openInitialBalanceModal() {
+  if (!historyGoal || !goalsAdminUnlocked) return;
+  const contribs = historyGoal.contributions || [];
+  const totalTracked = contribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
+  const untracked = (Number(historyGoal.collected) || 0) - totalTracked;
+  document.getElementById('goalInitialAmount').value = untracked > 0 ? untracked : 0;
+  document.getElementById('goalInitialOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('goalInitialAmount').focus(), 100);
+}
+function closeInitialBalanceModal() {
+  document.getElementById('goalInitialOverlay').classList.remove('show');
+}
+async function saveInitialBalance() {
+  if (!historyGoal || !goalsAdminUnlocked) return;
+  const val = parseFloat(document.getElementById('goalInitialAmount').value);
+  if (isNaN(val) || val < 0) { showToast('Indiquez un montant valide'); return; }
+  const contribs = historyGoal.contributions || [];
+  const totalTracked = contribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
+  historyGoal.collected = totalTracked + val;
+  historyGoal.updatedAt = new Date().toISOString();
+  await saveGoals();
+  closeInitialBalanceModal();
+  renderHistoryList();
+  renderGoals();
+  showToast('Solde initial mis à jour ✓');
+}
+async function deleteInitialBalance() {
+  if (!historyGoal || !goalsAdminUnlocked) return;
+  if (!confirm('Supprimer le solde initial (remettre à 0) ?\n\nLe total collecté sera recalculé à partir des dons enregistrés uniquement.')) return;
+  const contribs = historyGoal.contributions || [];
+  const totalTracked = contribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
+  historyGoal.collected = totalTracked;
+  historyGoal.updatedAt = new Date().toISOString();
+  await saveGoals();
+  closeInitialBalanceModal();
+  renderHistoryList();
+  renderGoals();
+  showToast('Solde initial supprimé');
 }
 
 // Share coordinates via native share / clipboard
@@ -5962,6 +6127,68 @@ function initGoals() {
     if (historyGoal) openContribModal(historyGoal);
     // Keep history modal open so the user sees the new entry appear when they save
   });
+
+  // Admin unlock
+  document.getElementById('goalAdminBtn').addEventListener('click', toggleAdminMode);
+
+  // Initial balance modal
+  document.getElementById('goalInitialClose').addEventListener('click', closeInitialBalanceModal);
+  document.getElementById('goalInitialCancel').addEventListener('click', closeInitialBalanceModal);
+  document.getElementById('goalInitialSave').addEventListener('click', saveInitialBalance);
+  document.getElementById('goalInitialDelete').addEventListener('click', deleteInitialBalance);
+  document.getElementById('goalInitialOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('goalInitialOverlay')) closeInitialBalanceModal();
+  });
+  document.getElementById('goalInitialAmount').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') saveInitialBalance();
+  });
+
+  // Direct link share for the Objectifs panel
+  const shareBtn = document.getElementById('goalsShareBtn');
+  if (shareBtn) {
+    shareBtn.addEventListener('click', shareGoalsPageLink);
+  }
+}
+
+// Share a direct link to the Objectifs page
+async function shareGoalsPageLink() {
+  const url = new URL(window.location.href);
+  url.hash = '';
+  url.search = '?panel=objectifs';
+  const link = url.toString();
+  const msg = '🎯 *Objectifs financiers — Église Esprit Supérieur*\n\n' +
+    'Consultez la progression des collectes en cours :\n' + link +
+    '\n\n_Accès réservé aux pasteurs (mot de passe requis)_';
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'Objectifs — Esprit Supérieur', text: msg });
+      return;
+    } catch(e) { /* fallback */ }
+  }
+  try {
+    await navigator.clipboard.writeText(link);
+    showToast('Lien copié ✓');
+  } catch(e) {
+    window.prompt('Copiez ce lien :', link);
+  }
+}
+
+// Open a specific panel from URL (?panel=objectifs, ?panel=ressources, etc.)
+function openPanelFromUrl() {
+  const search = window.location.search || '';
+  const match = search.match(/[?&]panel=([a-zA-Z0-9_-]+)/);
+  if (!match) return;
+  const panelName = match[1];
+  const tab = document.querySelector('.ph-tab[data-panel="' + panelName + '"]');
+  const panel = document.getElementById('panel-' + panelName);
+  if (tab && panel) {
+    document.querySelectorAll('.ph-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.ph-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    panel.classList.add('active');
+    // Clean the URL so refresh doesn't replay
+    try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+  }
 }
 
 checkSession();
