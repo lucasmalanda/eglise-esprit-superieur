@@ -2317,6 +2317,76 @@
     font-style: italic;
     font-variation-settings: "opsz" 144, "SOFT" 100;
   }
+  /* Edit button (same size/style as delete but different color) */
+  .history-edit {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .2s;
+  }
+  .history-edit:hover { background: rgba(184, 137, 61, 0.12); }
+  .history-edit svg { width: 13px; }
+  .history-actions { display: flex; gap: 4px; align-items: flex-start; flex-shrink: 0; }
+
+  /* Initial balance row — special styling */
+  .history-initial {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(122, 94, 168, 0.08);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    border-left: 3px solid #7a5ea8;
+  }
+  .history-initial-info { flex: 1; min-width: 0; }
+  .history-initial-amount {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 18px;
+    color: #4a3672;
+    letter-spacing: -0.01em;
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+    margin-bottom: 2px;
+  }
+  .history-initial-label {
+    font-size: 12px;
+    color: var(--muted-cream);
+    font-style: italic;
+  }
+
+  /* Admin unlock button in history header */
+  .admin-unlock-btn {
+    background: rgba(20, 21, 43, 0.06);
+    border: 1px solid var(--line-cream);
+    color: var(--muted-cream);
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .2s, color .2s;
+  }
+  .admin-unlock-btn:hover { background: var(--bg-cream); color: var(--ink); }
+  .admin-unlock-btn.unlocked {
+    background: #e6f8ec;
+    color: #1da851;
+    border-color: #7ecfa2;
+  }
+  .admin-unlock-btn svg { width: 12px; }
+
+  /* Hide action buttons when admin is locked */
+  .history-actions.locked { display: none; }
+  .history-initial-actions.locked { display: none; }
+  .history-initial-actions { display: flex; gap: 4px; align-items: flex-start; flex-shrink: 0; }
 
   @media (max-width: 768px) {
     .goals-hero { padding: 24px 20px; }
@@ -3185,8 +3255,14 @@
         </div>
 
         <div style="font-size:13px; color: var(--muted-cream); margin-bottom: 16px; line-height: 1.5;">
-          <span id="goalHistorySummary">—</span>
-          <div style="margin-top:6px; font-style: italic; font-size: 12px;">🔒 Cette liste est visible uniquement dans l'espace pasteurs, jamais partagée publiquement.</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom: 8px;">
+            <div style="flex:1; min-width:0;"><span id="goalHistorySummary">—</span></div>
+            <button class="admin-unlock-btn" id="goalAdminBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span id="goalAdminBtnLabel">Mode admin</span>
+            </button>
+          </div>
+          <div style="font-style: italic; font-size: 12px;">🔒 Cette liste est visible uniquement dans l'espace pasteurs, jamais partagée publiquement.</div>
         </div>
 
         <div id="goalHistoryList" style="max-height: 400px; overflow-y: auto; margin-bottom: 16px;"></div>
@@ -3194,6 +3270,31 @@
         <div class="modal-actions">
           <button class="btn btn-ghost" id="goalHistoryCloseBtn">Fermer</button>
           <button class="btn btn-primary" id="goalHistoryAddBtn">+ Ajouter un don</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ INITIAL BALANCE EDIT MODAL ============ -->
+    <div class="modal-overlay" id="goalInitialOverlay">
+      <div class="modal" style="max-width: 460px;">
+        <div class="modal-header">
+          <h2>Modifier le solde initial</h2>
+          <button class="modal-close" id="goalInitialClose" aria-label="Fermer">×</button>
+        </div>
+
+        <p style="font-size:13px; color: var(--muted-cream); margin-bottom: 14px; line-height: 1.5;">
+          Le solde initial correspond au montant collecté avant que vous ne commenciez à enregistrer les dons individuellement.
+        </p>
+
+        <div class="field">
+          <label for="goalInitialAmount">Solde initial (CHF)</label>
+          <input type="number" id="goalInitialAmount" placeholder="0" min="0" step="1">
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="goalInitialCancel">Annuler</button>
+          <button class="btn btn-danger" id="goalInitialDelete">Supprimer (0)</button>
+          <button class="btn btn-primary" id="goalInitialSave">Enregistrer</button>
         </div>
       </div>
     </div>
@@ -3346,6 +3447,9 @@
 // --- CONFIG : mot de passe partagé ---
 // Pour changer le mot de passe, remplacez la valeur ci-dessous.
 const SHARED_PASSWORD = "Esprit2026";
+// --- CONFIG : mot de passe admin (pour modifier/supprimer les dons enregistrés) ---
+// À conserver secret parmi les pasteurs de confiance. Pour le changer, remplacez la valeur ci-dessous.
+const ADMIN_PASSWORD = "Admin2026";
 
 // --- Données par défaut (calendrier pastoral mai → octobre 2026) ---
 // Récurrences extraites du PDF :
