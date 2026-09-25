@@ -2103,10 +2103,28 @@
     position: relative;
     background: var(--bg-cream);
     border-radius: 100px;
-    height: 20px;
+    height: 22px;
     overflow: hidden;
     box-shadow: inset 0 1px 3px rgba(20, 21, 43, 0.08);
   }
+  /* Pledge (promise) segment — sits BEHIND the received one, striped */
+  .gauge-fill-pledge {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(212, 168, 90, 0.45) 0px,
+        rgba(212, 168, 90, 0.45) 6px,
+        rgba(232, 210, 160, 0.25) 6px,
+        rgba(232, 210, 160, 0.25) 12px
+      );
+    border-radius: 100px;
+    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+  }
+  /* Received segment — sits ON TOP, solid gold */
   .gauge-fill {
     position: absolute;
     top: 0; left: 0;
@@ -2115,7 +2133,7 @@
     border-radius: 100px;
     transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 0 12px rgba(212, 168, 90, 0.4);
-    position: relative;
+    z-index: 2;
   }
   .gauge-fill::after {
     content: '';
@@ -2132,6 +2150,120 @@
     background: linear-gradient(90deg, #7ba85e 0%, #5a8c3f 100%);
     box-shadow: 0 0 14px rgba(123, 168, 94, 0.5);
   }
+  /* Legend for gauge segments */
+  .gauge-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted-cream);
+  }
+  .gauge-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gauge-legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+  .gauge-legend-swatch.recu {
+    background: linear-gradient(90deg, var(--gold-bright) 0%, var(--gold) 100%);
+  }
+  .gauge-legend-swatch.promesse {
+    background:
+      repeating-linear-gradient(
+        45deg,
+        rgba(212, 168, 90, 0.7) 0px,
+        rgba(212, 168, 90, 0.7) 3px,
+        rgba(232, 210, 160, 0.4) 3px,
+        rgba(232, 210, 160, 0.4) 6px
+      );
+    border: 1px solid rgba(212, 168, 90, 0.5);
+  }
+  .gauge-legend-value {
+    font-weight: 600;
+    color: var(--ink);
+    font-family: var(--display);
+    font-variation-settings: "opsz" 60, "SOFT" 40;
+  }
+
+  /* Contribution type tabs (in the add-contribution modal) */
+  .contrib-type-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .contrib-type-tab {
+    padding: 12px;
+    background: var(--bg-cream);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted-cream);
+    cursor: pointer;
+    transition: all .2s;
+    font-family: var(--sans);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .contrib-type-tab:hover { background: #efe7d3; }
+  .contrib-type-tab.active {
+    background: #fff;
+    border-color: var(--gold);
+    color: var(--ink);
+    box-shadow: 0 4px 12px -4px rgba(184, 137, 61, 0.3);
+  }
+  .contrib-type-sub {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted-cream);
+    letter-spacing: 0.02em;
+  }
+  .contrib-type-tab.active .contrib-type-sub { color: var(--gold); }
+
+  /* Type badge in history */
+  .history-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .history-type-badge.recu {
+    background: rgba(123, 168, 94, 0.15);
+    color: #5a8c3f;
+  }
+  .history-type-badge.promesse {
+    background: rgba(184, 137, 61, 0.15);
+    color: #7a5a1f;
+  }
+  .history-convert-btn {
+    background: rgba(123, 168, 94, 0.12);
+    border: 1px solid rgba(123, 168, 94, 0.4);
+    color: #5a8c3f;
+    padding: 5px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background .2s;
+  }
+  .history-convert-btn:hover { background: rgba(123, 168, 94, 0.25); }
+  .history-convert-btn svg { width: 11px; }
   .gauge-percent-row {
     display: flex;
     justify-content: space-between;
@@ -3227,11 +3359,25 @@
         </div>
 
         <p style="font-size:13px; color: var(--muted-cream); margin-bottom: 14px; line-height: 1.5;">
-          Le montant sera ajouté au total collecté de l'objectif. Le nom et la note sont optionnels mais permettent de garder une trace des dons.
+          Le montant sera comptabilisé selon le type choisi ci-dessous. Le nom et la note sont optionnels mais permettent de garder une trace détaillée.
         </p>
 
         <div class="field">
-          <label for="goalContribAmount">Montant à ajouter (CHF)</label>
+          <label>Type de don</label>
+          <div class="contrib-type-tabs">
+            <button type="button" class="contrib-type-tab active" data-type="recu">
+              ✓ Don reçu
+              <span class="contrib-type-sub">Montant déjà encaissé</span>
+            </button>
+            <button type="button" class="contrib-type-tab" data-type="promesse">
+              🤝 Promesse
+              <span class="contrib-type-sub">Engagement à venir</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="goalContribAmount">Montant (CHF)</label>
           <input type="number" id="goalContribAmount" placeholder="500" min="1" step="1" autofocus>
         </div>
 
@@ -5619,9 +5765,16 @@ function renderGoals() {
   goals.forEach(g => {
     const target = Math.max(1, Number(g.target) || 0);
     const collected = Math.max(0, Number(g.collected) || 0);
-    const pct = Math.min(100, (collected / target) * 100);
+    // Sum the pledges (unreceived promises)
+    const pledges = (g.contributions || [])
+      .filter(c => c.type === 'promesse')
+      .reduce((s, c) => s + (Number(c.amount) || 0), 0);
+    const committed = collected + pledges; // received + pledged
+    const pctReceived = Math.min(100, (collected / target) * 100);
+    const pctCommitted = Math.min(100, (committed / target) * 100);
     const isComplete = collected >= target;
-    const remaining = Math.max(0, target - collected);
+    const remaining = Math.max(0, target - committed);
+    const hasPledges = pledges > 0;
 
     const card = document.createElement('div');
     card.className = 'goal-card';
@@ -5645,16 +5798,25 @@ function renderGoals() {
           '<div class="gauge-target">sur <strong>' + formatCHF(target) + ' CHF</strong></div>' +
         '</div>' +
         '<div class="gauge-bar">' +
-          '<div class="gauge-fill' + (isComplete ? ' complete' : '') + '" style="width:0%;" data-target-width="' + pct.toFixed(1) + '%"></div>' +
+          // Pledge segment (behind, striped) — goes from 0 to committed%
+          (hasPledges ? '<div class="gauge-fill-pledge" style="width:0%;" data-target-width="' + pctCommitted.toFixed(1) + '%"></div>' : '') +
+          // Received segment (on top, solid) — goes from 0 to received%
+          '<div class="gauge-fill' + (isComplete ? ' complete' : '') + '" style="width:0%;" data-target-width="' + pctReceived.toFixed(1) + '%"></div>' +
         '</div>' +
         '<div class="gauge-percent-row">' +
-          '<div class="gauge-percent' + (isComplete ? ' complete' : '') + '">' + pct.toFixed(0) + '%</div>' +
+          '<div class="gauge-percent' + (isComplete ? ' complete' : '') + '">' + pctReceived.toFixed(0) + '%</div>' +
           '<div class="gauge-remaining">' +
             (isComplete
               ? '🎉 Objectif atteint !'
               : 'Reste : <strong>' + formatCHF(remaining) + ' CHF</strong>') +
           '</div>' +
         '</div>' +
+        // Legend — only shown when there are pledges
+        (hasPledges ? '<div class="gauge-legend">' +
+          '<div class="gauge-legend-item"><span class="gauge-legend-swatch recu"></span>Reçu : <span class="gauge-legend-value">' + formatCHF(collected) + ' CHF</span></div>' +
+          '<div class="gauge-legend-item"><span class="gauge-legend-swatch promesse"></span>Promis : <span class="gauge-legend-value">' + formatCHF(pledges) + ' CHF</span></div>' +
+          '<div class="gauge-legend-item" style="margin-left:auto;">Total engagé : <span class="gauge-legend-value">' + formatCHF(committed) + ' CHF</span></div>' +
+        '</div>' : '') +
       '</div>' +
       '<div class="goal-actions">' +
         '<button class="goal-action contribute" data-act="contribute">' +
@@ -5786,6 +5948,16 @@ let goalsAdminUnlocked = false;
 // Current contribution being edited (null = adding new)
 let editingContribId = null;
 
+function setContribType(type) {
+  document.querySelectorAll('.contrib-type-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.type === type);
+  });
+}
+function getContribType() {
+  const active = document.querySelector('.contrib-type-tab.active');
+  return (active && active.dataset.type) || 'recu';
+}
+
 function openContribModal(g, contribToEdit) {
   contributingGoal = g;
   editingContribId = contribToEdit ? contribToEdit.id : null;
@@ -5799,12 +5971,14 @@ function openContribModal(g, contribToEdit) {
     document.getElementById('goalContribAmount').value = contribToEdit.amount || '';
     document.getElementById('goalContribName').value = contribToEdit.name || '';
     document.getElementById('goalContribNote').value = contribToEdit.note || '';
+    setContribType(contribToEdit.type || 'recu');
   } else {
     modalTitle.textContent = 'Ajouter une contribution';
-    saveBtn.textContent = 'Ajouter au total';
+    saveBtn.textContent = 'Enregistrer';
     document.getElementById('goalContribAmount').value = '';
     document.getElementById('goalContribName').value = '';
     document.getElementById('goalContribNote').value = '';
+    setContribType('recu');
   }
   overlay.classList.add('show');
   setTimeout(() => document.getElementById('goalContribAmount').focus(), 100);
@@ -5820,6 +5994,7 @@ async function saveContribution() {
   if (!amount || amount < 1) { showToast('Indiquez un montant valide'); return; }
   const name = document.getElementById('goalContribName').value.trim();
   const note = document.getElementById('goalContribNote').value.trim();
+  const type = getContribType(); // 'recu' or 'promesse'
 
   if (!contributingGoal.contributions) contributingGoal.contributions = [];
 
@@ -5828,11 +6003,16 @@ async function saveContribution() {
     const existing = contributingGoal.contributions.find(c => c.id === editingContribId);
     if (existing) {
       const oldAmount = Number(existing.amount) || 0;
+      const oldType = existing.type || 'recu';
       existing.amount = amount;
       existing.name = name;
       existing.note = note;
-      // Adjust the collected total by the difference
-      const delta = amount - oldAmount;
+      existing.type = type;
+      // Adjust the collected total based on how received-ness changed
+      // If it was received, remove old amount; if it is now received, add new amount
+      let delta = 0;
+      if (oldType === 'recu') delta -= oldAmount;
+      if (type === 'recu') delta += amount;
       contributingGoal.collected = Math.max(0, (Number(contributingGoal.collected) || 0) + delta);
     }
   } else {
@@ -5842,21 +6022,28 @@ async function saveContribution() {
       amount: amount,
       name: name,
       note: note,
+      type: type,
       date: new Date().toISOString()
     });
-    contributingGoal.collected = (Number(contributingGoal.collected) || 0) + amount;
+    // Only received contributions increment the collected total (pledges are separate)
+    if (type === 'recu') {
+      contributingGoal.collected = (Number(contributingGoal.collected) || 0) + amount;
+    }
   }
   contributingGoal.updatedAt = new Date().toISOString();
   await saveGoals();
   const wasComplete = contributingGoal.collected >= contributingGoal.target;
   const currentGoal = contributingGoal;
   const wasEdit = !!editingContribId;
+  const savedType = type;
   closeContribModal();
   renderGoals();
   if (wasEdit) {
     showToast('Don modifié ✓');
   } else {
-    showToast(wasComplete ? '🎉 Objectif atteint !' : '+' + formatCHF(amount) + ' CHF ajouté ✓' + (name ? ' (' + name + ')' : ''));
+    const typeLabel = savedType === 'promesse' ? 'promesse enregistrée' : 'ajouté';
+    const emoji = savedType === 'promesse' ? '🤝' : '';
+    showToast((wasComplete && savedType === 'recu') ? '🎉 Objectif atteint !' : emoji + '+' + formatCHF(amount) + ' CHF ' + typeLabel + ' ✓' + (name ? ' (' + name + ')' : ''));
   }
   // If the history modal was open, refresh it
   if (document.getElementById('goalHistoryOverlay').classList.contains('show') && historyGoal && historyGoal.id === currentGoal.id) {
@@ -5917,13 +6104,22 @@ function renderHistoryList() {
   const list = document.getElementById('goalHistoryList');
   const summary = document.getElementById('goalHistorySummary');
 
-  // Summary line
-  const totalTracked = contribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
+  // Summary line — separate received vs pledges
+  const receivedContribs = contribs.filter(c => (c.type || 'recu') === 'recu');
+  const pledgeContribs = contribs.filter(c => c.type === 'promesse');
+  const totalReceivedTracked = receivedContribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
+  const totalPledged = pledgeContribs.reduce((sum, c) => sum + (Number(c.amount) || 0), 0);
   const totalCollected = Number(historyGoal.collected) || 0;
-  const untracked = totalCollected - totalTracked;
-  let summaryHtml = '<strong>' + contribs.length + ' don' + (contribs.length !== 1 ? 's' : '') + ' enregistré' + (contribs.length !== 1 ? 's' : '') + '</strong> — total : ' + formatCHF(totalTracked) + ' CHF';
+  const untracked = totalCollected - totalReceivedTracked;
+  let summaryHtml = '<strong>' + contribs.length + ' don' + (contribs.length !== 1 ? 's' : '') + ' enregistré' + (contribs.length !== 1 ? 's' : '') + '</strong>';
+  if (receivedContribs.length) {
+    summaryHtml += ' — ✓ Reçu : ' + formatCHF(totalReceivedTracked) + ' CHF';
+  }
+  if (pledgeContribs.length) {
+    summaryHtml += (receivedContribs.length ? ' · ' : ' — ') + '🤝 Promis : ' + formatCHF(totalPledged) + ' CHF';
+  }
   if (untracked < 0) {
-    summaryHtml += '<br><span style="font-size:12px; color: var(--rose);">⚠️ Le total enregistré dépasse le total collecté de ' + formatCHF(-untracked) + ' CHF</span>';
+    summaryHtml += '<br><span style="font-size:12px; color: var(--rose);">⚠️ Le total reçu enregistré dépasse le total collecté de ' + formatCHF(-untracked) + ' CHF</span>';
   }
   summary.innerHTML = summaryHtml;
 
@@ -5978,14 +6174,24 @@ function renderHistoryList() {
     if (d && !isNaN(d)) {
       dateStr = d.getDate() + ' ' + MONTHS[d.getMonth()].toLowerCase() + ' ' + d.getFullYear();
     }
+    const cType = c.type || 'recu';
+    const typeLabel = cType === 'promesse' ? '🤝 Promesse' : '✓ Reçu';
     const item = document.createElement('div');
     item.className = 'history-item';
+    // Highlight pledges with a different left border color
+    if (cType === 'promesse') {
+      item.style.borderLeftColor = 'rgba(184, 137, 61, 0.55)';
+      item.style.background = 'rgba(212, 168, 90, 0.05)';
+    }
     item.innerHTML =
       '<div class="history-info">' +
-        '<div class="history-amount">+' + formatCHF(c.amount) + ' CHF</div>' +
+        '<div class="history-amount">+' + formatCHF(c.amount) + ' CHF' +
+          '<span class="history-type-badge ' + cType + '">' + typeLabel + '</span>' +
+        '</div>' +
         (c.name ? '<div class="history-name">' + escapeHtml(c.name) + '</div>' : '<div class="history-name anon">Donateur anonyme</div>') +
         '<div class="history-meta">' + (dateStr ? '<span>' + dateStr + '</span>' : '') + '</div>' +
         (c.note ? '<div class="history-note">' + escapeHtml(c.note) + '</div>' : '') +
+        (cType === 'promesse' ? '<button class="history-convert-btn" data-act="convert" data-id="' + c.id + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Marquer comme reçu</button>' : '') +
       '</div>' +
       '<div class="history-actions' + (goalsAdminUnlocked ? '' : ' locked') + '">' +
         '<button class="history-edit" data-act="edit" data-id="' + c.id + '" title="Modifier ce don"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>' +
@@ -5997,17 +6203,33 @@ function renderHistoryList() {
   list.querySelectorAll('.history-item [data-act]').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (!goalsAdminUnlocked) return;
       const id = btn.dataset.id;
       const c = (historyGoal.contributions || []).find(x => x.id === id);
       if (!c) return;
+      // Convert action is always allowed (no admin needed for regular pastoral use)
+      if (btn.dataset.act === 'convert') {
+        if (!confirm('Marquer la promesse de ' + formatCHF(c.amount) + ' CHF' + (c.name ? ' (' + c.name + ')' : '') + ' comme reçue ?\n\nLe montant sera ajouté au total collecté.')) return;
+        c.type = 'recu';
+        historyGoal.collected = (Number(historyGoal.collected) || 0) + (Number(c.amount) || 0);
+        historyGoal.updatedAt = new Date().toISOString();
+        await saveGoals();
+        renderHistoryList();
+        renderGoals();
+        showToast('✓ Don marqué comme reçu (+' + formatCHF(c.amount) + ' CHF)');
+        return;
+      }
+      // Edit and delete require admin unlock
+      if (!goalsAdminUnlocked) return;
       if (btn.dataset.act === 'edit') {
         openContribModal(historyGoal, c);
       } else if (btn.dataset.act === 'del') {
         const label = c.name ? c.name : 'don anonyme';
-        if (!confirm('Supprimer ce don de ' + formatCHF(c.amount) + ' CHF (' + label + ') ?\n\nLe total collecté sera réduit d\'autant.')) return;
+        const wasReceived = (c.type || 'recu') === 'recu';
+        if (!confirm('Supprimer ce don de ' + formatCHF(c.amount) + ' CHF (' + label + ') ?' + (wasReceived ? '\n\nLe total collecté sera réduit d\'autant.' : ''))) return;
         historyGoal.contributions = historyGoal.contributions.filter(x => x.id !== id);
-        historyGoal.collected = Math.max(0, (Number(historyGoal.collected) || 0) - (Number(c.amount) || 0));
+        if (wasReceived) {
+          historyGoal.collected = Math.max(0, (Number(historyGoal.collected) || 0) - (Number(c.amount) || 0));
+        }
         historyGoal.updatedAt = new Date().toISOString();
         await saveGoals();
         renderHistoryList();
@@ -6115,6 +6337,10 @@ function initGoals() {
   });
   document.getElementById('goalContribAmount').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') saveContribution();
+  });
+  // Contribution type tabs (Reçu / Promesse)
+  document.querySelectorAll('.contrib-type-tab').forEach(t => {
+    t.addEventListener('click', () => setContribType(t.dataset.type));
   });
 
   // History modal handlers
